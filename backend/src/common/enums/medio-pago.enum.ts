@@ -1,0 +1,7 @@
+export enum MedioPago {
+  TRANSFERENCIA = 'TRANSFERENCIA',
+  EFECTIVO = 'EFECTIVO',
+  TARJETA = 'TARJETA',
+  CUOTA = 'CUOTA',
+  OTRO = 'OTRO'
+}
