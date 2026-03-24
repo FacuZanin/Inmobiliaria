@@ -1,38 +1,38 @@
+// backend\src\common\guards\roles.guard.ts
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
+  Injectable,
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { UserRole } from '@shared/contracts';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { UserRole } from '../enums/user-role.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles =
-      this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
-        context.getHandler(),
-        context.getClass(),
-      ]);
-
-    if (!requiredRoles || requiredRoles.length === 0) {
-      return true;
-    }
+    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    if (!user)
+    // 🔥 1. Si no hay usuario → no autenticado
+    if (!user) {
       throw new ForbiddenException('No autenticado');
-
-    if (!requiredRoles.includes(user.role)) {
-      throw new ForbiddenException('No tienes permisos');
     }
 
-    return true;
+    // 🔥 2. Si NO hay roles requeridos → permitir
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
+
+    // 🔥 3. Validar roles
+    return requiredRoles.includes(user.role);
   }
 }

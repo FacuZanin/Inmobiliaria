@@ -1,3 +1,4 @@
+// backend\src\common\interceptors\logging.interceptor.ts
 import {
   Injectable,
   NestInterceptor,
@@ -12,31 +13,31 @@ import { tap } from 'rxjs/operators';
 export class LoggingInterceptor implements NestInterceptor {
   private readonly logger = new Logger('HTTP');
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler) {
     const req = context.switchToHttp().getRequest();
-    const { method, url, body, params, query } = req;
+    const { method, url, body, query, params } = req;
+
+    const safeBody = { ...body };
+    if (safeBody?.password) safeBody.password = '***';
 
     const start = Date.now();
 
     return next.handle().pipe(
       tap({
         next: () => {
-          const duration = Date.now() - start;
           this.logger.log(
-            `${method} ${url} → ${duration}ms\nParams: ${JSON.stringify(
-              params,
-            )}\nQuery: ${JSON.stringify(query)}\nBody: ${JSON.stringify(body)}`
+            `${method} ${url} - ${Date.now() - start}ms | body=${JSON.stringify(
+              safeBody,
+            )}`,
           );
         },
         error: (err) => {
-          const duration = Date.now() - start;
           this.logger.error(
-            `${method} ${url} FAILED → ${duration}ms\nError: ${
-              err?.message
-            }\nStack: ${err?.stack}`
+            `${method} ${url} FAILED - ${err?.message}`,
           );
         },
       }),
     );
   }
 }
+

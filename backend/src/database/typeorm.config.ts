@@ -1,3 +1,4 @@
+// backend\src\database\typeorm.config.ts
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { config } from 'dotenv';
 
@@ -13,11 +14,11 @@ const ormconfig: TypeOrmModuleOptions = {
   database: process.env.DB_NAME,
 
   // PRODUCCIÓN / BUILD
-  entities: ['dist/**/*.entity.js'],
-  migrations: ['dist/database/migrations/*.js'],
+  entities: [__dirname + '/../**/*.entity.{ts,js}'],
+  migrations: [__dirname + '/../database/migrations/*.{ts,js}'],
 
-  synchronize: false,
-  autoLoadEntities: true,
+  synchronize: true,
+  autoLoadEntities: false,
 };
 
 export default ormconfig;

@@ -1,13 +1,16 @@
+// backend\src\app.controller.ts
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
 import { Public } from './common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+
+  @Get('health')
   @Public()
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  health() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+    };
   }
 }

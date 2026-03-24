@@ -1,3 +1,4 @@
+// backend\src\common\filters\http-exception.filter.ts
 import {
   ExceptionFilter,
   Catch,
@@ -14,20 +15,27 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Error interno en el servidor';
+    let message: any = 'Error interno del servidor';
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      const res: any = exception.getResponse();
-      message = res.message || res || exception.message;
+
+      const exceptionResponse = exception.getResponse();
+
+      // 🔥 ACA está la clave: respetar el mensaje real
+      if (typeof exceptionResponse === 'object') {
+        message = exceptionResponse;
+      } else {
+        message = { message: exceptionResponse };
+      }
     }
 
     response.status(status).json({
       success: false,
       statusCode: status,
-      timestamp: new Date().toISOString(),
       path: request.url,
-      message,
+      timestamp: new Date().toISOString(),
+      ...message,
     });
   }
 }

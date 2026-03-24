@@ -1,8 +1,9 @@
+// backend\src\common\decorators\auth.decorator.ts
 import { applyDecorators, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../modules/auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from './roles.decorator';
-import { UserRole } from '../enums/user-role.enum';
+import { UserRole } from '@shared/contracts';
 
 
 export function Auth(...roles: UserRole[]) {

@@ -1,0 +1,133 @@
+// backend\src\database\migrations\1766239939262-initSchema.ts
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class InitSchema1766239939262 implements MigrationInterface {
+    name = 'InitSchema1766239939262'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TABLE "agencias" ("id" SERIAL NOT NULL, "nombre" character varying(100), "direccion" character varying(50) NOT NULL, "localidad" character varying(100) NOT NULL, "email" character varying(150) NOT NULL, "telefono" character varying(50), "logoUrl" character varying(255), CONSTRAINT "UQ_80190618c1c1a41250fab1a6510" UNIQUE ("email"), CONSTRAINT "PK_0b03d6cacbc321b0b0e5d25ad2a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."users_role_enum" AS ENUM('ADMIN', 'AGENCIA_PENDING', 'AGENCIA', 'EMPLEADO', 'PROPIETARIO', 'INQUILINO')`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "email" character varying(150) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL DEFAULT 'INQUILINO', "nombre" character varying(100), "apellido" character varying(100), "telefono" character varying(50), "agenciaId" integer, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "favoritos" ("id" SERIAL NOT NULL, "propiedadId" integer NOT NULL, "inquilinoId" integer, CONSTRAINT "PK_2a6a4d0119130451dc0b644590a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."solicitudes_visita_estado_enum" AS ENUM('PENDIENTE', 'ACEPTADA', 'RECHAZADA')`);
+        await queryRunner.query(`CREATE TABLE "solicitudes_visita" ("id" SERIAL NOT NULL, "propiedadId" integer NOT NULL, "mensaje" character varying NOT NULL, "fechaDeseada" TIMESTAMP NOT NULL, "estado" "public"."solicitudes_visita_estado_enum" NOT NULL DEFAULT 'PENDIENTE', "creadoEl" TIMESTAMP NOT NULL DEFAULT now(), "inquilinoId" integer, CONSTRAINT "PK_ba70769658d7001eace792faab4" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "inquilinos" ("id" SERIAL NOT NULL, "telefono" character varying, "nombre" character varying, "userId" integer NOT NULL, "telefonoAlternativo" character varying, "ingresosMensuales" integer, "antiguedadLaboralMeses" integer, "tieneGarante" boolean NOT NULL DEFAULT false, "tieneMascota" boolean NOT NULL DEFAULT false, "operacionBuscada" character varying, "presupuestoMaximo" integer, "zonasPreferidas" text array, CONSTRAINT "PK_18584087b5524c28000808c161b" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."inquilino_documentos_tipodocumento_enum" AS ENUM('DNI_FRENTE', 'DNI_DORSO', 'RECIBO_SUELDO', 'GARANTIA_PROPIETARIA', 'SEGURO_CAUCION', 'CERTIFICADO_LABORAL', 'SERVICIO', 'CBU')`);
+        await queryRunner.query(`CREATE TYPE "public"."inquilino_documentos_estado_enum" AS ENUM('PENDIENTE', 'APROBADO', 'RECHAZADO', 'EN_ANALISIS')`);
+        await queryRunner.query(`CREATE TABLE "inquilino_documentos" ("id" SERIAL NOT NULL, "tipoDocumento" "public"."inquilino_documentos_tipodocumento_enum" NOT NULL, "archivoUrl" character varying NOT NULL, "estado" "public"."inquilino_documentos_estado_enum" NOT NULL DEFAULT 'PENDIENTE', "comentarioRechazo" text, "fechaSubida" TIMESTAMP NOT NULL DEFAULT now(), "inquilinoId" integer, CONSTRAINT "PK_49eaa9cfec8552691f8c644fef4" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."documento_audit_action_enum" AS ENUM('CREADO', 'APROBADO', 'RECHAZADO', 'DESCARGADO', 'ELIMINADO', 'EN_ANALISIS', 'REEMPLAZADO')`);
+        await queryRunner.query(`CREATE TABLE "documento_audit" ("id" SERIAL NOT NULL, "documentoId" integer NOT NULL, "documentoTipo" character varying NOT NULL, "action" "public"."documento_audit_action_enum" NOT NULL, "performedById" integer NOT NULL, "comentario" text, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "analisisIA" jsonb, "datosExtras" jsonb, CONSTRAINT "PK_bea1ea599d133a4ea88b2fcfb7d" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."agencia_solicitudes_estado_enum" AS ENUM('PENDIENTE', 'APROBADA', 'RECHAZADA')`);
+        await queryRunner.query(`CREATE TABLE "agencia_solicitudes" ("id" SERIAL NOT NULL, "nombreTitular" character varying(150) NOT NULL, "dni" character varying(20) NOT NULL, "cuit" character varying(20) NOT NULL, "matricula" character varying(50) NOT NULL, "colegio" character varying(100) NOT NULL, "provincia" character varying(100) NOT NULL, "estado" "public"."agencia_solicitudes_estado_enum" NOT NULL DEFAULT 'PENDIENTE', "dniFrente" character varying(255) NOT NULL, "dniDorso" character varying(255) NOT NULL, "constanciaCuit" character varying(255) NOT NULL, "constanciaAfip" character varying(255) NOT NULL, "certificadoMatricula" character varying(255) NOT NULL, "carnetProfesional" character varying(255) NOT NULL, "creadaEn" TIMESTAMP NOT NULL DEFAULT now(), "usuarioId" integer, CONSTRAINT "PK_4690925b325764e32e3e30e4acf" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_casas" ("id" SERIAL NOT NULL, "antiguedad" integer, "garage" boolean NOT NULL DEFAULT false, "patio" boolean NOT NULL DEFAULT false, "quincho" boolean NOT NULL DEFAULT false, "pileta" boolean NOT NULL DEFAULT false, "superficieTerreno" integer, "superficieConstruida" integer, "propiedadId" integer, CONSTRAINT "REL_366d755d74135a5c0c9d9b99eb" UNIQUE ("propiedadId"), CONSTRAINT "PK_350599781875dbdd7165164c023" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_departamentos" ("id" SERIAL NOT NULL, "piso" integer, "unidad" character varying, "ascensor" boolean NOT NULL DEFAULT false, "expensas" integer, "superficieBalcon" integer, "cochera" boolean NOT NULL DEFAULT false, "propiedadId" integer, CONSTRAINT "REL_0c52fd2cd49a0df11aac31ab04" UNIQUE ("propiedadId"), CONSTRAINT "PK_3541fe510c6a6ada311b4c3ab60" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_lotes" ("id" SERIAL NOT NULL, "superficieTotal" integer, "zonificacion" character varying, "frente" integer, "fondo" integer, "propiedadId" integer, CONSTRAINT "REL_b89468c8f0b760f399b20fcd24" UNIQUE ("propiedadId"), CONSTRAINT "PK_fbfaa273f1067a97e981b961651" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_locales" ("id" SERIAL NOT NULL, "vidrieraMetros" integer, "deposito" boolean NOT NULL DEFAULT false, "banos" integer, "aptoGastronomico" boolean NOT NULL DEFAULT false, "luzTrifasica" boolean NOT NULL DEFAULT false, "propiedadId" integer, CONSTRAINT "REL_1ac32bf610138fceea08e130e8" UNIQUE ("propiedadId"), CONSTRAINT "PK_e62fece9d053532c62f44279163" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_oficinas" ("id" SERIAL NOT NULL, "puestos" integer, "salaReuniones" boolean NOT NULL DEFAULT false, "kitchenette" boolean NOT NULL DEFAULT false, "banos" integer, "expensas" integer, "propiedadId" integer, CONSTRAINT "REL_5c74dd452cc600c3a9ae564ec4" UNIQUE ("propiedadId"), CONSTRAINT "PK_6c24053bb3e549b170eedf833db" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_campos" ("id" SERIAL NOT NULL, "hectareas" integer, "apto" character varying, "mejoras" text, "propiedadId" integer, CONSTRAINT "REL_4bb03719fe0c147bda06ad4a3c" UNIQUE ("propiedadId"), CONSTRAINT "PK_b4b04754faffd457f25f855ad5d" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_phs" ("id" SERIAL NOT NULL, "porcentajeLote" integer, "entradaIndividual" boolean NOT NULL DEFAULT false, "patio" boolean NOT NULL DEFAULT false, "expensas" integer, "propiedadId" integer, CONSTRAINT "REL_d4ac9e48ac63ad7b334f0982ea" UNIQUE ("propiedadId"), CONSTRAINT "PK_d6a3c09af8b359b9e9a113ab4eb" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "propiedad_pozos" ("id" SERIAL NOT NULL, "fechaEntrega" TIMESTAMP, "avancePorcentaje" integer, "tipologias" text, "constructora" character varying, "propiedadId" integer, CONSTRAINT "REL_31eb81c4afec15c4f6852d32d4" UNIQUE ("propiedadId"), CONSTRAINT "PK_f75a12e286b2e0bcf052fc09af3" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."propiedades_tipo_enum" AS ENUM('CASA', 'DEPARTAMENTO', 'LOTE', 'LOCAL', 'OFICINA', 'CAMPO', 'PH', 'POZO')`);
+        await queryRunner.query(`CREATE TYPE "public"."propiedades_operacion_enum" AS ENUM('VENTA', 'ALQUILER', 'TEMPORAL')`);
+        await queryRunner.query(`CREATE TABLE "propiedades" ("id" SERIAL NOT NULL, "titulo" character varying(150) NOT NULL, "descripcion" text, "tipo" "public"."propiedades_tipo_enum" NOT NULL, "operacion" "public"."propiedades_operacion_enum" NOT NULL, "precio" integer, "direccion" character varying(200) NOT NULL, "localidad" character varying(120) NOT NULL, "ambientes" integer, "dormitorios" integer, "banos" integer, "metrosCubiertos" integer, "metrosTotales" integer, "imagenes" text, "activo" boolean NOT NULL DEFAULT true, "creadoEn" TIMESTAMP NOT NULL DEFAULT now(), "agenciaId" integer, "creadoPorId" integer, "casaId" integer, "departamentoId" integer, "loteId" integer, "localId" integer, "oficinaId" integer, "campoId" integer, "phId" integer, "pozoId" integer, CONSTRAINT "REL_d621218940db096c29bb8ede07" UNIQUE ("casaId"), CONSTRAINT "REL_dee8eacc303186f5183a9caeef" UNIQUE ("departamentoId"), CONSTRAINT "REL_81010899041c33453576025f82" UNIQUE ("loteId"), CONSTRAINT "REL_65c3e6e9e359594f4670722e1b" UNIQUE ("localId"), CONSTRAINT "REL_49cb3d0c857941a292c3355934" UNIQUE ("oficinaId"), CONSTRAINT "REL_0f6af139c466b0197e52e85141" UNIQUE ("campoId"), CONSTRAINT "REL_38b8811f8f3fd208ff4875e394" UNIQUE ("phId"), CONSTRAINT "REL_d070f7e52e532f551d9970e0d1" UNIQUE ("pozoId"), CONSTRAINT "PK_ee3a1dc8c0d17c197d54bc2ff37" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "public"."operaciones_tipo_enum" AS ENUM('VENTA', 'ALQUILER', 'TEMPORAL')`);
+        await queryRunner.query(`CREATE TYPE "public"."operaciones_estado_enum" AS ENUM('PENDIENTE', 'RESERVADA', 'EN_PROCESO', 'FINALIZADA', 'CANCELADA')`);
+        await queryRunner.query(`CREATE TYPE "public"."operaciones_medio_enum" AS ENUM('WHATSAPP', 'TELEFONO', 'EMAIL', 'PRESENCIAL', 'WEB')`);
+        await queryRunner.query(`CREATE TABLE "operaciones" ("id" SERIAL NOT NULL, "tipo" "public"."operaciones_tipo_enum" NOT NULL, "estado" "public"."operaciones_estado_enum" NOT NULL DEFAULT 'PENDIENTE', "medio" "public"."operaciones_medio_enum", "fechaReserva" TIMESTAMP, "fechaFinalizacion" TIMESTAMP, "observaciones" text, "creadoEn" TIMESTAMP NOT NULL DEFAULT now(), "propiedadId" integer, "agenciaId" integer, "propietarioDirectoId" integer, "creadoPorId" integer NOT NULL, "compradorInquilinoId" integer, CONSTRAINT "PK_c52d2f0bc2772a24657bdd4c676" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`ALTER TABLE "documento_audit" DROP COLUMN "documentoTipo"`);
+        await queryRunner.query(`CREATE TYPE "public"."documento_audit_documentotipo_enum" AS ENUM('INQUILINO', 'PROPIETARIO')`);
+        await queryRunner.query(`ALTER TABLE "documento_audit" ADD "documentoTipo" "public"."documento_audit_documentotipo_enum" NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "users" ADD CONSTRAINT "FK_7ee6e4cef5309b7e24b5c3a9ae8" FOREIGN KEY ("agenciaId") REFERENCES "agencias"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "favoritos" ADD CONSTRAINT "FK_b3688f7e19374f13e116acef417" FOREIGN KEY ("inquilinoId") REFERENCES "inquilinos"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "solicitudes_visita" ADD CONSTRAINT "FK_d63f6da9dbc5cd582b06d3a6a2e" FOREIGN KEY ("inquilinoId") REFERENCES "inquilinos"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "inquilino_documentos" ADD CONSTRAINT "FK_f1846bbc7a9c3ba7b7249841d08" FOREIGN KEY ("inquilinoId") REFERENCES "inquilinos"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "agencia_solicitudes" ADD CONSTRAINT "FK_811202389ce6f3a7be8b9d96dd8" FOREIGN KEY ("usuarioId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_casas" ADD CONSTRAINT "FK_366d755d74135a5c0c9d9b99eb5" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_departamentos" ADD CONSTRAINT "FK_0c52fd2cd49a0df11aac31ab040" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_lotes" ADD CONSTRAINT "FK_b89468c8f0b760f399b20fcd243" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_locales" ADD CONSTRAINT "FK_1ac32bf610138fceea08e130e88" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_oficinas" ADD CONSTRAINT "FK_5c74dd452cc600c3a9ae564ec4e" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_campos" ADD CONSTRAINT "FK_4bb03719fe0c147bda06ad4a3c5" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_phs" ADD CONSTRAINT "FK_d4ac9e48ac63ad7b334f0982ea6" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedad_pozos" ADD CONSTRAINT "FK_31eb81c4afec15c4f6852d32d42" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_0f4747086249968b555016c8cad" FOREIGN KEY ("agenciaId") REFERENCES "agencias"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_1b6d5168085ede878972e0d2b54" FOREIGN KEY ("creadoPorId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_d621218940db096c29bb8ede071" FOREIGN KEY ("casaId") REFERENCES "propiedad_casas"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_dee8eacc303186f5183a9caeef8" FOREIGN KEY ("departamentoId") REFERENCES "propiedad_departamentos"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_81010899041c33453576025f82e" FOREIGN KEY ("loteId") REFERENCES "propiedad_lotes"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_65c3e6e9e359594f4670722e1b6" FOREIGN KEY ("localId") REFERENCES "propiedad_locales"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_49cb3d0c857941a292c33559341" FOREIGN KEY ("oficinaId") REFERENCES "propiedad_oficinas"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_0f6af139c466b0197e52e851418" FOREIGN KEY ("campoId") REFERENCES "propiedad_campos"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_38b8811f8f3fd208ff4875e3943" FOREIGN KEY ("phId") REFERENCES "propiedad_phs"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "propiedades" ADD CONSTRAINT "FK_d070f7e52e532f551d9970e0d1b" FOREIGN KEY ("pozoId") REFERENCES "propiedad_pozos"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "operaciones" ADD CONSTRAINT "FK_d5b016abfae21326430edbb976a" FOREIGN KEY ("propiedadId") REFERENCES "propiedades"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "operaciones" ADD CONSTRAINT "FK_119adadeb210b3b8d566b4b90a9" FOREIGN KEY ("agenciaId") REFERENCES "agencias"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "operaciones" ADD CONSTRAINT "FK_471cbdf0039e65b3a18ec69a519" FOREIGN KEY ("propietarioDirectoId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "operaciones" ADD CONSTRAINT "FK_be8ca2d55e1d886e4096c17f8a6" FOREIGN KEY ("creadoPorId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "operaciones" ADD CONSTRAINT "FK_47313219b7b1e1ef029470d61f8" FOREIGN KEY ("compradorInquilinoId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "operaciones" DROP CONSTRAINT "FK_47313219b7b1e1ef029470d61f8"`);
+        await queryRunner.query(`ALTER TABLE "operaciones" DROP CONSTRAINT "FK_be8ca2d55e1d886e4096c17f8a6"`);
+        await queryRunner.query(`ALTER TABLE "operaciones" DROP CONSTRAINT "FK_471cbdf0039e65b3a18ec69a519"`);
+        await queryRunner.query(`ALTER TABLE "operaciones" DROP CONSTRAINT "FK_119adadeb210b3b8d566b4b90a9"`);
+        await queryRunner.query(`ALTER TABLE "operaciones" DROP CONSTRAINT "FK_d5b016abfae21326430edbb976a"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_d070f7e52e532f551d9970e0d1b"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_38b8811f8f3fd208ff4875e3943"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_0f6af139c466b0197e52e851418"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_49cb3d0c857941a292c33559341"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_65c3e6e9e359594f4670722e1b6"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_81010899041c33453576025f82e"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_dee8eacc303186f5183a9caeef8"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_d621218940db096c29bb8ede071"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_1b6d5168085ede878972e0d2b54"`);
+        await queryRunner.query(`ALTER TABLE "propiedades" DROP CONSTRAINT "FK_0f4747086249968b555016c8cad"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_pozos" DROP CONSTRAINT "FK_31eb81c4afec15c4f6852d32d42"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_phs" DROP CONSTRAINT "FK_d4ac9e48ac63ad7b334f0982ea6"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_campos" DROP CONSTRAINT "FK_4bb03719fe0c147bda06ad4a3c5"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_oficinas" DROP CONSTRAINT "FK_5c74dd452cc600c3a9ae564ec4e"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_locales" DROP CONSTRAINT "FK_1ac32bf610138fceea08e130e88"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_lotes" DROP CONSTRAINT "FK_b89468c8f0b760f399b20fcd243"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_departamentos" DROP CONSTRAINT "FK_0c52fd2cd49a0df11aac31ab040"`);
+        await queryRunner.query(`ALTER TABLE "propiedad_casas" DROP CONSTRAINT "FK_366d755d74135a5c0c9d9b99eb5"`);
+        await queryRunner.query(`ALTER TABLE "agencia_solicitudes" DROP CONSTRAINT "FK_811202389ce6f3a7be8b9d96dd8"`);
+        await queryRunner.query(`ALTER TABLE "inquilino_documentos" DROP CONSTRAINT "FK_f1846bbc7a9c3ba7b7249841d08"`);
+        await queryRunner.query(`ALTER TABLE "solicitudes_visita" DROP CONSTRAINT "FK_d63f6da9dbc5cd582b06d3a6a2e"`);
+        await queryRunner.query(`ALTER TABLE "favoritos" DROP CONSTRAINT "FK_b3688f7e19374f13e116acef417"`);
+        await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "FK_7ee6e4cef5309b7e24b5c3a9ae8"`);
+        await queryRunner.query(`ALTER TABLE "documento_audit" DROP COLUMN "documentoTipo"`);
+        await queryRunner.query(`DROP TYPE "public"."documento_audit_documentotipo_enum"`);
+        await queryRunner.query(`ALTER TABLE "documento_audit" ADD "documentoTipo" character varying NOT NULL`);
+        await queryRunner.query(`DROP TABLE "operaciones"`);
+        await queryRunner.query(`DROP TYPE "public"."operaciones_medio_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."operaciones_estado_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."operaciones_tipo_enum"`);
+        await queryRunner.query(`DROP TABLE "propiedades"`);
+        await queryRunner.query(`DROP TYPE "public"."propiedades_operacion_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."propiedades_tipo_enum"`);
+        await queryRunner.query(`DROP TABLE "propiedad_pozos"`);
+        await queryRunner.query(`DROP TABLE "propiedad_phs"`);
+        await queryRunner.query(`DROP TABLE "propiedad_campos"`);
+        await queryRunner.query(`DROP TABLE "propiedad_oficinas"`);
+        await queryRunner.query(`DROP TABLE "propiedad_locales"`);
+        await queryRunner.query(`DROP TABLE "propiedad_lotes"`);
+        await queryRunner.query(`DROP TABLE "propiedad_departamentos"`);
+        await queryRunner.query(`DROP TABLE "propiedad_casas"`);
+        await queryRunner.query(`DROP TABLE "agencia_solicitudes"`);
+        await queryRunner.query(`DROP TYPE "public"."agencia_solicitudes_estado_enum"`);
+        await queryRunner.query(`DROP TABLE "documento_audit"`);
+        await queryRunner.query(`DROP TYPE "public"."documento_audit_action_enum"`);
+        await queryRunner.query(`DROP TABLE "inquilino_documentos"`);
+        await queryRunner.query(`DROP TYPE "public"."inquilino_documentos_estado_enum"`);
+        await queryRunner.query(`DROP TYPE "public"."inquilino_documentos_tipodocumento_enum"`);
+        await queryRunner.query(`DROP TABLE "inquilinos"`);
+        await queryRunner.query(`DROP TABLE "solicitudes_visita"`);
+        await queryRunner.query(`DROP TYPE "public"."solicitudes_visita_estado_enum"`);
+        await queryRunner.query(`DROP TABLE "favoritos"`);
+        await queryRunner.query(`DROP TABLE "users"`);
+        await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
+        await queryRunner.query(`DROP TABLE "agencias"`);
+    }
+
+}
