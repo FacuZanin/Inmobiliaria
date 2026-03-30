@@ -11,9 +11,9 @@ import {
   Get,
 } from '@nestjs/common';
 
-import { Auth } from '../../../../common/decorators/auth.decorator';
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { Audit } from '../../../../common/decorators/audit.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
+import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
+import { Audit } from '../../../../shared/security/decorators/audit.decorator';
 
 import { UserRole, AuditAction, AuditEntity} from '@shared/contracts';
 

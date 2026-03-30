@@ -10,9 +10,12 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { seedAdmin } from './database/seeds/admin.seed';
+import { AppLogger } from '@shared/infrastructure/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // 🔹 Logger global
+  app.useLogger(app.get(AppLogger));
 
   // 🔹 Pipes globales
   app.useGlobalPipes(

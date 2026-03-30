@@ -1,7 +1,7 @@
 // backend\src\modules\agencias\infrastructure\controllers\agencias.controller.ts
 import { Controller, Post, Body, Get, Param, Patch } from '@nestjs/common';
 
-import { Roles } from '../../../../common/decorators/roles.decorator';
+import { Roles } from '../../../../shared/security/decorators/roles.decorator';
 import { UserRole } from '@shared/contracts';
 
 import { CreateAgenciaDto } from '../../application/dto/create-agencia.dto';

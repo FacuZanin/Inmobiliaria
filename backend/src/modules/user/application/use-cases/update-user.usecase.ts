@@ -9,7 +9,7 @@ import { USER_REPOSITORY } from '../tokens';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserMapper } from '../../domain/mappers/user.mapper';
 import type { UserRepositoryPort } from '../ports/user-repository.port';
-import { ensureNotEmpty } from '../../../../common/validators/ensure-not-empty';
+import { ensureNotEmpty } from '../../../../shared/utils/validators/ensure-not-empty';
 
 @Injectable()
 export class UpdateUserUseCase {

@@ -10,8 +10,8 @@ import {
 } from 'class-validator';
 
 import { UserRole, UserProfile } from '@shared/contracts';
-import { IsPositiveInteger } from '../../../../common/validators/is-positive-integer.validator';
-import { IsNonEmptyString } from '../../../../common/validators/is-non-empty-string.validator';
+import { IsPositiveInteger } from '../../../../shared/utils/validators/is-positive-integer.validator';
+import { IsNonEmptyString } from '../../../../shared/utils/validators/is-non-empty-string.validator';
 
 
 export class CreateUserDto {

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { Auth } from '../../../../common/decorators/auth.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { UserRole } from '@shared/contracts';
 
 import type { FileStoragePort } from '../../application/ports/file-storage.port';

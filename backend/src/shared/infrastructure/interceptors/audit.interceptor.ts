@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { tap } from 'rxjs/operators';
-import { AUDIT_KEY } from '../decorators/audit.decorator';
-import { AuditService } from '../../modules/audit/application/audit.service';
+import { AUDIT_KEY } from '../../security/decorators/audit.decorator';
+import { AuditService } from '../../../modules/audit/application/audit.service';
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {

@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { Roles } from '../../../../common/decorators/roles.decorator';
-import { Profiles } from '../../../../common/decorators/profiles.decorator';
+import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
+import { Roles } from '../../../../shared/security/decorators/roles.decorator';
+import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 import { UserRole, UserProfile } from '@shared/contracts';
 
 import { User } from '../../../../modules/user/domain/entities/user.entity';

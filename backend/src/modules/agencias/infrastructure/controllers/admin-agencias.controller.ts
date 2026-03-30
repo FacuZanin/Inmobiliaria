@@ -1,9 +1,9 @@
 // backend\src\modules\agencias\infrastructure\controllers\admin-agencias.controller.ts
 import { Controller, Post, Body, Get, Param, Patch, UseGuards, } from '@nestjs/common';
 
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { Roles } from '../../../../common/decorators/roles.decorator';
-import { Profiles } from '../../../../common/decorators/profiles.decorator';
+import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
+import { Roles } from '../../../../shared/security/decorators/roles.decorator';
+import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
 import { UserRole, UserProfile } from '@shared/contracts';
 
@@ -19,7 +19,7 @@ import { RechazarSolicitudAgenciaUseCase } from '../../application/use-cases/rec
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
 import { ProfilesGuard } from '../../../../common/guards/profiles.guard';
-import { Auth } from '../../../../common/decorators/auth.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 
 
 @UseGuards(JwtAuthGuard, RolesGuard, ProfilesGuard)

@@ -11,6 +11,8 @@ import type { TokenServicePort } from '../ports/token-service.port';
 import { USER_REPOSITORY } from '../../../user/application/tokens';
 import { PASSWORD_HASHER, TOKEN_SERVICE } from '../tokens';
 
+import { RefreshTokenService } from '../services/refresh-token.service';
+
 @Injectable()
 export class LoginUseCase {
   constructor(
@@ -22,10 +24,11 @@ export class LoginUseCase {
 
     @Inject(TOKEN_SERVICE)
     private readonly tokenService: TokenServicePort,
+
+    private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
   async execute(dto: LoginDto) {
-
     const user = await this.users.findByEmail(dto.email);
 
     if (!user) {
@@ -45,24 +48,29 @@ export class LoginUseCase {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-   const payload = {
-  sub: user.id,
-  role: user.role,
-  profile: user.profile,
-  tokenVersion: user.tokenVersion,
-};
+    const payload = {
+      sub: user.id,
+      role: user.role,
+      profile: user.profile,
+    };
 
-return {
-  access_token: this.tokenService.sign(payload),
-  refresh_token: this.tokenService.signRefresh(payload),
-  user: {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    profile: user.profile,
-    nombre: user.nombre,
-    apellido: user.apellido,
-  },
-};
+    // 🔐 ACCESS TOKEN (JWT)
+    const accessToken = await this.tokenService.sign(payload);
+
+    // 🔁 REFRESH TOKEN (DB)
+    const refreshToken = await this.refreshTokenService.create(user);
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        profile: user.profile,
+        nombre: user.nombre,
+        apellido: user.apellido,
+      },
+    };
   }
 }

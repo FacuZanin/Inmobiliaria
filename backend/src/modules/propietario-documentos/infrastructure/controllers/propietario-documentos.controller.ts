@@ -16,10 +16,10 @@ import { CambiarEstadoDocumentoPropietarioUseCase } from '../../application/use-
 import { CreateDocumentoDto } from '../../application/dto/create-documento.dto';
 import { UpdateEstadoDocumentoDto } from '../../application/dto/update-estado.dto';
 
-import { Auth } from '../../../../common/decorators/auth.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { UserProfile } from '@shared/contracts';
-import { Profiles } from '../../../../common/decorators/profiles.decorator';
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
+import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
+import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { User } from '../../../../modules/user/domain/entities/user.entity';
 
 @Controller('propietario-documentos')

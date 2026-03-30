@@ -5,10 +5,12 @@ import {
   Column,
   ManyToOne,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { Agencia } from '../../../agencias/domain/entities/agencia.entity';
 import { UserRole, UserProfile, UserStatus } from '@shared/contracts';
+import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-token.entity';
 
 @Entity('users')
 export class User {
@@ -59,9 +61,9 @@ export class User {
   @DeleteDateColumn()
   deletedAt?: Date;
 
-  @Column({ type: 'varchar', length: 512, nullable: true })
-  refreshToken: string | null;
-
   @Column({ default: 0 })
   tokenVersion: number;
+
+  @OneToMany(() => RefreshToken, (token) => token.user)
+  refreshTokens: RefreshToken[];
 }

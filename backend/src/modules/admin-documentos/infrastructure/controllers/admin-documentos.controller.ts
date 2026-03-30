@@ -1,8 +1,8 @@
 // backend\src\modules\admin-documentos\infrastructure\controllers\admin-documentos.controller.ts
 import { Controller, Get, Patch, Param, Body, Query } from '@nestjs/common';
 
-import { Auth } from '../../../../common/decorators/auth.decorator';
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
+import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 
 import { FiltroDocumentosDto } from '../../application/dto/filtro-documentos.dto';
 import { CambiarEstadoDto } from '../../application/dto/cambiar-estado.dto';
@@ -13,8 +13,8 @@ import { VerHistorialDocumentoUseCase } from '../../application/use-cases/ver-hi
 
 import { DocumentoTipo } from '../../domain/entities/documento-audit.entity';
 
-import { Roles } from '../../../../common/decorators/roles.decorator';
-import { Profiles } from '../../../../common/decorators/profiles.decorator';
+import { Roles } from '../../../../shared/security/decorators/roles.decorator';
+import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
 import { UserRole, UserProfile } from '@shared/contracts';
 

@@ -1,6 +1,6 @@
 // backend\src\app.controller.ts
 import { Controller, Get } from '@nestjs/common';
-import { Public } from './common/decorators/public.decorator';
+import { Public } from './shared/security/decorators/public.decorator';
 
 @Controller()
 export class AppController {

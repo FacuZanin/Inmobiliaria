@@ -13,11 +13,11 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 
-import { Auth } from '../../../../common/decorators/auth.decorator';
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
+import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { User } from '../../../user/domain/entities/user.entity';
-import { Roles } from '../../../../common/decorators/roles.decorator';
-import { Profiles } from '../../../../common/decorators/profiles.decorator';
+import { Roles } from '../../../../shared/security/decorators/roles.decorator';
+import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
 import { UserRole, UserProfile } from '@shared/contracts';
 

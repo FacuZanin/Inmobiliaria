@@ -1,4 +1,4 @@
-// backend\src\common\logger\app-logger.ts
+// backend\src\shared\infrastructure\logger\winston.config.ts
 import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
 import * as winston from 'winston';
 

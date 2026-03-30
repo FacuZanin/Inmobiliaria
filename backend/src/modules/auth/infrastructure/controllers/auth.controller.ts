@@ -1,9 +1,9 @@
 // backend\src\modules\auth\infrastructure\controllers\auth.controller.ts
 import { Inject } from '@nestjs/common';
 import { Controller, Post, Body } from '@nestjs/common';
-import { Public } from '../../../../common/decorators/public.decorator';
-import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
-import { Auth } from '../../../../common/decorators/auth.decorator';
+import { Public } from '../../../../shared/security/decorators/public.decorator';
+import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 
 import { UserProfile } from '@shared/contracts';
 

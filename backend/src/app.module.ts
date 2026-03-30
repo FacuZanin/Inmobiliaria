@@ -22,16 +22,16 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/infrastructure/guards/jwt-auth.guard';
 
-import { RolesGuard } from './common/guards/roles.guard';
-import { ProfilesGuard } from './common/guards/profiles.guard';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { TimingInterceptor } from './common/interceptors/timing.interceptor';
-import { GlobalExceptionInterceptor } from './common/interceptors/global-exception.interceptor';
-import { ValidationPipe } from './common/pipes/validation.pipe';
+import { RolesGuard } from './shared/security/guards/roles.guard';
+import { ProfilesGuard } from './shared/security/guards/profiles.guard';
+import { HttpExceptionFilter } from './shared/infrastructure/filters/http-exception.filter';
+import { LoggingInterceptor } from './shared/infrastructure/interceptors/logging.interceptor';
+import { TimingInterceptor } from './shared/infrastructure/interceptors/timing.interceptor';
+import { GlobalExceptionInterceptor } from './shared/infrastructure/interceptors/global-exception.interceptor';
+import { ValidationPipe } from './shared/infrastructure/pipes/validation.pipe';
 
 // LOGGER
-import { AppLogger } from './common/logger/app-logger.service';
+import { LoggerModule } from '@shared/infrastructure/logger/logger.module';
 
 // HEALTH
 import { HealthModule } from './health/health.module';
@@ -53,6 +53,9 @@ import { HealthModule } from './health/health.module';
     // DB
     TypeOrmModule.forRoot(ormconfig),
 
+    // LOGGER GLOBAL
+    LoggerModule,
+
     // DOMAINS
     HealthModule,
     AuthModule,
@@ -64,10 +67,9 @@ import { HealthModule } from './health/health.module';
     UploadsModule,
   ],
   controllers: [
-    AppController, // opcional
+    AppController,
   ],
   providers: [
-    AppLogger,
     // 🔐 AUTH GLOBAL
     {
       provide: APP_GUARD,

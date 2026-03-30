@@ -2,6 +2,8 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 
 import { AuthController } from './infrastructure/controllers/auth.controller';
 
@@ -14,6 +16,9 @@ import { LogoutUseCase } from './application/use-cases/logout.usecase';
 // Services
 import { JwtTokenService } from './infrastructure/services/jwt-token.service';
 import { PasswordHasherService } from './infrastructure/services/password-hasher.service';
+
+// Entities
+import { RefreshToken } from './infrastructure/entities/refresh-token.entity';
 
 // Guards / Strategy
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
