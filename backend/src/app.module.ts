@@ -31,7 +31,7 @@ import { GlobalExceptionInterceptor } from './shared/infrastructure/interceptors
 import { ValidationPipe } from './shared/infrastructure/pipes/validation.pipe';
 
 // LOGGER
-import { LoggerModule } from '@shared/infrastructure/logger/logger.module';
+import { LoggerModule } from './shared/infrastructure/logger/logger.module';
 
 // HEALTH
 import { HealthModule } from './health/health.module';

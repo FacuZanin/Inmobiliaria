@@ -16,6 +16,7 @@ import { LogoutUseCase } from './application/use-cases/logout.usecase';
 // Services
 import { JwtTokenService } from './infrastructure/services/jwt-token.service';
 import { PasswordHasherService } from './infrastructure/services/password-hasher.service';
+import { RefreshTokenService } from './application/services/refresh-token.service';
 
 // Entities
 import { RefreshToken } from './infrastructure/entities/refresh-token.entity';
@@ -23,7 +24,7 @@ import { RefreshToken } from './infrastructure/entities/refresh-token.entity';
 // Guards / Strategy
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
+import { RolesGuard } from '../../shared/security/guards/roles.guard';
 
 // Ports
 import { TOKEN_SERVICE, PASSWORD_HASHER } from './application/tokens';
@@ -34,6 +35,7 @@ import { UsersModule } from '../user/users.module';
 @Module({
   imports: [
     forwardRef(() => UsersModule),
+    TypeOrmModule.forFeature([RefreshToken]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -44,6 +46,8 @@ import { UsersModule } from '../user/users.module';
   controllers: [AuthController],
 
   providers: [
+
+    RefreshTokenService,
     // Use cases
     LoginUseCase,
     RegisterUseCase,
@@ -69,6 +73,7 @@ import { UsersModule } from '../user/users.module';
   exports: [
     JwtAuthGuard,
     PassportModule,
+    RefreshTokenService,
   ],
 })
 export class AuthModule {}

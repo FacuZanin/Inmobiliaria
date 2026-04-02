@@ -2,7 +2,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { AppLogger } from '../logger/app-logger.service';
+import { AppLogger } from '../logger/logger.service';
 
 @Injectable()
 export class TimingInterceptor implements NestInterceptor {

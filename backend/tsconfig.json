@@ -16,7 +16,9 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "paths": {
-      "@shared/contracts": ["../shared/dist"]
+      "@/*": ["src/*"],
+      "@shared/*": ["src/shared/*"],
+      "@modules/*": ["src/modules/*"]
     }
   }
 }

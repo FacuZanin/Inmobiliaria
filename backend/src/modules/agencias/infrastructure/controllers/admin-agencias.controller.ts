@@ -17,8 +17,8 @@ import { AprobarSolicitudAgenciaUseCase } from '../../application/use-cases/apro
 import { RechazarSolicitudAgenciaUseCase } from '../../application/use-cases/rechazar-solicitud-agencia.usecase';
 
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../../common/guards/roles.guard';
-import { ProfilesGuard } from '../../../../common/guards/profiles.guard';
+import { RolesGuard } from '../../../../shared/security/guards/roles.guard';
+import { ProfilesGuard } from '../../../../shared/security/guards/profiles.guard';
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 
 

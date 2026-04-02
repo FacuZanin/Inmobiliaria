@@ -8,15 +8,18 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { LoggingInterceptor } from '@shared/infrastructure/interceptors/logging.interceptor';
 import { seedAdmin } from './database/seeds/admin.seed';
 import { AppLogger } from '@shared/infrastructure/logger/logger.service';
 
+import cookieParser from 'cookie-parser';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
   // 🔹 Logger global
   app.useLogger(app.get(AppLogger));
-
   // 🔹 Pipes globales
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,6 +35,11 @@ async function bootstrap() {
 
   // 🔹 Interceptor global
   // app.useGlobalInterceptors(new LoggingInterceptor());
+
+  app.enableCors({
+    origin: 'http://localhost:5173', // tu frontend (React)
+    credentials: true,
+  });
 
   // 🔹 Swagger
   const config = new DocumentBuilder()

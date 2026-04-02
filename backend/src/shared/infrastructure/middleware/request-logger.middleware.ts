@@ -1,7 +1,7 @@
 // backend\src\common\middleware\request-logger.middleware.ts
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { AppLogger } from '../logger/app-logger.service';
+import { AppLogger } from '../logger/logger.service';
 
 @Injectable()
 export class RequestLoggerMiddleware implements NestMiddleware {
