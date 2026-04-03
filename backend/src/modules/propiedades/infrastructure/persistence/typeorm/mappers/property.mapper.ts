@@ -1,7 +1,9 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\mappers\property.mapper.ts
 
 import { Propiedad } from '../entities/propiedad.entity';
-import { PropiedadTipo, OperacionTipo} from '@shared/contracts';
+
+import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
+import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
 
 import { PropertyAggregate } from '../../../../domain/entities/property.aggregate';
 import { AddressVO } from '../../../../domain/value-objects/address.vo';

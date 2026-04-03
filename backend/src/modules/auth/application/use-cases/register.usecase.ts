@@ -10,7 +10,8 @@ import {
 import { RegisterDto } from '../dto/register.dto';
 import { RegisterToUserDto } from '../dto/register-to-user.dto';
 
-import { UserStatus, UserRole } from '@shared/contracts';
+import { UserStatus } from '@shared/enums/user-status.enum';
+import { UserRole } from '@shared/enums/user-role.enum';
 
 import { USER_REPOSITORY } from '../../../user/application/tokens';
 import { PASSWORD_HASHER } from '../tokens';

@@ -6,20 +6,8 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-export enum DocumentoAuditAction {
-  CREADO = 'CREADO',
-  APROBADO = 'APROBADO',
-  RECHAZADO = 'RECHAZADO',
-  DESCARGADO = 'DESCARGADO',
-  ELIMINADO = 'ELIMINADO',
-  EN_ANALISIS = 'EN_ANALISIS',
-  REEMPLAZADO = 'REEMPLAZADO',
-}
-
-export enum DocumentoTipo {
-  INQUILINO = 'INQUILINO',
-  PROPIETARIO = 'PROPIETARIO',
-}
+import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
+import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
 
 @Entity('documento_audit')
 export class DocumentoAudit {
@@ -56,5 +44,3 @@ export class DocumentoAudit {
   @CreateDateColumn()
   createdAt: Date;
 }
-
-

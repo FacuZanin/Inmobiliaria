@@ -10,7 +10,8 @@ import {
 
 import { Agencia } from '../../../../../agencias/domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
-import { PropiedadTipo, OperacionTipo } from '@shared/contracts';
+import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
+import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
 
 import { PropiedadCasa } from './propiedad-casa.entity';
 import { PropiedadDepartamento } from './propiedad-departamento.entity';

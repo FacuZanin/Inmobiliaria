@@ -8,9 +8,9 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
-import { LoggingInterceptor } from '@shared/infrastructure/interceptors/logging.interceptor';
 import { seedAdmin } from './database/seeds/admin.seed';
-import { AppLogger } from '@shared/infrastructure/logger/logger.service';
+import { LoggingInterceptor } from '@/shared/infrastructure/interceptors/logging.interceptor';
+import { AppLogger } from '@/shared/infrastructure/logger/logger.service';
 
 import cookieParser from 'cookie-parser';
 

@@ -6,8 +6,9 @@ import { Repository } from 'typeorm';
 import type { DocumentoAuditRepositoryPort } from '../../../../application/ports/documento-audit-repository.port';
 import {
   DocumentoAudit,
-  DocumentoTipo,
 } from '../../../../domain/entities/documento-audit.entity';
+
+import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
 
 @Injectable()
 export class DocumentoAuditTypeOrmRepository

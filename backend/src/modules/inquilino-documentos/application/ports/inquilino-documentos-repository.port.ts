@@ -1,9 +1,8 @@
 // backend\src\modules\inquilino-documentos\application\ports\inquilino-documentos-repository.port.ts
-import type {
-  InquilinoDocumento,
-  TipoDocumentoInquilino,
-  DocumentoAudit,
-} from '../../domain/entities/inquilino-documento.entity';
+
+import { InquilinoDocumento } from '@shared/enums/tipo-documento-inquilino.enum';
+import { TipoDocumentoInquilino } from '@shared/enums/tipo-documento-inquilino.enum';
+import { DocumentoAudit } from '@shared/enums/documento-audit-action.enum';
 
 import type { Inquilino } from '../../../inquilinos/domain/entities/inquilino.entity';
 

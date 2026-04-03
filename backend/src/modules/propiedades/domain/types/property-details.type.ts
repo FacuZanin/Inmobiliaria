@@ -7,7 +7,7 @@ import { OficinaDetails } from '../details/oficina.details';
 import { CampoDetails } from '../details/campo.details';
 import { PHDetails } from '../details/ph.details';
 import { PozoDetails } from '../details/pozo.details';
-import { PropiedadTipo } from '@shared/contracts';
+import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
 
 /**
  * Mapa de detalles por tipo de propiedad

@@ -8,7 +8,7 @@ import { Public } from '../../../../shared/security/decorators/public.decorator'
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 
-import { UserProfile } from '@shared/contracts';
+import { UserProfile } from '@shared/enums/user-profile.enum';
 
 import { LoginDto } from '../../application/dto/login.dto';
 import { RegisterPublicDto } from '../../application/dto/register-public.dto';

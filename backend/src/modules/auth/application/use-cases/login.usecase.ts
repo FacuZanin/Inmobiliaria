@@ -2,7 +2,7 @@
 import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 
 import { LoginDto } from '../dto/login.dto';
-import { UserStatus } from '@shared/contracts';
+import { UserStatus } from '@shared/enums/user-status.enum';
 
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 import type { PasswordHasherPort } from '../ports/password-hasher.port';

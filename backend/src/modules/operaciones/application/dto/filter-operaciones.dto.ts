@@ -1,6 +1,7 @@
 // backend\src\modules\operaciones\application\dto\filter-operaciones.dto.ts
 import { IsEnum, IsOptional, IsDateString, IsInt } from 'class-validator';
-import { OperacionTipo, OperacionEstado} from '@shared/contracts';
+import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
+import { OperacionEstado } from '@shared/enums/operacion-estado.enum';
 
 export class FilterOperacionesDto {
   @IsEnum(OperacionTipo)

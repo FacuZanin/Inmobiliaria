@@ -1,6 +1,6 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\mappers\property-details.mapper.ts
 import { Propiedad } from '../entities/propiedad.entity';
-import { PropiedadTipo } from '@shared/contracts';
+import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
 
 import {
   CasaDetails,

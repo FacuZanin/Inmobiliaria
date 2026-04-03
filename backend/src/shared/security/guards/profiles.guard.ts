@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PROFILES_KEY } from '../decorators/profiles.decorator';
-import { UserProfile } from '@shared/contracts';
+import { UserProfile } from '@shared/enums/user-profile.enum';
 
 @Injectable()
 export class ProfilesGuard implements CanActivate {

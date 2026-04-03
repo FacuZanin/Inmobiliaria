@@ -5,8 +5,8 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 
-import { DocumentoEstado } from '@shared/contracts';
-import { DocumentoAuditAction } from '../../domain/entities/inquilino-documento.entity';
+import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
+import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
 
 import type { User } from '../../../user/domain/entities/user.entity';
 import type { InquilinoDocumentosRepositoryPort } from '../ports/inquilino-documentos-repository.port';

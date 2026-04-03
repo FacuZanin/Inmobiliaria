@@ -1,6 +1,6 @@
 // backend/src/modules/inquilino-documentos/application/dto/create-inquilino-documento.dto.ts
 import { IsEnum } from 'class-validator';
-import { TipoDocumentoInquilino } from '../../domain/entities/inquilino-documento.entity';
+import { TipoDocumentoInquilino } from '@shared/enums/tipo-documento-inquilino.enum';
 
 
 export class CreateInquilinoDocumentoDto {

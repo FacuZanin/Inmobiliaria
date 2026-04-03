@@ -1,5 +1,6 @@
 // backend\src\modules\auth\application\types\jwt-payload.type.ts
-import { UserRole, UserProfile } from '@shared/contracts';
+import { UserRole } from '@shared/enums/user-role.enum';
+import { UserProfile } from '@shared/enums/user-profile.enum';
 
 export type JwtPayload = {
   sub: number;

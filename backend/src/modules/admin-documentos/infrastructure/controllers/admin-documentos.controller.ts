@@ -11,12 +11,13 @@ import { ListarDocumentosUseCase } from '../../application/use-cases/listar-docu
 import { CambiarEstadoDocumentoUseCase } from '../../application/use-cases/cambiar-estado-documento.usecase';
 import { VerHistorialDocumentoUseCase } from '../../application/use-cases/ver-historial-documento.usecase';
 
-import { DocumentoTipo } from '../../domain/entities/documento-audit.entity';
+import { DocumentoTipo } from '@shared/enums/documento-tipo.enum'
 
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
 import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
-import { UserRole, UserProfile } from '@shared/contracts';
+import { UserRole } from '@shared/enums/user-role.enum';
+import { UserProfile } from '@shared/enums/user-profile.enum';
 
 
 @Controller('admin/documentos')

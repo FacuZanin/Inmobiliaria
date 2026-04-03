@@ -8,11 +8,7 @@ import {
 } from 'typeorm';
 import { User } from '../../../user/domain/entities/user.entity';
 
-export enum AgenciaSolicitudEstado {
-  PENDIENTE = 'PENDIENTE',
-  APROBADA = 'APROBADA',
-  RECHAZADA = 'RECHAZADA',
-}
+import { AgenciaSolicitudEstado } from '@shared/enums/agencia-solicitud-estado.enum';
 
 @Entity('agencia_solicitudes')
 export class AgenciaSolicitud {

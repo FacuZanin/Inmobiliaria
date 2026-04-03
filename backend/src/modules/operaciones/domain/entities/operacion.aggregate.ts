@@ -1,5 +1,7 @@
 // backend\src\modules\operaciones\domain\entities\operacion.aggregate.ts
-import { OperacionTipo, OperacionEstado, MedioOperacion} from '@shared/contracts';
+import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
+import { OperacionEstado } from '@shared/enums/operacion-estado.enum';
+import { MedioOperacion } from '@shared/enums/medio-operacion.enum';
 
 type OperacionProps = {
   id?: number | null;

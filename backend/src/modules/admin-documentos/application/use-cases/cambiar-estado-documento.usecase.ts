@@ -7,14 +7,30 @@ import { DOCUMENTO_AUDIT_REPOSITORY_PORT } from '../ports/documento-audit-reposi
 import type { DocumentoCommandPort } from '../ports/documento-command.port';
 import type { DocumentoAuditRepositoryPort } from '../ports/documento-audit-repository.port';
 
-import { DocumentoEstado } from '@shared/contracts';
-import {
-  DocumentoAuditAction,
-  DocumentoTipo,
-} from '../../domain/entities/documento-audit.entity';
+import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
+import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
+import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
+
 import { DocumentoAuditService } from '../../domain/services/documento-audit.service';
 import { DocumentoTipoVO } from '../../domain/value-objects/documento-tipo.vo';
 import { DocumentoIdVO } from '../../domain/value-objects/documento-id.vo';
+
+
+function mapEstadoToAuditAction(estado: DocumentoEstado): DocumentoAuditAction {
+  switch (estado) {
+    case DocumentoEstado.APROBADO:
+      return DocumentoAuditAction.APROBADO;
+
+    case DocumentoEstado.RECHAZADO:
+      return DocumentoAuditAction.RECHAZADO;
+
+    case DocumentoEstado.EN_ANALISIS:
+      return DocumentoAuditAction.EN_ANALISIS;
+
+    default:
+      throw new Error('Estado no soportado para auditoría');
+  }
+}
 
 @Injectable()
 export class CambiarEstadoDocumentoUseCase {
@@ -47,10 +63,10 @@ export class CambiarEstadoDocumentoUseCase {
 
     const action =
       params.estado === DocumentoEstado.APROBADO
-        ? DocumentoAuditAction.APROBADO
+        ? DocumentoEstado.APROBADO
         : params.estado === DocumentoEstado.RECHAZADO
-        ? DocumentoAuditAction.RECHAZADO
-        : DocumentoAuditAction.EN_ANALISIS;
+        ? DocumentoEstado.RECHAZADO
+        : DocumentoEstado.EN_ANALISIS;
 
     const audit = this.auditService.registrar({
       documentoId: documentoIdVO.value,

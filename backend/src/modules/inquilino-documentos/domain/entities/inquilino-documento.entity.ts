@@ -8,29 +8,10 @@ import {
 } from 'typeorm';
 
 import { Inquilino } from '../../../inquilinos/domain/entities/inquilino.entity';
-import { DocumentoEstado} from '@shared/contracts';
+import { DocumentoEstado} from '@shared/enums/documento-estado.enum';
 
-export enum TipoDocumentoInquilino {
-  DNI_FRENTE = 'DNI_FRENTE',
-  DNI_DORSO = 'DNI_DORSO',
-  RECIBO_SUELDO = 'RECIBO_SUELDO',
-  GARANTIA_PROPIETARIA = 'GARANTIA_PROPIETARIA',
-  SEGURO_CAUCION = 'SEGURO_CAUCION',
-  CERTIFICADO_LABORAL = 'CERTIFICADO_LABORAL',
-  SERVICIO = 'SERVICIO',
-  CBU = 'CBU',
-}
-
-export enum DocumentoAuditAction {
-  CREADO = 'CREADO',
-  APROBADO = 'APROBADO',
-  RECHAZADO = 'RECHAZADO',
-  DESCARGADO = 'DESCARGADO',
-  ELIMINADO = 'ELIMINADO',
-  EN_ANALISIS = 'EN_ANALISIS',
-  REEMPLAZADO = 'REEMPLAZADO',
-}
-
+import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
+import { TipoDocumentoInquilino } from '@shared/enums/tipo-documento-inquilino.enum';
 
 @Entity('inquilino_documentos')
 export class InquilinoDocumento {
@@ -61,37 +42,4 @@ export class InquilinoDocumento {
 
   @CreateDateColumn()
   fechaSubida: Date;
-}
-
-@Entity('documento_audit')
-export class DocumentoAudit {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  documentoId: number;
-
-  @Column()
-  documentoTipo: 'INQUILINO' | 'PROPIETARIO';
-
-  @Column({
-    type: 'enum',
-    enum: DocumentoAuditAction,
-  })
-  action: DocumentoAuditAction;
-
-  @Column()
-  performedById: number;
-
-  @Column({ type: 'text', nullable: true })
-  comentario: string | null;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Column({ type: 'jsonb', nullable: true })
-  analisisIA?: any;
-
-  @Column({ type: 'jsonb', nullable: true })
-  datosExtras?: any;
 }

@@ -8,7 +8,8 @@ import {
   IsString,
 } from 'class-validator';
 
-import { OperacionTipo, MedioOperacion} from '@shared/contracts';
+import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
+import { MedioOperacion } from '@shared/enums/medio-operacion.enum';
 
 export class CreateOperacionDto {
   @IsEnum(OperacionTipo)

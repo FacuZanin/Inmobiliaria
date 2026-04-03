@@ -3,7 +3,7 @@ import { applyDecorators, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../../modules/auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from './roles.decorator';
-import { UserRole } from '@shared/contracts';
+import { UserRole } from '@shared/enums/user-role.enum';
 
 
 export function Auth(...roles: UserRole[]) {

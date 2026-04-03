@@ -2,7 +2,7 @@
 import { PartialType } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, IsDateString } from 'class-validator';
 import { CreateOperacionDto } from './create-operacion.dto';
-import { OperacionEstado } from '@shared/contracts';
+import { OperacionEstado } from '@shared/enums/operacion-estado.enum';
 
 
 export class UpdateOperacionDto extends PartialType(CreateOperacionDto) {

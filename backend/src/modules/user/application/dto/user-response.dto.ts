@@ -1,5 +1,6 @@
 // backend\src\modules\user\application\dto\user-response.dto.ts
-import { UserRole, UserProfile } from '@shared/contracts';
+import { UserRole } from '@shared/enums/user-role.enum';
+import { UserProfile } from '@shared/enums/user-profile.enum';
 
 export class UserResponseDto {
   id: number;

@@ -1,6 +1,6 @@
 // backend\src\modules\propiedades\domain\entities\property.aggregate.ts
-import type { OperationType } from './property.types';
-import { PropiedadTipo } from '@shared/contracts';
+import type { OperationTipo } from '@shared/enums/operacion-tipo.enum';
+import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
 
 import { AddressVO } from '../value-objects/address.vo';
 import { PriceVO } from '../value-objects/price.vo';
@@ -40,7 +40,7 @@ type PropertyAggregateProps = {
   titulo: string;
   descripcion?: string | null;
   tipo: PropiedadTipo;
-  operacion: OperationType;
+  operacion: OperationTipo;
   precio?: PriceVO | null;
   direccion: AddressVO;
   localidad: string;
@@ -65,7 +65,7 @@ export class PropertyAggregate {
   private _titulo: string;
   private _descripcion: string | null;
   private _tipo: PropiedadTipo;;
-  private _operacion: OperationType;
+  private _operacion: OperationTipo;
   private _precio: PriceVO | null;
 
   private _direccion: AddressVO;
@@ -150,7 +150,7 @@ export class PropertyAggregate {
     return this._tipo;
   }
 
-  get operacion(): OperationType {
+  get operacion(): OperationTipo {
     return this._operacion;
   }
 
@@ -211,7 +211,7 @@ export class PropertyAggregate {
   updateGeneral(data: Partial<{
     titulo: string;
     descripcion: string | null;
-    operacion: OperationType;
+    operacion: OperationTipo;
     precio: PriceVO | null;
     direccion: AddressVO;
     localidad: string;

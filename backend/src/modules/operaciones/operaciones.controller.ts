@@ -16,7 +16,8 @@ import { CurrentUser } from '../../shared/security/decorators/current-user.decor
 import { Roles } from '../../shared/security/decorators/roles.decorator';
 import { Profiles } from '../../shared/security/decorators/profiles.decorator';
 
-import { UserRole, UserProfile } from '@shared/contracts';
+import { UserRole } from '@shared/enums/user-role.enum';
+import { UserProfile } from '@shared/enums/user-profile.enum';
 
 import { User } from '../user/domain/entities/user.entity';
 

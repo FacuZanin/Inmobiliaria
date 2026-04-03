@@ -9,7 +9,11 @@ import {
 } from 'typeorm';
 
 import { Agencia } from '../../../agencias/domain/entities/agencia.entity';
-import { UserRole, UserProfile, UserStatus } from '@shared/contracts';
+
+import { UserRole } from '@shared/enums/user-role.enum';
+import { UserProfile } from '@shared/enums/user-profile.enum';
+import { UserStatus } from '@shared/enums/user-status.enum';
+
 import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-token.entity';
 
 @Entity('users')

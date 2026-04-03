@@ -10,9 +10,9 @@ import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-
 import type { AgenciasRepositoryPort } from '../ports/agencias-repository.port';
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 
-import { AgenciaSolicitudEstado } from '../../domain/entities/agencia-solicitud.entity';
+import { AgenciaSolicitudEstado } from '@shared/enums/agencia-solicitud-estado.enum';
 
-import { UserProfile } from '@shared/contracts';
+import { UserProfile } from '@shared/enums/user-profile.enum';
 
 import { AGENCIAS_REPOSITORY, AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 

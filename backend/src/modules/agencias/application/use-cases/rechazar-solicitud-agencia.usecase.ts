@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-repository.port';
-import { AgenciaSolicitudEstado } from '../../domain/entities/agencia-solicitud.entity';
+import { AgenciaSolicitudEstado } from '@shared/enums/agencia-solicitud-estado.enum';
 
 @Injectable()
 export class RechazarSolicitudAgenciaUseCase {

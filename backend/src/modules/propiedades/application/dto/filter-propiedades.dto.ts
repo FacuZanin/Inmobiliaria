@@ -1,6 +1,7 @@
 // backend\src\modules\propiedades\application\dto\filter-propiedades.dto.ts
 import { IsEnum, IsOptional } from 'class-validator';
-import { PropiedadTipo, OperacionTipo } from '@shared/contracts';
+import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
+import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
 
 export class FilterPropiedadesDto {
   @IsOptional()

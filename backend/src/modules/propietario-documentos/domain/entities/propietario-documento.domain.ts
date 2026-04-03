@@ -8,15 +8,9 @@ import {
 } from 'typeorm';
 
 import { User } from '../../../../modules/user/domain/entities/user.entity';
-import { DocumentoEstado } from '@shared/contracts';
+import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
+import { TipoDocumentoPropietario } from '@shared/enums/tipo-documento-propietario.enum';
 
-export enum TipoDocumentoPropietario {
-  DNI_FRENTE = 'DNI_FRENTE',
-  DNI_DORSO = 'DNI_DORSO',
-  ESCRITURA = 'ESCRITURA',
-  DOMINIO = 'DOMINIO',
-  SERVICIO = 'SERVICIO',
-}
 
 @Entity('propietario_documentos')
 export class PropietarioDocumento {

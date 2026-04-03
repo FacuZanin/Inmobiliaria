@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { InquilinoDocumentosController } from './infrastructure/controllers/inquilino-documentos.controller';
 
-import { InquilinoDocumento, DocumentoAudit } from './domain/entities/inquilino-documento.entity';
+import { InquilinoDocumento } from '@shared/enums/tipo-documento-inquilino.enum';
+import { DocumentoAudit } from '@shared/enums/documento-audit-action.enum';
+
 import { Inquilino } from '../inquilinos/domain/entities/inquilino.entity';
 
 import { UploadsModule } from '../uploads/uploads.module';
