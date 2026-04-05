@@ -8,6 +8,7 @@ export interface RegistrarAuditParams {
   action: DocumentoAuditAction;
   performedById: number;
   comentario?: string | null;
+  metadata?: Record<string, any>;
 }
 
 export class DocumentoAuditService {

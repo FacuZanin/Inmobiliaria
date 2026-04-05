@@ -13,57 +13,57 @@ import { AgenciaSolicitudEstado } from '@shared/enums/agencia-solicitud-estado.e
 @Entity('agencia_solicitudes')
 export class AgenciaSolicitud {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(() => User, {
     eager: true,
     onDelete: 'CASCADE',
   })
-  usuario: User;
+  usuario!: User;
 
   @Column({ length: 150 })
-  nombreTitular: string;
+  nombreTitular!: string;
 
   @Column({ length: 20 })
-  dni: string;
+  dni!: string;
 
   @Column({ length: 20 })
-  cuit: string;
+  cuit!: string;
 
   @Column({ length: 50 })
-  matricula: string;
+  matricula!: string;
 
   @Column({ length: 100 })
-  colegio: string;
+  colegio!: string;
 
   @Column({ length: 100 })
-  provincia: string;
+  provincia!: string;
 
   @Column({
     type: 'enum',
     enum: AgenciaSolicitudEstado,
     default: AgenciaSolicitudEstado.PENDIENTE,
   })
-  estado: AgenciaSolicitudEstado;
+  estado!: AgenciaSolicitudEstado;
 
   @Column({ length: 255 })
-  dniFrente: string;
+  dniFrente!: string;
 
   @Column({ length: 255 })
-  dniDorso: string;
+  dniDorso!: string;
 
   @Column({ length: 255 })
-  constanciaCuit: string;
+  constanciaCuit!: string;
 
   @Column({ length: 255 })
-  constanciaAfip: string;
+  constanciaAfip!: string;
 
   @Column({ length: 255 })
-  certificadoMatricula: string;
+  certificadoMatricula!: string;
 
   @Column({ length: 255 })
-  carnetProfesional: string;
+  carnetProfesional!: string;
 
   @CreateDateColumn()
-  creadaEn: Date;
+  creadaEn!: Date;
 }

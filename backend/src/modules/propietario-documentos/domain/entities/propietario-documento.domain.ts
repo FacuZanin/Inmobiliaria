@@ -15,10 +15,10 @@ import { TipoDocumentoPropietario } from '@shared/enums/tipo-documento-propietar
 @Entity('propietario_documentos')
 export class PropietarioDocumento {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(() => User, { eager: true })
-  propietario: User;
+  propietario!: User;
 
   @Column({ type: 'int', nullable: true })
   propiedadId?: number | null;
@@ -27,21 +27,21 @@ export class PropietarioDocumento {
     type: 'enum',
     enum: TipoDocumentoPropietario,
   })
-  tipoDocumento: TipoDocumentoPropietario;
+  tipoDocumento!: TipoDocumentoPropietario;
 
   @Column()
-  archivoUrl: string;
+  archivoUrl!: string;
 
   @Column({
     type: 'enum',
     enum: DocumentoEstado,
     default: DocumentoEstado.PENDIENTE,
   })
-  estado: DocumentoEstado;
+  estado!: DocumentoEstado;
 
   @Column({ type: 'text', nullable: true })
-  comentarioRechazo: string | null;
+  comentarioRechazo!: string | null;
 
   @CreateDateColumn()
-  fechaSubida: Date;
+  fechaSubida!: Date;
 }

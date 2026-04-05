@@ -1,4 +1,3 @@
-// backend\src\modules\admin-documentos\application\use-cases\cambiar-estado-documento.usecase.ts
 import { Inject, Injectable } from '@nestjs/common';
 
 import { DOCUMENTO_COMMAND_PORT } from '../ports/documento-command.port';
@@ -14,23 +13,6 @@ import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
 import { DocumentoAuditService } from '../../domain/services/documento-audit.service';
 import { DocumentoTipoVO } from '../../domain/value-objects/documento-tipo.vo';
 import { DocumentoIdVO } from '../../domain/value-objects/documento-id.vo';
-
-
-function mapEstadoToAuditAction(estado: DocumentoEstado): DocumentoAuditAction {
-  switch (estado) {
-    case DocumentoEstado.APROBADO:
-      return DocumentoAuditAction.APROBADO;
-
-    case DocumentoEstado.RECHAZADO:
-      return DocumentoAuditAction.RECHAZADO;
-
-    case DocumentoEstado.EN_ANALISIS:
-      return DocumentoAuditAction.EN_ANALISIS;
-
-    default:
-      throw new Error('Estado no soportado para auditoría');
-  }
-}
 
 @Injectable()
 export class CambiarEstadoDocumentoUseCase {
@@ -61,17 +43,14 @@ export class CambiarEstadoDocumentoUseCase {
       params.comentario,
     );
 
-    const action =
-      params.estado === DocumentoEstado.APROBADO
-        ? DocumentoEstado.APROBADO
-        : params.estado === DocumentoEstado.RECHAZADO
-        ? DocumentoEstado.RECHAZADO
-        : DocumentoEstado.EN_ANALISIS;
-
+    // ✅ Auditoría correcta (evento + metadata)
     const audit = this.auditService.registrar({
       documentoId: documentoIdVO.value,
       documentoTipo: tipoVO.value,
-      action,
+      action: DocumentoAuditAction.ESTADO_CAMBIADO,
+      metadata: {
+        nuevoEstado: params.estado,
+      },
       performedById: params.userId,
       comentario: params.comentario ?? null,
     });

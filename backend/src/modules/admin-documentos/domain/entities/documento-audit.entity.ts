@@ -12,28 +12,28 @@ import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum'
 @Entity('documento_audit')
 export class DocumentoAudit {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  documentoId: number;
+  documentoId!: number;
 
   @Column({
     type: 'enum',
     enum: DocumentoTipo,
   })
-  documentoTipo: DocumentoTipo;
+  documentoTipo!: DocumentoTipo;
 
   @Column({
     type: 'enum',
     enum: DocumentoAuditAction,
   })
-  action: DocumentoAuditAction;
+  action!: DocumentoAuditAction;
 
   @Column()
-  performedById: number;
+  performedById!: number;
 
   @Column({ type: 'text', nullable: true })
-  comentario: string | null;
+  comentario!: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
   datosExtras: any;
@@ -41,6 +41,9 @@ export class DocumentoAudit {
   @Column({ type: 'jsonb', nullable: true })
   analisisIA: any;
 
+  @Column({ type: 'json', nullable: true })
+  metadata?: Record<string, any>;
+
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

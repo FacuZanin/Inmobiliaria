@@ -1,6 +1,7 @@
+// shared\src\enums\documento-audit-action.enum.ts
 export enum DocumentoAuditAction {
-  APROBADO = 'APROBADO',
-  RECHAZADO = 'RECHAZADO',
+  CREADO = 'CREADO',
   SUBIDO = 'SUBIDO',
-  EN_ANALISIS = 'EN_ANALISIS',
+  REEMPLAZADO = 'REEMPLAZADO',
+  ESTADO_CAMBIADO = 'ESTADO_CAMBIADO',
 }

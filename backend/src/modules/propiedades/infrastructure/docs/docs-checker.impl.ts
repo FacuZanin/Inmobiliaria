@@ -20,12 +20,12 @@ export class DocsCheckerImpl implements DocsCheckerPort {
 
     const dni = docs.some(
       d =>
-        d.tipoDocumento === 'DNI_FRENTE' ||
-        d.tipoDocumento === 'DNI_DORSO',
+        d.tipoDocumento === TipoDocumentoPropietario.DNI_FRENTE ||
+        d.tipoDocumento === TipoDocumentoPropietario.DNI_DORSO,
     );
 
     const escritura = docs.some(
-      d => d.tipoDocumento === 'ESCRITURA',
+      d => d.tipoDocumento === TipoDocumentoPropietario.ESCRITURA,
     );
 
     return { dni, escritura };
