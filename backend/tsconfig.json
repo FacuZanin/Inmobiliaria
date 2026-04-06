@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node", "multer", "express"],
     "module": "Node16",
     "moduleResolution": "node16",
     "esModuleInterop": true,
@@ -23,8 +24,5 @@
     }
   },
 
-  "include": [
-    "src/**/*",
-    "../shared/src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

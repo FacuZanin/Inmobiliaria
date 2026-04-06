@@ -17,13 +17,14 @@ import { SubirDocumentoInquilinoUseCase } from './application/use-cases/subir-do
 import { CambiarEstadoInquilinoDocumentoUseCase } from './application/use-cases/cambiar-estado.usecase';
 import { ListarMisDocumentosUseCase } from './application/use-cases/listar-mis-documentos.usecase';
 import { DocumentosAprobadosUseCase } from './application/use-cases/documentos-aprobados.usecase';
+import { DocumentoAudit } from '../../modules/admin-documentos/domain/entities/documento-audit.entity';
+import { InquilinoDocumento } from './domain/entities/inquilino-documento.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      TipoDocumentoInquilino,
-      Inquilino,
-      DocumentoAuditAction,
+      InquilinoDocumento,
+      DocumentoAudit,
     ]),
     UploadsModule,
   ],

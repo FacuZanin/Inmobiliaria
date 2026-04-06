@@ -4,9 +4,11 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
+import { Express } from 'express';
 
 import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
 import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
+import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
 
 import type { User } from '../../../user/domain/entities/user.entity';
 import type { InquilinoDocumentosRepositoryPort } from '../ports/inquilino-documentos-repository.port';
@@ -50,7 +52,7 @@ export class SubirDocumentoInquilinoUseCase {
 
       await this.repo.saveAudit({
         documentoId: saved.id,
-        documentoTipo: 'INQUILINO',
+        documentoTipo: DocumentoTipo.INQUILINO,
         action: DocumentoAuditAction.REEMPLAZADO,
         performedById: user.id,
         datosExtras: { oldUrl, newUrl: archivoUrl },
@@ -68,7 +70,7 @@ export class SubirDocumentoInquilinoUseCase {
 
     await this.repo.saveAudit({
       documentoId: nuevo.id,
-      documentoTipo: 'INQUILINO',
+      documentoTipo: DocumentoTipo.INQUILINO,
       action: DocumentoAuditAction.CREADO,
       performedById: user.id,
     });

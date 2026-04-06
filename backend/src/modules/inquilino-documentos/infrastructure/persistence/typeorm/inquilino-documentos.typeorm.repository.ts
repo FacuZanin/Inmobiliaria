@@ -8,11 +8,9 @@ import type {
 } from '../../../application/ports/inquilino-documentos-repository.port';
 
 import { TipoDocumentoInquilino } from '@shared/enums/tipo-documento-inquilino.enum';
-
 import { Inquilino } from '../../../../inquilinos/domain/entities/inquilino.entity';
 import { InquilinoDocumento } from '../../../domain/entities/inquilino-documento.entity';
 import { DocumentoAudit as AdminDocumentoAudit } from '../../../../admin-documentos/domain/entities/documento-audit.entity';
-
 import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
 
 @Injectable()

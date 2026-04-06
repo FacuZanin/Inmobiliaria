@@ -4,6 +4,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import type { DocsCheckerPort } from '../../application/ports/docs-checker.port';
 import { DocumentosAprobadosPropietarioUseCase } 
 from '../../../propietario-documentos/application/use-cases/documentos-aprobados.usecase';
+import { TipoDocumentoPropietario } from '@shared/enums/tipo-documento-propietario.enum';
 
 
 @Injectable()

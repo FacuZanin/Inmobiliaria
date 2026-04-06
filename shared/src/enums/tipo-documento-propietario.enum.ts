@@ -1,5 +1,6 @@
 export enum TipoDocumentoPropietario {
-  DNI = 'DNI',
-  ESCRITURA = 'ESCRITURA',
-  IMPUESTO = 'IMPUESTO',
+  DNI_FRENTE = "DNI_FRENTE",
+  DNI_DORSO = "DNI_DORSO",
+  ESCRITURA = "ESCRITURA",
+  IMPUESTO = "IMPUESTO",
 }
