@@ -4,6 +4,7 @@ import { AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-repository.port';
 import type { SolicitudAgenciaDto } from '../dto/solicitud-agencia.dto';
 import type { User } from '../../../user/domain/entities/user.entity';
+import { CrearSolicitudAgenciaDto } from '../dto/crear-solicitud-agencia.dto';
 
 @Injectable()
 export class SolicitarAgenciaUseCase {
@@ -12,7 +13,7 @@ export class SolicitarAgenciaUseCase {
     private readonly repo: AgenciaSolicitudRepositoryPort,
   ) {}
 
-  execute(dto: SolicitudAgenciaDto, user: User) {
-    return this.repo.create(dto, user.id);
+  execute(dto: CrearSolicitudAgenciaDto) {
+    return this.repo.createBasic(dto);
   }
 }

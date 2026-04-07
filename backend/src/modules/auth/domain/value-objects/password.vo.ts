@@ -1,4 +1,5 @@
 // backend\src\modules\auth\domain\value-objects\password.vo.ts
+import { BadRequestException } from '@nestjs/common';
 import { PasswordHasherPort } from '../../application/ports/password-hasher.port';
 
 export class Password {
@@ -8,8 +9,27 @@ export class Password {
     plainPassword: string,
     hasher: PasswordHasherPort,
   ): Promise<Password> {
-    if (!plainPassword || plainPassword.length < 8) {
-      throw new Error('La contraseña no cumple con los requisitos mínimos');
+    if (!plainPassword) {
+      throw new BadRequestException('La contraseña es requerida');
+    }
+
+    if (plainPassword.length < 8) {
+      throw new BadRequestException(
+        'La contraseña debe tener al menos 8 caracteres',
+      );
+    }
+
+    // 🔥 (opcional pero PRO)
+    if (!/[A-Z]/.test(plainPassword)) {
+      throw new BadRequestException(
+        'La contraseña debe tener al menos una mayúscula',
+      );
+    }
+
+    if (!/[0-9]/.test(plainPassword)) {
+      throw new BadRequestException(
+        'La contraseña debe tener al menos un número',
+      );
     }
 
     const hashed = await hasher.hash(plainPassword);

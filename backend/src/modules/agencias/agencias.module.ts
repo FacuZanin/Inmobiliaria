@@ -57,5 +57,9 @@ import {
     AprobarSolicitudAgenciaUseCase,
     RechazarSolicitudAgenciaUseCase,
   ],
+    exports: [
+    AGENCIAS_REPOSITORY,
+    SolicitarAgenciaUseCase,
+  ],
 })
 export class AgenciasModule {}

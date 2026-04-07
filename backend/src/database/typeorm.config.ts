@@ -9,11 +9,10 @@ const ormconfig: TypeOrmModuleOptions = {
 
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
+  username: process.env.DB_USERNAME, // ✅ FIX
+  password: process.env.DB_PASSWORD, // ✅ FIX
   database: process.env.DB_NAME,
 
-  // PRODUCCIÓN / BUILD
   entities: [__dirname + '/../**/*.entity.{ts,js}'],
   migrations: [__dirname + '/../database/migrations/*.{ts,js}'],
 

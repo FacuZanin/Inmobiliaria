@@ -1,23 +1,38 @@
 // backend\src\modules\auth\application\dto\register.dto.ts
-import { IsEmail, IsEnum, IsNotEmpty, MinLength, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  MinLength,
+  IsOptional,
+  ValidateIf,
+  Matches,
+  IsString
+} from 'class-validator';
 import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 export class RegisterDto {
   @IsNotEmpty()
-  nombre: string;
+  nombre!: string;
 
   @IsNotEmpty()
-  apellido: string;
+  apellido!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
-  @MinLength(6)
-  password: string;
+  @MinLength(8)
+  @Matches(/^(?=.*[A-Z])(?=.*\d).+$/, {
+    message: 'Debe tener al menos una mayúscula y un número',
+  })
+  password!: string;
 
+  @IsNotEmpty()
   @IsEnum(UserProfile)
-  profile: UserProfile;
+  profile!: UserProfile;
 
-  @IsOptional()
-  agenciaId?: number;
+  @ValidateIf((o) => o.profile === UserProfile.AGENCIA)
+  @IsNotEmpty()
+  @IsString()
+  nombreAgencia?: string;
 }

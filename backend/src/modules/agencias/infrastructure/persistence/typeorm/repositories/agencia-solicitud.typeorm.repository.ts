@@ -9,10 +9,12 @@ import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitu
 import type { SolicitudAgenciaDto } from '../../../../application/dto/solicitud-agencia.dto';
 import { Agencia } from '../../../../domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
-
+import { CrearSolicitudAgenciaDto } from '../../../../application/dto/crear-solicitud-agencia.dto';
 
 @Injectable()
-export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudRepositoryPort {
+export class AgenciaSolicitudTypeOrmRepository
+  implements AgenciaSolicitudRepositoryPort
+{
   constructor(
     @InjectRepository(AgenciaSolicitud)
     private readonly repo: Repository<AgenciaSolicitud>,
@@ -24,7 +26,10 @@ export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudReposi
     private readonly agenciaRepo?: Repository<Agencia>,
   ) {}
 
-  async create(data: SolicitudAgenciaDto, userId: number): Promise<AgenciaSolicitud> {
+  async create(
+    data: SolicitudAgenciaDto,
+    userId: number,
+  ): Promise<AgenciaSolicitud> {
     // crear y castear explícitamente a la entidad para evitar inferencias indeseadas
     const s = this.repo.create({
       ...data,
@@ -55,7 +60,10 @@ export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudReposi
     return this.repo.save(solicitud);
   }
 
-  async approveAndAssignUser(solicitudId: number, nuevaAgencia: Agencia): Promise<AgenciaSolicitud> {
+  async approveAndAssignUser(
+    solicitudId: number,
+    nuevaAgencia: Agencia,
+  ): Promise<AgenciaSolicitud> {
     // Cargar solicitud con usuario
     const solicitud = await this.repo.findOne({
       where: { id: solicitudId },
@@ -64,8 +72,12 @@ export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudReposi
     if (!solicitud) throw new BadRequestException('Solicitud no encontrada');
 
     // Crear agencia
-    const agenciaEntity = this.agenciaRepo ? this.agenciaRepo.create(nuevaAgencia as any) : undefined;
-    const savedAgencia = agenciaEntity ? await this.agenciaRepo!.save(agenciaEntity) : undefined;
+    const agenciaEntity = this.agenciaRepo
+      ? this.agenciaRepo.create(nuevaAgencia as any)
+      : undefined;
+    const savedAgencia = agenciaEntity
+      ? await this.agenciaRepo!.save(agenciaEntity)
+      : undefined;
 
     // Actualizar usuario (asignar role y agencia)
     if (solicitud.usuario) {
@@ -76,6 +88,15 @@ export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudReposi
 
     // Marcar solicitud aprobada
     solicitud.estado = AgenciaSolicitudEstado.APROBADA;
+    return this.repo.save(solicitud);
+  }
+
+  async createBasic(dto: CrearSolicitudAgenciaDto) {
+    const solicitud = this.repo.create({
+      usuario: { id: dto.userId } as any,
+      estado: AgenciaSolicitudEstado.PENDIENTE,
+    });
+
     return this.repo.save(solicitud);
   }
 }

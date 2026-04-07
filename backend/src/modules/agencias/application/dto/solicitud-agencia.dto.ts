@@ -4,43 +4,43 @@ import { IsString, IsNotEmpty, IsUrl } from 'class-validator';
 export class SolicitudAgenciaDto {
   @IsString()
   @IsNotEmpty()
-  nombreTitular: string;
+  nombreTitular!: string;
 
   @IsString()
   @IsNotEmpty()
-  dni: string;
+  dni!: string;
 
   @IsString()
   @IsNotEmpty()
-  cuit: string;
+  cuit!: string;
 
   @IsString()
   @IsNotEmpty()
-  matricula: string;
+  matricula!: string;
 
   @IsString()
   @IsNotEmpty()
-  colegio: string;
+  colegio!: string;
 
   @IsString()
   @IsNotEmpty()
-  provincia: string;
+  provincia!: string;
 
   @IsUrl()
-  dniFrente: string;
+  dniFrente!: string;
 
   @IsUrl()
-  dniDorso: string;
+  dniDorso!: string;
 
   @IsUrl()
-  constanciaCuit: string;
+  constanciaCuit!: string;
 
   @IsUrl()
-  constanciaAfip: string;
+  constanciaAfip!: string;
 
   @IsUrl()
-  certificadoMatricula: string;
+  certificadoMatricula!: string;
 
   @IsUrl()
-  carnetProfesional: string;
+  carnetProfesional!: string;
 }

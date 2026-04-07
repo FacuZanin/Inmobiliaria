@@ -12,13 +12,17 @@ import { RegisterToUserDto } from '../dto/register-to-user.dto';
 
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
+import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 import { USER_REPOSITORY } from '../../../user/application/tokens';
 import { PASSWORD_HASHER } from '../tokens';
+import { AGENCIAS_REPOSITORY } from '@/modules/agencias/application/tokens';
 
 import { RegistrationPolicy } from '../../domain/policies/registration-policy';
 import { Password } from '../../domain/value-objects/password.vo';
 import { Email } from '../../domain/value-objects/email.vo';
+
+import { SolicitarAgenciaUseCase } from '@/modules/agencias/application/use-cases/solicitar-agencia.usecase';
 
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 import type { PasswordHasherPort } from '../ports/password-hasher.port';
@@ -31,6 +35,8 @@ export class RegisterUseCase {
 
     @Inject(PASSWORD_HASHER)
     private readonly hasher: PasswordHasherPort,
+
+    private readonly solicitarAgenciaUseCase: SolicitarAgenciaUseCase,
   ) {}
 
   async execute(dto: RegisterDto) {
@@ -42,7 +48,8 @@ export class RegisterUseCase {
     if (!RegistrationPolicy.canRegister(dto.profile)) {
       throw new ForbiddenException('Perfil no permitido');
     }
-
+    const nombreAgencia =
+      dto.profile === UserProfile.AGENCIA ? dto.nombreAgencia : undefined;
     const email = Email.create(dto.email);
     const password = await Password.create(dto.password, this.hasher);
 
@@ -57,6 +64,17 @@ export class RegisterUseCase {
     };
 
     const user = await this.users.create(userToCreate);
+
+    if (dto.profile === UserProfile.AGENCIA) {
+      if (!nombreAgencia) {
+        throw new ConflictException('Nombre de agencia requerido');
+      }
+
+      await this.solicitarAgenciaUseCase.execute({
+        nombre: nombreAgencia,
+        userId: user.id,
+      });
+    }
 
     return {
       id: user.id,

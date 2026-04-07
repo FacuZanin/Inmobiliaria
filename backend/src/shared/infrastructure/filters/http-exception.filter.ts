@@ -29,13 +29,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message = { message: exceptionResponse };
       }
     }
+    console.error('🔥 ERROR COMPLETO:', exception);
 
+    if ((exception as any)?.stack) {
+      console.error('🔥 STACK:', (exception as any).stack);
+    }
     response.status(status).json({
       success: false,
       statusCode: status,
+      message:
+        typeof message === 'string'
+          ? message
+          : Array.isArray(message?.message)
+            ? message.message
+            : message?.message || 'Error interno del servidor',
       path: request.url,
       timestamp: new Date().toISOString(),
-      ...message,
     });
   }
 }

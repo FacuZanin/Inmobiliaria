@@ -27,7 +27,7 @@ import { ProfilesGuard } from './shared/security/guards/profiles.guard';
 import { HttpExceptionFilter } from './shared/infrastructure/filters/http-exception.filter';
 import { LoggingInterceptor } from './shared/infrastructure/interceptors/logging.interceptor';
 import { TimingInterceptor } from './shared/infrastructure/interceptors/timing.interceptor';
-import { GlobalExceptionInterceptor } from './shared/infrastructure/interceptors/global-exception.interceptor';
+// import { GlobalExceptionInterceptor } from './shared/infrastructure/interceptors/global-exception.interceptor';
 import { ValidationPipe } from './shared/infrastructure/pipes/validation.pipe';
 
 // LOGGER
@@ -105,10 +105,10 @@ import { HealthModule } from './health/health.module';
       provide: APP_INTERCEPTOR,
       useClass: TimingInterceptor,
     },
-    {
+    /*{
       provide: APP_INTERCEPTOR,
       useClass: GlobalExceptionInterceptor,
-    },
+    },*/
   ],
 })
 export class AppModule {}

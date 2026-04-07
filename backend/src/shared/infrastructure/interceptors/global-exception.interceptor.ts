@@ -1,5 +1,5 @@
 // backend\src\common\interceptors\global-exception.interceptor.ts
-import {
+/*import {
   CallHandler,
   ExecutionContext,
   Injectable,
@@ -39,3 +39,4 @@ export class GlobalExceptionInterceptor implements NestInterceptor {
     );
   }
 }
+*/

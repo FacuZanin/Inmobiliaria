@@ -31,10 +31,12 @@ import { TOKEN_SERVICE, PASSWORD_HASHER } from './application/tokens';
 
 // User module
 import { UsersModule } from '../user/users.module';
+import { AgenciasModule } from '../agencias/agencias.module';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
+    AgenciasModule,
     TypeOrmModule.forFeature([RefreshToken]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({

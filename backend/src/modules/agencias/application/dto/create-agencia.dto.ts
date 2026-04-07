@@ -9,19 +9,19 @@ import {
 export class CreateAgenciaDto {
   @IsString()
   @IsNotEmpty()
-  nombre: string;
+  nombre!: string;
 
   @IsString()
   @IsNotEmpty()
-  direccion: string;
+  direccion!: string;
 
   @IsString()
   @IsNotEmpty()
-  localidad: string;
+  localidad!: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @IsOptional()
   @IsString()

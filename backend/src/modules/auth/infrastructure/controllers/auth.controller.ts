@@ -11,7 +11,7 @@ import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 import { LoginDto } from '../../application/dto/login.dto';
-import { RegisterPublicDto } from '../../application/dto/register-public.dto';
+import { RegisterDto } from '../../application/dto/register.dto';
 
 import { RefreshTokenService } from '../../application/services/refresh-token.service';
 
@@ -61,7 +61,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  register(@Body() dto: RegisterPublicDto) {
+  register(@Body() dto: RegisterDto) {
     return this.registerUC.execute({
       ...dto,
       profile: UserProfile.INQUILINO,
