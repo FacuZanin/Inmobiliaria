@@ -10,7 +10,7 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "../",
+    "rootDir": ".",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -20,9 +20,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@modules/*": ["./src/modules/*"],
-      "@shared/*": ["../shared/src/*"]
+      "@shared/contracts": ["../shared/dist"],
+      "@shared/contracts/*": ["../shared/dist/*"]
     }
   },
 
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }

@@ -24,3 +24,4 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return result;
   }
 }
+console.log('JwtAuthGuard ejecutándose');
