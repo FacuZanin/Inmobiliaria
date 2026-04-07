@@ -6,9 +6,9 @@ import { DOCUMENTO_AUDIT_REPOSITORY_PORT } from '../ports/documento-audit-reposi
 import type { DocumentoCommandPort } from '../ports/documento-command.port';
 import type { DocumentoAuditRepositoryPort } from '../ports/documento-audit-repository.port';
 
-import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
-import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
-import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
+import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
+import { DocumentoAuditAction } from '@shared/contracts/enums/documento-audit-action.enum';
+import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum';
 
 import { DocumentoAuditService } from '../../domain/services/documento-audit.service';
 import { DocumentoTipoVO } from '../../domain/value-objects/documento-tipo.vo';

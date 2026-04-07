@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 
 import { User } from '../../../../modules/user/domain/entities/user.entity';
-import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
-import { TipoDocumentoPropietario } from '@shared/enums/tipo-documento-propietario.enum';
+import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
+import { TipoDocumentoPropietario } from '@shared/contracts/enums/tipo-documento-propietario.enum';
 
 @Entity('propietario_documentos')
 export class PropietarioDocumento {

@@ -1,6 +1,6 @@
 // backend\src\modules\auth\application\dto\register.dto.ts
 import { IsEmail, IsEnum, IsNotEmpty, MinLength, IsOptional } from 'class-validator';
-import { UserProfile } from '@shared/enums/user-profile.enum';
+import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 export class RegisterDto {
   @IsNotEmpty()

@@ -1,11 +1,11 @@
 // backend\src\modules\inquilino-documentos\application\ports\inquilino-documentos-repository.port.ts
 
 import { InquilinoDocumento } from '../../domain/entities/inquilino-documento.entity';
-import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
+import { DocumentoAuditAction } from '@shared/contracts/enums/documento-audit-action.enum';
 import { DocumentoAudit } from '../../../admin-documentos/domain/entities/documento-audit.entity';
 
 import type { Inquilino } from '../../../inquilinos/domain/entities/inquilino.entity';
-import { TipoDocumentoInquilino } from '@shared/enums/tipo-documento-inquilino.enum';
+import { TipoDocumentoInquilino } from '@shared/contracts/enums/tipo-documento-inquilino.enum';
 
 export interface InquilinoDocumentosRepositoryPort {
   findInquilinoByUserId(userId: number): Promise<Inquilino | null>;

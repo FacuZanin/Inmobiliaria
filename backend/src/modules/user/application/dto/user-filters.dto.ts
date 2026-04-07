@@ -1,6 +1,6 @@
 // backend\src\modules\user\application\dto\user-filters.dto.ts
 import { IsOptional, IsBoolean, IsEnum, IsString, IsDateString } from 'class-validator';
-import { UserRole } from '@shared/enums/user-role.enum';
+import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
 export class UserFiltersDto {
   @IsOptional()

@@ -15,9 +15,9 @@ import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Audit } from '../../../../shared/security/decorators/audit.decorator';
 
-import { UserRole } from '@shared/enums/user-role.enum';
-import { AuditAction } from '@shared/enums/audit-action.enum';
-import { AuditEntity } from '@shared/enums/audit-entity.enum';
+import { UserRole } from '@shared/contracts/enums/user-role.enum';
+import { AuditAction } from '@shared/contracts/enums/audit-action.enum';
+import { AuditEntity } from '@shared/contracts/enums/audit-entity.enum';
 
 import { CreateUserUseCase } from '../../application/use-cases/create-user.usecase';
 import { UpdateUserAdminUseCase } from '../../application/use-cases/update-user-admin.usecase';

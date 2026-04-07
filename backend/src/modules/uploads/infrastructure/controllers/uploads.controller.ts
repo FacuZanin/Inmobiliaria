@@ -10,7 +10,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
-import { UserRole } from '@shared/enums/user-role.enum';
+import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
 import type { FileStoragePort } from '../../application/ports/file-storage.port';
 import { FILE_STORAGE } from '../../application/tokens';

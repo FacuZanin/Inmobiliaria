@@ -8,7 +8,7 @@ import {
   DocumentoAudit,
 } from '../../../../domain/entities/documento-audit.entity';
 
-import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
+import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum';
 
 @Injectable()
 export class DocumentoAuditTypeOrmRepository

@@ -7,11 +7,11 @@ import type {
   InquilinoDocumentosRepositoryPort,
 } from '../../../application/ports/inquilino-documentos-repository.port';
 
-import { TipoDocumentoInquilino } from '@shared/enums/tipo-documento-inquilino.enum';
+import { TipoDocumentoInquilino } from '@shared/contracts/enums/tipo-documento-inquilino.enum';
 import { Inquilino } from '../../../../inquilinos/domain/entities/inquilino.entity';
 import { InquilinoDocumento } from '../../../domain/entities/inquilino-documento.entity';
 import { DocumentoAudit as AdminDocumentoAudit } from '../../../../admin-documentos/domain/entities/documento-audit.entity';
-import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
+import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
 
 @Injectable()
 export class InquilinoDocumentosTypeOrmRepository

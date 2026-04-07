@@ -1,5 +1,5 @@
 // backend\src\modules\admin-documentos\domain\value-objects\documento-tipo.vo.ts
-import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
+import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum';
 
 export class DocumentoTipoVO {
   private constructor(public readonly value: DocumentoTipo) {}

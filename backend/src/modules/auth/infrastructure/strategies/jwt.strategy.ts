@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { USER_REPOSITORY } from '../../../user/application/tokens';
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
-import { UserStatus} from '@shared/enums/user-status.enum';
+import { UserStatus} from '@shared/contracts/enums/user-status.enum';
 import { TokenPayload } from '../../domain/token-payload';
 
 @Injectable()

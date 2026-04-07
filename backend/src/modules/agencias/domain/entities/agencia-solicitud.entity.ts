@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { User } from '../../../user/domain/entities/user.entity';
 
-import { AgenciaSolicitudEstado } from '@shared/enums/agencia-solicitud-estado.enum';
+import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
 
 @Entity('agencia_solicitudes')
 export class AgenciaSolicitud {

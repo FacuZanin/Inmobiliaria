@@ -1,6 +1,6 @@
 // backend\src\modules\admin-documentos\domain\services\documento-audit.service.ts
-import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
-import { DocumentoTipo } from '@shared/enums/documento-tipo.enum'
+import { DocumentoAuditAction } from '@shared/contracts/enums/documento-audit-action.enum';
+import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum'
 
 export interface RegistrarAuditParams {
   documentoId: number;

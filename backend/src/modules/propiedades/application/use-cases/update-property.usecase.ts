@@ -9,8 +9,8 @@ import { AddressVO } from '../../domain/value-objects/address.vo';
 import { PriceVO } from '../../domain/value-objects/price.vo';
 import { SuperficieVO } from '../../domain/value-objects/superficie.vo';
 
-import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
-import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
+import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
+import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 
 import { PROPERTY_REPOSITORY } from '../tokens';
 

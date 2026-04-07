@@ -1,6 +1,6 @@
 // backend\src\modules\propiedades\domain\entities\property.aggregate.ts
-import type { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
-import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
+import type { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
+import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 
 import { AddressVO } from '../value-objects/address.vo';
 import { PriceVO } from '../value-objects/price.vo';

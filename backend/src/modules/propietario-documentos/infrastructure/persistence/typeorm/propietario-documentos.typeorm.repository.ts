@@ -10,7 +10,7 @@ import { User } from '../../../../user/domain/entities/user.entity';
 import { PropietarioDocumentoModel } from '../../../domain/entities/propietario-documento.model';
 import { Owner } from '../../../domain/entities/owner';
 import { toDomain, toOrmPartial } from './propietario-documento.mapper';
-import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
+import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
 
 @Injectable()
 export class PropietarioDocumentosTypeOrmRepository implements PropietarioDocumentosRepositoryPort {

@@ -1,6 +1,6 @@
 // backend\src\modules\admin-documentos\application\dto\filtro-documentos.dto.ts
 import { IsOptional, IsEnum, IsString, IsInt } from 'class-validator';
-import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
+import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
 
 export class FiltroDocumentosDto {
   @IsOptional()

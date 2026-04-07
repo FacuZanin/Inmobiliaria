@@ -1,6 +1,6 @@
 // backend\src\common\decorators\profiles.decorator.ts
 import { SetMetadata } from '@nestjs/common';
-import { UserProfile } from '@shared/enums/user-profile.enum';
+import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 export const PROFILES_KEY = 'profiles';
 export const Profiles = (...profiles: UserProfile[]) =>

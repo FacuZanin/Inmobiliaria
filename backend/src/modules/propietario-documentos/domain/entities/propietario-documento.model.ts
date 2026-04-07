@@ -1,8 +1,8 @@
 // backend\src\modules\propietario-documentos\domain\entities\propietario-documento.model.ts
 
 import { Owner } from './owner';
-import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
-import { TipoDocumentoPropietario } from '@shared/enums/tipo-documento-propietario.enum';
+import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
+import { TipoDocumentoPropietario } from '@shared/contracts/enums/tipo-documento-propietario.enum';
 export class PropietarioDocumentoModel {
   constructor(
     public id: number | null,

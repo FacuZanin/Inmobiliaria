@@ -6,8 +6,8 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
-import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
+import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum';
+import { DocumentoAuditAction } from '@shared/contracts/enums/documento-audit-action.enum';
 
 @Entity('documento_audit')
 export class DocumentoAudit {

@@ -2,7 +2,7 @@
 import { Controller, Post, Body, Get, Param, Patch } from '@nestjs/common';
 
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
-import { UserRole } from '@shared/enums/user-role.enum';
+import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
 import { CreateAgenciaDto } from '../../application/dto/create-agencia.dto';
 import { UpdateAgenciaDto } from '../../application/dto/update-agencia.dto';

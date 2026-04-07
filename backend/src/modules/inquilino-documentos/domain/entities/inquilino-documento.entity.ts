@@ -8,10 +8,10 @@ import {
 } from 'typeorm';
 
 import { Inquilino } from '../../../inquilinos/domain/entities/inquilino.entity';
-import { DocumentoEstado} from '@shared/enums/documento-estado.enum';
+import { DocumentoEstado} from '@shared/contracts/enums/documento-estado.enum';
 
-import { DocumentoAuditAction } from '@shared/enums/documento-audit-action.enum';
-import { TipoDocumentoInquilino } from '@shared/enums/tipo-documento-inquilino.enum';
+import { DocumentoAuditAction } from '@shared/contracts/enums/documento-audit-action.enum';
+import { TipoDocumentoInquilino } from '@shared/contracts/enums/tipo-documento-inquilino.enum';
 
 @Entity('inquilino_documentos')
 export class InquilinoDocumento {

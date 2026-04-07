@@ -2,8 +2,8 @@
 
 import { Propiedad } from '../entities/propiedad.entity';
 
-import { PropiedadTipo } from '@shared/enums/propiedad-tipo.enum';
-import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
+import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
+import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 
 import { PropertyAggregate } from '../../../../domain/entities/property.aggregate';
 import { AddressVO } from '../../../../domain/value-objects/address.vo';

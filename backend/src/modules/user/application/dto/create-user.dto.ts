@@ -9,8 +9,8 @@ import {
   Validate,
 } from 'class-validator';
 
-import { UserRole } from '@shared/enums/user-role.enum';
-import { UserProfile } from '@shared/enums/user-profile.enum';
+import { UserRole } from '@shared/contracts/enums/user-role.enum';
+import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 import { IsPositiveInteger } from '../../../../shared/utils/validators/is-positive-integer.validator';
 import { IsNonEmptyString } from '../../../../shared/utils/validators/is-non-empty-string.validator';

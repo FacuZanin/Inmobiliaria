@@ -7,7 +7,7 @@ import {
   Inject,
 } from '@nestjs/common';
 
-import { DocumentoEstado } from '@shared/enums/documento-estado.enum';
+import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
 import type { User } from '../../../user/domain/entities/user.entity';
 import type { FileStoragePort } from '../../../uploads/application/ports/file-storage.port';
 import type { PropietarioDocumentosRepositoryPort } from '../ports/propietario-documentos-repository.port';

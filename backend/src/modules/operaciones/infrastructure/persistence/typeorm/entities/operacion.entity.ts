@@ -9,9 +9,9 @@ import {
 import { Propiedad } from '../../../../../propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
 import { Agencia } from '../../../../../agencias/domain/entities/agencia.entity';
-import { MedioOperacion} from '@shared/enums/medio-operacion.enum';
-import { OperacionTipo } from '@shared/enums/operacion-tipo.enum';
-import { OperacionEstado } from '@shared/enums/operacion-estado.enum';
+import { MedioOperacion} from '@shared/contracts/enums/medio-operacion.enum';
+import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
+import { OperacionEstado } from '@shared/contracts/enums/operacion-estado.enum';
 
 @Entity('operaciones')
 export class Operacion {

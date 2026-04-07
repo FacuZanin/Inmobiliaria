@@ -5,7 +5,7 @@ import { DOCUMENTO_AUDIT_REPOSITORY_PORT } from '../ports/documento-audit-reposi
 
 import type { DocumentoAuditRepositoryPort } from '../ports/documento-audit-repository.port';
 
-import { DocumentoTipo } from '@shared/enums/documento-tipo.enum';
+import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum';
 import { DocumentoTipoVO } from '../../domain/value-objects/documento-tipo.vo';
 import { DocumentoIdVO } from '../../domain/value-objects/documento-id.vo';
 

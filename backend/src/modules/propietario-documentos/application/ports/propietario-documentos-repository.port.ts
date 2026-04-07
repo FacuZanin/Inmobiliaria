@@ -1,7 +1,7 @@
 // backend\src\modules\propietario-documentos\application\ports\propietario-documentos-repository.port.ts
 import type { PropietarioDocumentoModel } from '../../domain/entities/propietario-documento.model';
 import type { Owner } from '../../domain/entities/owner';
-import { TipoDocumentoPropietario } from '@shared/enums/tipo-documento-propietario.enum';
+import { TipoDocumentoPropietario } from '@shared/contracts/enums/tipo-documento-propietario.enum';
 
 export interface PropietarioDocumentosRepositoryPort {
   findOwnerById(ownerId: number): Promise<Owner | null>;
