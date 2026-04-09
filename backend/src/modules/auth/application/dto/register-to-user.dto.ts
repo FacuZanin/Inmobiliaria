@@ -4,12 +4,12 @@ import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
 export class RegisterToUserDto {
-  nombre: string;
-  apellido: string;
-  email: string;
-  password: string;
-  role: UserRole;
-  profile: UserProfile;
-  status: UserStatus;
+  nombre!: string;
+  apellido!: string;
+  email!: string;
+  password!: string;
+  role!: UserRole;
+  profile!: UserProfile;
+  status!: UserStatus;
   agenciaId?: number;
 }

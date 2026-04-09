@@ -1,28 +1,21 @@
-// backend/src/modules/auth/application/use-cases/register.usecase.ts
-
+//backend\src\modules\auth\application\use-cases\register.usecase.ts
 import {
   Inject,
   Injectable,
   ConflictException,
-  ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { RegisterDto } from '../dto/register.dto';
-import { RegisterToUserDto } from '../dto/register-to-user.dto';
 
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 import { USER_REPOSITORY } from '../../../user/application/tokens';
 import { PASSWORD_HASHER } from '../tokens';
-import { AGENCIAS_REPOSITORY } from '@/modules/agencias/application/tokens';
 
-import { RegistrationPolicy } from '../../domain/policies/registration-policy';
 import { Password } from '../../domain/value-objects/password.vo';
 import { Email } from '../../domain/value-objects/email.vo';
-
-import { SolicitarAgenciaUseCase } from '@/modules/agencias/application/use-cases/solicitar-agencia.usecase';
 
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 import type { PasswordHasherPort } from '../ports/password-hasher.port';
@@ -35,51 +28,36 @@ export class RegisterUseCase {
 
     @Inject(PASSWORD_HASHER)
     private readonly hasher: PasswordHasherPort,
-
-    private readonly solicitarAgenciaUseCase: SolicitarAgenciaUseCase,
   ) {}
 
   async execute(dto: RegisterDto) {
+    // 🔥 Validaciones de igualdad (correcto lugar)
+    if (dto.email !== dto.repeatEmail) {
+      throw new BadRequestException('Los emails no coinciden');
+    }
+
+    if (dto.password !== dto.repeatPassword) {
+      throw new BadRequestException('Las contraseñas no coinciden');
+    }
+
     const exists = await this.users.findByEmail(dto.email);
     if (exists) {
       throw new ConflictException('El email ya está registrado');
     }
 
-    if (!RegistrationPolicy.canRegister(dto.profile)) {
-      throw new ForbiddenException('Perfil no permitido');
-    }
-    const nombreAgencia =
-      dto.profile === UserProfile.AGENCIA ? dto.nombreAgencia : undefined;
     const email = Email.create(dto.email);
     const password = await Password.create(dto.password, this.hasher);
 
-    const userToCreate: RegisterToUserDto = {
+    const user = await this.users.create({
       email: email.value,
       password: password.value,
-      nombre: dto.nombre,
-      apellido: dto.apellido,
-      profile: dto.profile,
       role: UserRole.USER,
-      status: UserStatus.ACTIVE,
-    };
-
-    const user = await this.users.create(userToCreate);
-
-    if (dto.profile === UserProfile.AGENCIA) {
-      if (!nombreAgencia) {
-        throw new ConflictException('Nombre de agencia requerido');
-      }
-
-      await this.solicitarAgenciaUseCase.execute({
-        nombre: nombreAgencia,
-        userId: user.id,
-      });
-    }
+      profile: null,
+    });
 
     return {
       id: user.id,
       email: user.email,
-      profile: user.profile,
       status: user.status,
     };
   }

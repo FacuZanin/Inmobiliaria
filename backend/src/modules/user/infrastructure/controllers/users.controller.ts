@@ -30,6 +30,9 @@ import { UpdateUserAdminDto } from '../../application/dto/update-user-admin.dto'
 import { UpdateMyProfileDto } from '../../application/dto/update-my-profile.dto';
 import { UserFiltersDto } from '../../application/dto/user-filters.dto';
 
+import { CompleteProfileUseCase } from '../../application/use-cases/complete-profile.usecase';
+import { CompleteProfileDto } from '../../application/dto/complete-profile.dto';
+
 import { User } from '../../domain/entities/user.entity';
 
 @Controller('users')
@@ -40,6 +43,7 @@ export class UsersController {
     private readonly updateMyProfileUC: UpdateMyProfileUseCase,
     private readonly restoreUserUC: RestoreUserUseCase,
     private readonly listUsersUC: ListUsersUseCase,
+    private readonly completeProfileUC: CompleteProfileUseCase,
   ) {}
 
   @Get('me')
@@ -88,4 +92,13 @@ export class UsersController {
   restore(@Param('id') id: string) {
     return this.restoreUserUC.execute(+id);
   }
+
+  @Patch('complete-profile')
+@Auth()
+completeProfile(
+  @CurrentUser() user: User,
+  @Body() dto: CompleteProfileDto,
+) {
+  return this.completeProfileUC.execute(user.id, dto);
+}
 }

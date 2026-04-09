@@ -9,4 +9,5 @@ export interface AgenciasRepositoryPort {
   create(data: CreateAgenciaDto): Promise<Agencia>;
   update(id: number, data: UpdateAgenciaDto): Promise<Agencia>;
   delete(id: number): Promise<void>;
+  createBasic(data: { nombre: string }): Promise<Agencia>;
 }

@@ -69,4 +69,12 @@ export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
   async delete(id: number): Promise<void> {
     await this.repo.delete(id);
   }
+
+  async createBasic(data: { nombre: string }): Promise<Agencia> {
+    const agencia = this.repo.create({
+      nombre: data.nombre,
+    });
+
+    return this.repo.save(agencia);
+  }
 }

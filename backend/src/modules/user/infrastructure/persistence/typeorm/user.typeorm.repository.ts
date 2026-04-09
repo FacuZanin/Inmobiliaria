@@ -78,7 +78,9 @@ export class UserTypeOrmRepository implements UserRepositoryPort {
     }
 
     if (filters.isActive !== undefined) {
-      qb.andWhere('user.isActive = :isActive', { isActive: filters.isActive });
+     qb.andWhere('user.status = :status', {
+  status: filters.isActive ? 'ACTIVE' : 'INACTIVE',
+});
     }
 
     if (filters.search) {

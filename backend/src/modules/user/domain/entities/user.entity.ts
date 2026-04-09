@@ -6,6 +6,7 @@ import {
   ManyToOne,
   DeleteDateColumn,
   OneToMany,
+  CreateDateColumn,
 } from 'typeorm';
 
 import { Agencia } from '../../../agencias/domain/entities/agencia.entity';
@@ -19,55 +20,59 @@ import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-tok
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: 'varchar', length: 150, unique: true })
-  email: string;
+  email!: string;
 
   @Column({ type: 'varchar', length: 255 })
-  password: string;
+  password!: string;
 
   @Column({
     type: 'enum',
     enum: UserRole,
     default: UserRole.USER,
   })
-  role: UserRole;
+  role!: UserRole;
 
   @Column({
     type: 'enum',
     enum: UserProfile,
+    nullable: true,
   })
-  profile: UserProfile;
+  profile!: UserProfile | null;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  nombre: string | null;
+  nombre!: string | null;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  apellido: string | null;
+  apellido!: string | null;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  telefono: string | null;
+  telefono!: string | null;
 
   @ManyToOne(() => Agencia, {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  agencia: Agencia | null;
+  agencia!: Agencia | null;
 
   @Column({
     type: 'enum',
     enum: UserStatus,
     default: UserStatus.ACTIVE,
   })
-  status: UserStatus;
+  status!: UserStatus;
 
   @DeleteDateColumn()
   deletedAt?: Date;
 
   @Column({ default: 0 })
-  tokenVersion: number;
+  tokenVersion!: number;
 
   @OneToMany(() => RefreshToken, (token) => token.user)
-  refreshTokens: RefreshToken[];
+  refreshTokens!: RefreshToken[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }

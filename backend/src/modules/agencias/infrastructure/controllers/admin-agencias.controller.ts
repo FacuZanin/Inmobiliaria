@@ -1,5 +1,13 @@
 // backend\src\modules\agencias\infrastructure\controllers\admin-agencias.controller.ts
-import { Controller, Post, Body, Get, Param, Patch, UseGuards, } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
@@ -22,7 +30,6 @@ import { RolesGuard } from '../../../../shared/security/guards/roles.guard';
 import { ProfilesGuard } from '../../../../shared/security/guards/profiles.guard';
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 
-
 @UseGuards(JwtAuthGuard, RolesGuard, ProfilesGuard)
 @Auth(UserRole.SUPERADMIN)
 @Profiles(UserProfile.AGENCIA)
@@ -36,13 +43,9 @@ export class AdminAgenciasController {
   ) {}
 
   @Post('solicitar')
-  @Profiles(
-    UserProfile.PROPIETARIO,
-    UserProfile.INQUILINO,
-    UserProfile.AGENCIA,
-  )
+  @Profiles(UserProfile.PROPIETARIO, UserProfile.INQUILINO, UserProfile.AGENCIA)
   solicitar(@Body() dto: SolicitudAgenciaDto, @CurrentUser() user: User) {
-    return this.solicitarUC.execute(dto, user);
+    return this.solicitarUC.execute(dto, user.id);
   }
 
   @Get('solicitudes')

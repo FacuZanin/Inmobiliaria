@@ -64,7 +64,6 @@ export class AuthController {
   register(@Body() dto: RegisterDto) {
     return this.registerUC.execute({
       ...dto,
-      profile: UserProfile.INQUILINO,
     });
   }
 
