@@ -10,18 +10,25 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+async canActivate(context: ExecutionContext): Promise<boolean> {
+  const request = context.switchToHttp().getRequest();
 
-    if (isPublic) {
-      return true;
-    }
+  console.log('🔥 HEADERS:', request.headers);
 
-    const result = (await super.canActivate(context)) as boolean;
-    return result;
+  const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+    context.getHandler(),
+    context.getClass(),
+  ]);
+
+  if (isPublic) {
+    return true;
   }
+
+  const result = (await super.canActivate(context)) as boolean;
+
+  console.log('✅ JWT PASSED');
+
+  return result;
+}
 }
 console.log('JwtAuthGuard ejecutándose');

@@ -52,6 +52,7 @@ export class LoginUseCase {
       sub: user.id,
       role: user.role,
       profile: user.profile,
+      tokenVersion: await this.users.getTokenVersion(user.id),
     };
 
     // 🔐 ACCESS TOKEN (JWT)

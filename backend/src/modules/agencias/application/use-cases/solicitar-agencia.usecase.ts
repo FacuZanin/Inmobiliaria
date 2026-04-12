@@ -1,9 +1,16 @@
-// backend\src\modules\agencias\application\use-cases\solicitar-agencia.usecase.ts
 import { Injectable } from '@nestjs/common';
+import type { SolicitudAgenciaDto } from '../dto/solicitud-agencia.dto';
 
 @Injectable()
 export class SolicitarAgenciaUseCase {
-  execute(): never {
-    throw new Error('SolicitarAgenciaUseCase deshabilitado');
+  async execute(dto: SolicitudAgenciaDto, userId: number) {
+
+    return {
+      message: 'Solicitud enviada correctamente',
+      data: {
+        ...dto,
+        userId,
+      },
+    };
   }
 }

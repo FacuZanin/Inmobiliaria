@@ -1,5 +1,5 @@
 // backend\src\modules\agencias\agencias.module.ts
-import { Module } from '@nestjs/common';
+import { Module, forwardRef  } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../user/users.module';
 
@@ -32,7 +32,8 @@ import {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Agencia, AgenciaSolicitud, User,]),UsersModule
+  TypeOrmModule.forFeature([Agencia, AgenciaSolicitud, User]),
+  forwardRef(() => UsersModule),
   ],
   controllers: [
     AgenciasController,

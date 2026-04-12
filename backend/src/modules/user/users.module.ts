@@ -14,6 +14,9 @@ import { UpdateUserAdminUseCase } from './application/use-cases/update-user-admi
 import { UpdateMyProfileUseCase } from './application/use-cases/update-my-profile.usecase';
 import { RestoreUserUseCase } from './application/use-cases/restore-user.usecase';
 import { ListUsersUseCase } from './application/use-cases/list-users.usecase';
+import { CompleteProfileUseCase } from './application/use-cases/complete-profile.usecase';
+
+import { AgenciasModule } from '../agencias/agencias.module';
 
 import { USER_REPOSITORY } from './application/tokens';
 import { AuthModule } from '../auth/auth.module';
@@ -24,6 +27,7 @@ import { AuditModule } from '../audit/audit.module';
     TypeOrmModule.forFeature([User]),
     AuditModule,
     forwardRef(() => AuthModule),
+    forwardRef(() => AgenciasModule),
   ],
   controllers: [UsersController],
   providers: [
@@ -37,6 +41,7 @@ import { AuditModule } from '../audit/audit.module';
     UpdateMyProfileUseCase,
     RestoreUserUseCase,
     ListUsersUseCase,
+    CompleteProfileUseCase,
     FindUserByIdUseCase,
     FindUserByEmailUseCase,
   ],
