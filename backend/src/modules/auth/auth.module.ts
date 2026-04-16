@@ -33,6 +33,8 @@ import { TOKEN_SERVICE, PASSWORD_HASHER } from './application/tokens';
 import { UsersModule } from '../user/users.module';
 import { AgenciasModule } from '../agencias/agencias.module';
 
+const JWT_SECRET = process.env.JWT_SECRET;
+console.log('JWT_SECRET MODULE:', JWT_SECRET);
 @Module({
   imports: [
     forwardRef(() => UsersModule),

@@ -56,7 +56,6 @@ export class AuthController {
       },
     },
   })
-
   @Public()
   @Post('login')
   async login(
@@ -130,10 +129,10 @@ export class AuthController {
     return { success: true };
   }
 
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('perfil')
-  getPerfil() {
-    return { message: 'Perfil OK' };
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  getPerfil(@CurrentUser() user: any) {
+    return user;
   }
 }

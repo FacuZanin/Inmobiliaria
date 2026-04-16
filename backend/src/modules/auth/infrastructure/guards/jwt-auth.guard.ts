@@ -1,5 +1,8 @@
-// backend\src\modules\auth\infrastructure\guards\jwt-auth.guard.ts
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../../../../shared/security/decorators/public.decorator';
@@ -10,20 +13,26 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-async canActivate(context: ExecutionContext): Promise<boolean> {
-  const request = context.switchToHttp().getRequest();
+  canActivate(context: ExecutionContext) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
-  const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-    context.getHandler(),
-    context.getClass(),
-  ]);
+    if (isPublic) {
+      return true;
+    }
 
-  if (isPublic) {
-    return true;
+    return super.canActivate(context);
   }
 
-  const result = (await super.canActivate(context)) as boolean;
+  handleRequest(err, user, info) {
+    if (err || !user) {
+      // 🔥 esto te deja ver el error real
+      console.log('JWT ERROR:', err, info);
+      throw err || new UnauthorizedException();
+    }
 
-  return result;
-}
+    return user;
+  }
 }
