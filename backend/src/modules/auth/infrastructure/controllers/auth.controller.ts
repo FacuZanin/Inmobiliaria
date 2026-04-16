@@ -112,7 +112,8 @@ export class AuthController {
       access_token,
     };
   }
-
+  
+  @ApiBearerAuth('access-token')
   @Auth()
   @Post('logout')
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {

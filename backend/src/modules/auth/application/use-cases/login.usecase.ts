@@ -17,7 +17,7 @@ import { RefreshTokenService } from '../services/refresh-token.service';
 export class LoginUseCase {
   constructor(
     @Inject(USER_REPOSITORY)
-    private readonly users: UserRepositoryPort,
+    private readonly userRepo: UserRepositoryPort,
 
     @Inject(PASSWORD_HASHER)
     private readonly hasher: PasswordHasherPort,
@@ -29,7 +29,7 @@ export class LoginUseCase {
   ) {}
 
   async execute(dto: LoginDto) {
-    const user = await this.users.findByEmail(dto.email);
+    const user = await this.userRepo.findByEmail(dto.email);
 
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
@@ -52,7 +52,7 @@ export class LoginUseCase {
       sub: user.id,
       role: user.role,
       profile: user.profile,
-      tokenVersion: await this.users.getTokenVersion(user.id),
+      tokenVersion: await this.userRepo.getTokenVersion(user.id),
     };
 
     // 🔐 ACCESS TOKEN (JWT)

@@ -9,7 +9,10 @@ import {
   UseInterceptors,
   Query,
   Get,
+  UseGuards,
 } from '@nestjs/common';
+
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
@@ -18,6 +21,8 @@ import { Audit } from '../../../../shared/security/decorators/audit.decorator';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { AuditAction } from '@shared/contracts/enums/audit-action.enum';
 import { AuditEntity } from '@shared/contracts/enums/audit-entity.enum';
+
+import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 
 import { CreateUserUseCase } from '../../application/use-cases/create-user.usecase';
 import { UpdateUserAdminUseCase } from '../../application/use-cases/update-user-admin.usecase';
@@ -46,9 +51,10 @@ export class UsersController {
     private readonly completeProfileUC: CompleteProfileUseCase,
   ) {}
 
-  @Get('me')
+  @ApiBearerAuth('access-token')
   @Auth()
-  getMe(@CurrentUser() user: User) {
+  @Get('me')
+  getMe(@CurrentUser() user) {
     return user;
   }
 
@@ -94,11 +100,8 @@ export class UsersController {
   }
 
   @Patch('complete-profile')
-@Auth()
-completeProfile(
-  @CurrentUser() user: User,
-  @Body() dto: CompleteProfileDto,
-) {
-  return this.completeProfileUC.execute(user.id, dto);
-}
+  @Auth()
+  completeProfile(@CurrentUser() user: User, @Body() dto: CompleteProfileDto) {
+    return this.completeProfileUC.execute(user.id, dto);
+  }
 }
