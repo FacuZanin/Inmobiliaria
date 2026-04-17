@@ -60,10 +60,16 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() dto: LoginDto,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token, refresh_token, user } =
-      await this.loginUC.execute(dto);
+    const ip = req.ip;
+    const userAgent = req.headers['user-agent'];
+
+    const { access_token, refresh_token, user } = await this.loginUC.execute(
+      dto,
+      { ip, userAgent },
+    );
 
     res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
@@ -112,16 +118,16 @@ export class AuthController {
       access_token,
     };
   }
-  
-  @ApiBearerAuth('access-token')
-  @Auth()
-  @Post('logout')
-  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const token = req.cookies['refresh_token'];
 
-    if (token) {
-      await this.refreshTokenService.revoke(token);
-    }
+  @Post('logout')
+  @Auth()
+  @ApiBearerAuth('access-token')
+  async logout(
+    @CurrentUser() user: any,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.refreshTokenService.revokeAllUserTokens(user.id);
 
     res.clearCookie('refresh_token', {
       path: '/auth/refresh',

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-
+import { randomUUID } from 'crypto';
 import { TOKEN_SERVICE } from '../tokens';
 import { RefreshTokenService } from '../services/refresh-token.service';
 
@@ -28,7 +28,7 @@ export class RefreshTokenUseCase {
       sub: user.id,
       role: user.role,
       profile: user.profile,
-      tokenVersion: await this.userRepo.getTokenVersion(user.id),
+      jti: randomUUID(),
     });
 
     return {

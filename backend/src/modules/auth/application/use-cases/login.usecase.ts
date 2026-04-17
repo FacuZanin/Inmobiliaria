@@ -1,6 +1,8 @@
 // backend\src\modules\auth\application\use-cases\login.usecase.ts
 import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 
+import { randomUUID } from 'crypto';
+
 import { LoginDto } from '../dto/login.dto';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
@@ -28,7 +30,7 @@ export class LoginUseCase {
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
-  async execute(dto: LoginDto) {
+  async execute(dto: LoginDto, metadata?: { ip?: string; userAgent?: string }) {
     const user = await this.userRepo.findByEmail(dto.email);
 
     if (!user) {
@@ -52,14 +54,14 @@ export class LoginUseCase {
       sub: user.id,
       role: user.role,
       profile: user.profile,
-      tokenVersion: await this.userRepo.getTokenVersion(user.id),
+      jti: randomUUID(),
     };
 
     // 🔐 ACCESS TOKEN (JWT)
     const accessToken = await this.tokenService.sign(payload);
 
     // 🔁 REFRESH TOKEN (DB)
-    const refreshToken = await this.refreshTokenService.create(user);
+    const refreshToken = await this.refreshTokenService.create(user, metadata);
 
     return {
       access_token: accessToken,

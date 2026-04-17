@@ -26,19 +26,24 @@ export class RefreshTokenService {
   }
 
   // 💾 guardar token en DB
-  async create(user: User): Promise<string> {
+  async create(
+    user: User,
+    metadata?: { ip?: string; userAgent?: string },
+  ): Promise<string> {
     const refreshToken = this.generateToken();
     const tokenHash = this.hashToken(refreshToken);
 
     const entity = this.repo.create({
       tokenHash,
       user,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      ip: metadata?.ip,
+      userAgent: metadata?.userAgent,
     });
 
     await this.repo.save(entity);
 
-    return refreshToken; // 🔴 se devuelve SOLO una vez
+    return refreshToken;
   }
 
   // 🔍 validar token
@@ -66,7 +71,9 @@ export class RefreshTokenService {
   }
 
   // 🔁 ROTACIÓN
-  async rotate(oldToken: string): Promise<{ refreshToken: string; user: User }> {
+  async rotate(
+    oldToken: string,
+  ): Promise<{ refreshToken: string; user: User }> {
     const storedToken = await this.validate(oldToken);
 
     // detectar reuse (ataque)
@@ -88,6 +95,8 @@ export class RefreshTokenService {
       tokenHash: this.hashToken(newRefreshToken),
       user: storedToken.user,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      ip: storedToken.ip,
+      userAgent: storedToken.userAgent,
     });
 
     await this.repo.save(newTokenEntity);
@@ -102,10 +111,7 @@ export class RefreshTokenService {
   async revoke(token: string): Promise<void> {
     const hashed = this.hashToken(token);
 
-    await this.repo.update(
-      { tokenHash: hashed },
-      { revoked: true },
-    );
+    await this.repo.update({ tokenHash: hashed }, { revoked: true });
   }
 
   // 🔥 logout global / seguridad
