@@ -1,12 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+
 import { TOKEN_SERVICE } from '../tokens';
 import { RefreshTokenService } from '../services/refresh-token.service';
 
-import { USER_REPOSITORY } from '@/modules/user/application/tokens';
-
 import type { TokenServicePort } from '../ports/token-service.port';
-import type { UserRepositoryPort } from '@/modules/user/application/ports/user-repository.port';
 
 @Injectable()
 export class RefreshTokenUseCase {
@@ -15,9 +12,6 @@ export class RefreshTokenUseCase {
 
     @Inject(TOKEN_SERVICE)
     private readonly tokenService: TokenServicePort,
-
-    @Inject(USER_REPOSITORY)
-    private readonly userRepo: UserRepositoryPort,
   ) {}
 
   async execute(oldRefreshToken: string) {
@@ -28,7 +22,7 @@ export class RefreshTokenUseCase {
       sub: user.id,
       role: user.role,
       profile: user.profile,
-      jti: randomUUID(),
+      tokenVersion: user.tokenVersion,
     });
 
     return {

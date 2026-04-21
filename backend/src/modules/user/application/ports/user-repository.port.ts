@@ -8,7 +8,7 @@ export interface UserRepositoryPort {
   findByEmail(email: string): Promise<User | null>;
   findByIdIncludingDeleted(id: number): Promise<User | null>;
   create(data: CreateUserDto): Promise<User>;
-  update(id: number, data: UpdateUserDto): Promise<User>;
+  update(id: number, data: Partial<User>): Promise<User>;
   save(user: User): Promise<User>;
   softDelete(id: number): Promise<void>;
   restore(id: number): Promise<void>;

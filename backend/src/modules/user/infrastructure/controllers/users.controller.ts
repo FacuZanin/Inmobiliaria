@@ -101,7 +101,8 @@ export class UsersController {
 
   @Patch('complete-profile')
   @Auth()
-  completeProfile(@CurrentUser() user: User, @Body() dto: CompleteProfileDto) {
+  completeProfile(@CurrentUser() user: User, 
+  @Body() dto: CompleteProfileDto) {
     return this.completeProfileUC.execute(user.id, dto);
   }
 }

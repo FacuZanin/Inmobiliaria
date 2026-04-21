@@ -1,8 +1,6 @@
 // backend\src\modules\auth\application\use-cases\login.usecase.ts
 import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 
-import { randomUUID } from 'crypto';
-
 import { LoginDto } from '../dto/login.dto';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
@@ -54,7 +52,7 @@ export class LoginUseCase {
       sub: user.id,
       role: user.role,
       profile: user.profile,
-      jti: randomUUID(),
+      tokenVersion: user.tokenVersion,
     };
 
     // 🔐 ACCESS TOKEN (JWT)

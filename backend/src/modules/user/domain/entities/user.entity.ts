@@ -75,4 +75,7 @@ export class User {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column({ type: 'varchar', nullable: true })
+  refreshTokenHash!: string | null;
 }
