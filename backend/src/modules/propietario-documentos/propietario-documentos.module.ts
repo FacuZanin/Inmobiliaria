@@ -1,6 +1,7 @@
 // backend\src\modules\propietario-documentos\propietario-documentos.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
 
 import { PropietarioDocumentosController } from './infrastructure/controllers/propietario-documentos.controller';
 
@@ -11,6 +12,7 @@ import { Propiedad } from '../propiedades/infrastructure/persistence/typeorm/ent
 import { PropietarioDocumentosTypeOrmRepository } from './infrastructure/persistence/typeorm/propietario-documentos.typeorm.repository';
 
 import { UploadsModule } from '../uploads/uploads.module';
+import { AuthModule } from '../auth/auth.module';
 
 import { SubirDocumentoPropietarioUseCase } from './application/use-cases/subir-documento.usecase';
 import { CambiarEstadoDocumentoPropietarioUseCase } from './application/use-cases/cambiar-estado.usecase';
@@ -23,6 +25,7 @@ import { PROPIETARIO_DOCUMENTOS_REPOSITORY } from './application/tokens';
   imports: [
     TypeOrmModule.forFeature([PropietarioDocumento, User, Propiedad]),
     UploadsModule,
+    AuthModule,
   ],
   controllers: [PropietarioDocumentosController],
   providers: [

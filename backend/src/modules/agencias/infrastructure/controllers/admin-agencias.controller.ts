@@ -25,12 +25,10 @@ import { ListarSolicitudesUseCase } from '../../application/use-cases/listar-sol
 import { AprobarSolicitudAgenciaUseCase } from '../../application/use-cases/aprobar-solicitud-agencia.usecase';
 import { RechazarSolicitudAgenciaUseCase } from '../../application/use-cases/rechazar-solicitud-agencia.usecase';
 
-import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../shared/security/guards/roles.guard';
 import { ProfilesGuard } from '../../../../shared/security/guards/profiles.guard';
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 
-@UseGuards(JwtAuthGuard, RolesGuard, ProfilesGuard)
 @Auth(UserRole.SUPERADMIN)
 @Profiles(UserProfile.AGENCIA)
 @Controller('admin/agencias')

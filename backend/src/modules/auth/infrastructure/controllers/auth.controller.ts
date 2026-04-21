@@ -137,7 +137,6 @@ export class AuthController {
   }
 
   @Get('perfil')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   getPerfil(@CurrentUser() user: any) {
     return user;

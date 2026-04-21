@@ -12,6 +12,7 @@ export class UserMapper {
       status: user.status,
       nombre: user.nombre,
       apellido: user.apellido,
+      tokenVersion: user.tokenVersion,
     };
   }
 }

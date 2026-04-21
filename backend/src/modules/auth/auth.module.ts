@@ -3,7 +3,8 @@ import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { APP_GUARD } from '@nestjs/core';
+import { Global } from '@nestjs/common';
 
 import { AuthController } from './infrastructure/controllers/auth.controller';
 
@@ -23,7 +24,6 @@ import { RefreshToken } from './infrastructure/entities/refresh-token.entity';
 
 // Guards / Strategy
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
-import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../shared/security/guards/roles.guard';
 
 // Ports
@@ -35,6 +35,7 @@ import { AgenciasModule } from '../agencias/agencias.module';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 console.log('JWT_SECRET MODULE:', JWT_SECRET);
+@Global()
 @Module({
   imports: [
     forwardRef(() => UsersModule),
@@ -50,7 +51,7 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
   controllers: [AuthController],
 
   providers: [
-
+    
     RefreshTokenService,
     // Use cases
     LoginUseCase,
@@ -60,8 +61,8 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
 
     // Security
     JwtStrategy,
-    JwtAuthGuard,
     RolesGuard,
+    
 
     // Services
     {
@@ -75,7 +76,6 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
   ],
 
   exports: [
-    JwtAuthGuard,
     PassportModule,
     RefreshTokenService,
   ],
