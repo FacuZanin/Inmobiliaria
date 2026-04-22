@@ -116,9 +116,12 @@ export class RefreshTokenService {
 
   // 🔥 logout global / seguridad
   async revokeAllUserTokens(userId: number): Promise<void> {
-    await this.repo.update(
-      { user: { id: userId }, revoked: false },
-      { revoked: true },
-    );
+    await this.repo
+      .createQueryBuilder()
+      .update()
+      .set({ revoked: true })
+      .where('userId = :userId', { userId })
+      .andWhere('revoked = false')
+      .execute();
   }
 }

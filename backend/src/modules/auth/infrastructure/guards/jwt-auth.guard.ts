@@ -11,6 +11,7 @@ import { FindUserByIdUseCase } from '@/modules/user/application/use-cases/find-u
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../../../../shared/security/decorators/public.decorator';
+import { ALLOW_INCOMPLETE_PROFILE } from '@/shared/security/decorators/allow-incomplete-profile.decorator';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -44,24 +45,23 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!dbUser) {
       throw new UnauthorizedException('Usuario no existe');
     }
-
+    console.log('TOKEN:', user);
+    console.log('DB USER:', dbUser);
     if (dbUser.tokenVersion !== user.tokenVersion) {
       throw new UnauthorizedException('Token inválido');
     }
 
     // 🚨 BLOQUEO PERFIL
+    const allowIncomplete = this.reflector.getAllAndOverride<boolean>(
+      ALLOW_INCOMPLETE_PROFILE,
+      [context.getHandler(), context.getClass()],
+    );
+
     if (!user.role || !user.profile) {
-      const allowedRoutes = ['/users/complete-profile', '/auth/refresh'];
-
-      const isAllowed = allowedRoutes.some((route) =>
-        request.url.includes(route),
-      );
-
-      if (!isAllowed) {
+      if (!allowIncomplete) {
         throw new ForbiddenException('Debe completar su perfil');
       }
     }
-
     return result;
   }
 

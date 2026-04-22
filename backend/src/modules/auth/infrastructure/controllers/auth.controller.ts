@@ -15,6 +15,7 @@ import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../../../../shared/security/decorators/public.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
+import { AllowIncompleteProfile } from '@/shared/security/decorators/allow-incomplete-profile.decorator';
 
 import { LoginDto } from '../../application/dto/login.dto';
 import { RegisterDto } from '../../application/dto/register.dto';
@@ -27,8 +28,6 @@ import { RefreshTokenUseCase } from '../../application/use-cases/refresh-token.u
 
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 import { USER_REPOSITORY } from '../../../user/application/tokens';
-
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -120,6 +119,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @AllowIncompleteProfile()
   @Auth()
   @ApiBearerAuth('access-token')
   async logout(

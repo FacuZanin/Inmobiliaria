@@ -42,6 +42,10 @@ export class RefreshToken {
   })
   user!: User;
 
+  @Column()
+  @Index()
+  userId!: number;
+
   @Column({ nullable: true })
   ip?: string;
 
