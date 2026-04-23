@@ -16,6 +16,7 @@ import { PropiedadesModule } from './modules/propiedades/propiedades.module';
 import { OperacionesModule } from './modules/operaciones/operaciones.module';
 import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { SecurityModule } from './shared/security/security.module';
 
 // GLOBALS
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
@@ -64,6 +65,9 @@ import { HealthModule } from './health/health.module';
     OperacionesModule,
     InquilinosModule,
     UploadsModule,
+
+    // Security
+    SecurityModule,
   ],
   controllers: [
     AppController,

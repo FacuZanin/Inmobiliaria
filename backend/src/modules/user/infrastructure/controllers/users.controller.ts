@@ -6,13 +6,11 @@ import {
   Body,
   Param,
   ParseIntPipe,
-  UseInterceptors,
   Query,
   Get,
-  UseGuards,
 } from '@nestjs/common';
 
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
@@ -39,6 +37,7 @@ import { CompleteProfileDto } from '../../application/dto/complete-profile.dto';
 
 import { User } from '../../domain/entities/user.entity';
 
+@ApiBearerAuth('access-token')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -50,7 +49,7 @@ export class UsersController {
     private readonly completeProfileUC: CompleteProfileUseCase,
   ) {}
 
-  @ApiBearerAuth('access-token')
+
   @Auth()
   @Get('me')
   getMe(@CurrentUser() user) {
@@ -58,7 +57,6 @@ export class UsersController {
   }
 
   // 🛡️ SOLO SUPERADMIN
-
   @Get()
   @Auth(UserRole.SUPERADMIN)
   findAll(@Query() filters: UserFiltersDto) {
@@ -99,10 +97,9 @@ export class UsersController {
   }
 
   @Patch('complete-profile')
-  @Auth()
   @AllowIncompleteProfile()
-  completeProfile(@CurrentUser() user: User, 
-  @Body() dto: CompleteProfileDto) {
+  @Auth()
+  completeProfile(@CurrentUser() user: User, @Body() dto: CompleteProfileDto) {
     return this.completeProfileUC.execute(user.id, dto);
   }
 }

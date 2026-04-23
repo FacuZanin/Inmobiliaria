@@ -23,47 +23,55 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     console.log('✅ NUEVO JwtAuthGuard cargado');
   }
 
-  async canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+async canActivate(context: ExecutionContext) {
+  const request = context.switchToHttp().getRequest();
+  console.log('HEADERS:', request.headers);
 
-    if (isPublic) {
-      return true;
-    }
+  // 🔓 ENDPOINT PUBLICO
+  const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+    context.getHandler(),
+    context.getClass(),
+  ]);
 
-    // 👇 ejecuta el guard original
-    const result = (await super.canActivate(context)) as boolean;
+  if (isPublic) {
+    return true;
+  }
 
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
+  // 👇 Ejecuta JWT
+  const result = (await super.canActivate(context)) as boolean;
+  const user = request.user;
 
-    // 🔥 VALIDACIÓN tokenVersion
-    const dbUser = await this.findUserByIdUseCase.execute(user.sub);
+  // 🔥 VALIDAR USUARIO EN DB
+  const dbUser = await this.findUserByIdUseCase.execute(user.sub);
 
-    if (!dbUser) {
-      throw new UnauthorizedException('Usuario no existe');
-    }
-    console.log('TOKEN:', user);
-    console.log('DB USER:', dbUser);
-    if (dbUser.tokenVersion !== user.tokenVersion) {
-      throw new UnauthorizedException('Token inválido');
-    }
+  if (!dbUser) {
+    throw new UnauthorizedException('Usuario no existe');
+  }
 
-    // 🚨 BLOQUEO PERFIL
-    const allowIncomplete = this.reflector.getAllAndOverride<boolean>(
+  console.log('TOKEN:', user);
+  console.log('DB USER:', dbUser);
+
+  // 🔐 tokenVersion
+  if (dbUser.tokenVersion !== user.tokenVersion) {
+    throw new UnauthorizedException('Token inválido');
+  }
+
+  // 🧠 METADATA (LA CLAVE)
+  const allowIncomplete =
+    this.reflector.getAllAndOverride<boolean>(
       ALLOW_INCOMPLETE_PROFILE,
       [context.getHandler(), context.getClass()],
     );
 
-    if (!user.role || !user.profile) {
-      if (!allowIncomplete) {
-        throw new ForbiddenException('Debe completar su perfil');
-      }
-    }
-    return result;
+  console.log('ALLOW_INCOMPLETE:', allowIncomplete);
+
+  // 🚨 BLOQUEO SOLO SI NO ESTÁ PERMITIDO
+  if (!user.profile && !allowIncomplete) {
+    throw new ForbiddenException('Debe completar su perfil');
   }
+
+  return result;
+}
 
   handleRequest(err, user, info, context: ExecutionContext) {
     if (err || !user) {

@@ -24,6 +24,7 @@ import { RefreshToken } from './infrastructure/entities/refresh-token.entity';
 
 // Guards / Strategy
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
+import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../shared/security/guards/roles.guard';
 
 // Ports
@@ -62,7 +63,13 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
     // Security
     JwtStrategy,
     RolesGuard,
-    
+    JwtAuthGuard,
+
+    // 👇 GUARD GLOBAL
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
 
     // Services
     {
