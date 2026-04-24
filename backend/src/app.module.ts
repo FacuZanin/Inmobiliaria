@@ -69,9 +69,7 @@ import { HealthModule } from './health/health.module';
     // Security
     SecurityModule,
   ],
-  controllers: [
-    AppController,
-  ],
+  controllers: [AppController],
   providers: [
     // 🔐 AUTH GLOBAL
     {
@@ -80,11 +78,11 @@ import { HealthModule } from './health/health.module';
     },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard,
+      useClass: ProfilesGuard,
     },
     {
       provide: APP_GUARD,
-      useClass: ProfilesGuard,
+      useClass: RolesGuard,
     },
 
     // PIPE GLOBAL

@@ -28,7 +28,7 @@ export class CompleteProfileUseCase {
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
     // 🔥 evitar re-onboarding
-    if (user.profile) {
+    if (user.profile !== null && user.profile !== undefined) {
       throw new BadRequestException('El perfil ya fue completado');
     }
 

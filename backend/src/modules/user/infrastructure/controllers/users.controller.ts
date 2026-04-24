@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Query,
   Get,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -48,7 +49,6 @@ export class UsersController {
     private readonly listUsersUC: ListUsersUseCase,
     private readonly completeProfileUC: CompleteProfileUseCase,
   ) {}
-
 
   @Auth()
   @Get('me')
@@ -96,9 +96,9 @@ export class UsersController {
     return this.restoreUserUC.execute(+id);
   }
 
-  @Patch('complete-profile')
   @AllowIncompleteProfile()
   @Auth()
+  @Patch('complete-profile')
   completeProfile(@CurrentUser() user: User, @Body() dto: CompleteProfileDto) {
     return this.completeProfileUC.execute(user.id, dto);
   }

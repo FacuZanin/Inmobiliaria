@@ -4,6 +4,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PROFILES_KEY } from '../decorators/profiles.decorator';
@@ -48,7 +49,7 @@ export class ProfilesGuard implements CanActivate {
     const user = request.user;
 
     if (!user) {
-      throw new ForbiddenException('No autenticado');
+      throw new UnauthorizedException('No autenticado');
     }
 
     if (!requiredProfiles.includes(user.profile)) {

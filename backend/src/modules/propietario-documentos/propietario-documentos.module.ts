@@ -13,6 +13,7 @@ import { PropietarioDocumentosTypeOrmRepository } from './infrastructure/persist
 
 import { UploadsModule } from '../uploads/uploads.module';
 import { AuthModule } from '../auth/auth.module';
+import { UsersModule } from '../user/users.module';
 
 import { SubirDocumentoPropietarioUseCase } from './application/use-cases/subir-documento.usecase';
 import { CambiarEstadoDocumentoPropietarioUseCase } from './application/use-cases/cambiar-estado.usecase';
@@ -26,6 +27,7 @@ import { PROPIETARIO_DOCUMENTOS_REPOSITORY } from './application/tokens';
     TypeOrmModule.forFeature([PropietarioDocumento, User, Propiedad]),
     UploadsModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [PropietarioDocumentosController],
   providers: [

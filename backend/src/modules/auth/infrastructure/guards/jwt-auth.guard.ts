@@ -23,55 +23,43 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     console.log('✅ NUEVO JwtAuthGuard cargado');
   }
 
-async canActivate(context: ExecutionContext) {
-  const request = context.switchToHttp().getRequest();
-  console.log('HEADERS:', request.headers);
+  async canActivate(context: ExecutionContext) {
+    const request = context.switchToHttp().getRequest();
+    console.log('HEADERS:', request.headers);
 
-  // 🔓 ENDPOINT PUBLICO
-  const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-    context.getHandler(),
-    context.getClass(),
-  ]);
+    // 🔓 ENDPOINT PUBLICO
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
-  if (isPublic) {
-    return true;
+    if (isPublic) {
+      return true;
+    }
+
+    // 👇 Ejecuta JWT
+    const result = (await super.canActivate(context)) as boolean;
+    const user = request.user;
+
+    // 🔥 VALIDAR USUARIO EN DB
+    const dbUser = await this.findUserByIdUseCase.execute(user.sub);
+
+    if (!dbUser) {
+      throw new UnauthorizedException('Usuario no existe');
+    }
+
+    request.user = dbUser;
+
+    console.log('TOKEN:', user);
+    console.log('DB USER:', dbUser);
+
+    // 🔐 tokenVersion
+    if (dbUser.tokenVersion !== user.tokenVersion) {
+      throw new UnauthorizedException('Token inválido');
+    }
+
+    return result;
   }
-
-  // 👇 Ejecuta JWT
-  const result = (await super.canActivate(context)) as boolean;
-  const user = request.user;
-
-  // 🔥 VALIDAR USUARIO EN DB
-  const dbUser = await this.findUserByIdUseCase.execute(user.sub);
-
-  if (!dbUser) {
-    throw new UnauthorizedException('Usuario no existe');
-  }
-
-  console.log('TOKEN:', user);
-  console.log('DB USER:', dbUser);
-
-  // 🔐 tokenVersion
-  if (dbUser.tokenVersion !== user.tokenVersion) {
-    throw new UnauthorizedException('Token inválido');
-  }
-
-  // 🧠 METADATA (LA CLAVE)
-  const allowIncomplete =
-    this.reflector.getAllAndOverride<boolean>(
-      ALLOW_INCOMPLETE_PROFILE,
-      [context.getHandler(), context.getClass()],
-    );
-
-  console.log('ALLOW_INCOMPLETE:', allowIncomplete);
-
-  // 🚨 BLOQUEO SOLO SI NO ESTÁ PERMITIDO
-  if (!user.profile && !allowIncomplete) {
-    throw new ForbiddenException('Debe completar su perfil');
-  }
-
-  return result;
-}
 
   handleRequest(err, user, info, context: ExecutionContext) {
     if (err || !user) {

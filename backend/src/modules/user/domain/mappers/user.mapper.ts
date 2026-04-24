@@ -5,7 +5,7 @@ import { UserId } from '../../../auth/domain/value-objects/user-id.vo';
 export class UserMapper {
   static toDomain(user: User) {
     return {
-      id: UserId.create(user.id),
+      id: user.id,
       email: user.email,
       role: user.role,
       profile: user.profile,

@@ -63,15 +63,8 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
     // Security
     JwtStrategy,
     RolesGuard,
-    JwtAuthGuard,
 
-    // 👇 GUARD GLOBAL
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
 
-    // Services
     {
       provide: TOKEN_SERVICE,
       useClass: JwtTokenService,
