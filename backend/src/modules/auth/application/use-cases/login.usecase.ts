@@ -52,7 +52,6 @@ export class LoginUseCase {
       sub: user.id,
       email: user.email,
       role: user.role,
-      profile: user.profile,
       tokenVersion: user.tokenVersion,
     };
 
@@ -69,7 +68,6 @@ export class LoginUseCase {
         id: user.id,
         email: user.email,
         role: user.role,
-        profile: user.profile,
         nombre: user.nombre,
         apellido: user.apellido,
       },

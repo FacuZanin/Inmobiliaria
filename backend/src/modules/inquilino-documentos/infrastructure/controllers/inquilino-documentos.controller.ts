@@ -13,7 +13,7 @@ import { Roles } from '../../../../shared/security/decorators/roles.decorator';
 import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
 
 import { User } from '../../../../modules/user/domain/entities/user.entity';
 

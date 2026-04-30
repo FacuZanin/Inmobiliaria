@@ -6,15 +6,13 @@ import {
   Get,
   Param,
   Patch,
-  UseGuards,
 } from '@nestjs/common';
 
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
-import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 import type { User } from '../../../user/domain/entities/user.entity';
 
@@ -25,12 +23,7 @@ import { ListarSolicitudesUseCase } from '../../application/use-cases/listar-sol
 import { AprobarSolicitudAgenciaUseCase } from '../../application/use-cases/aprobar-solicitud-agencia.usecase';
 import { RechazarSolicitudAgenciaUseCase } from '../../application/use-cases/rechazar-solicitud-agencia.usecase';
 
-import { RolesGuard } from '../../../../shared/security/guards/roles.guard';
-import { ProfilesGuard } from '../../../../shared/security/guards/profiles.guard';
-import { Auth } from '../../../../shared/security/decorators/auth.decorator';
-
 @Auth(UserRole.SUPERADMIN)
-@Profiles(UserProfile.AGENCIA)
 @Controller('admin/agencias')
 export class AdminAgenciasController {
   constructor(
@@ -41,7 +34,6 @@ export class AdminAgenciasController {
   ) {}
 
   @Post('solicitar')
-  @Profiles(UserProfile.PROPIETARIO, UserProfile.INQUILINO, UserProfile.AGENCIA)
   solicitar(@Body() dto: SolicitudAgenciaDto, @CurrentUser() user: User) {
     return this.solicitarUC.execute(dto, user.id);
   }

@@ -18,7 +18,6 @@ import { SuperficieVO } from '../../domain/value-objects/superficie.vo';
 
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 import { PROPERTY_REPOSITORY, DOCS_CHECKER } from '../tokens';
 

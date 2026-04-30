@@ -11,7 +11,6 @@ import { FindUserByIdUseCase } from '@/modules/user/application/use-cases/find-u
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../../../../shared/security/decorators/public.decorator';
-import { ALLOW_INCOMPLETE_PROFILE } from '@/shared/security/decorators/allow-incomplete-profile.decorator';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

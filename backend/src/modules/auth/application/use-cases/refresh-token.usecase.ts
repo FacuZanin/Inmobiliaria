@@ -21,7 +21,6 @@ export class RefreshTokenUseCase {
     const accessToken = await this.tokenService.sign({
       sub: user.id,
       role: user.role,
-      profile: user.profile,
       tokenVersion: user.tokenVersion,
     });
 

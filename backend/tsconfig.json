@@ -21,7 +21,8 @@
       "@/*": ["./src/*"],
       "@modules/*": ["./src/modules/*"],
       "@shared/contracts": ["../shared/dist"],
-      "@shared/contracts/*": ["../shared/dist/*"]
+      "@shared/contracts/*": ["../shared/dist/*"],
+      "@shared/*": ["../shared/src/*"]
     }
   },
 

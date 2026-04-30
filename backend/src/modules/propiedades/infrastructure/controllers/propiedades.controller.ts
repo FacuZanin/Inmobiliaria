@@ -1,5 +1,4 @@
 // backend\src\modules\propiedades\infrastructure\controllers\propiedades.controller.ts
-
 import {
   Controller,
   Get,
@@ -11,16 +10,15 @@ import {
   Query,
   ParseIntPipe,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 
-import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { User } from '../../../user/domain/entities/user.entity';
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
-import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 import { CreatePropertyUseCase } from '../../application/use-cases/create-property.usecase';
 import { UpdatePropertyUseCase } from '../../application/use-cases/update-property.usecase';
@@ -44,27 +42,34 @@ export class PropiedadesController {
   ) {}
 
   @Post()
-  @Profiles(UserProfile.PROPIETARIO, UserProfile.AGENCIA)
   async create(@Body() dto: CreatePropertyDTO, @CurrentUser() user: User) {
     if (!user?.id) throw new BadRequestException('Usuario no autenticado');
+
+    // 🔥 VALIDACIÓN NUEVA (reemplazo de Profiles)
+    if (user.tipo !== UserType.AGENCIA) {
+      throw new ForbiddenException('Solo agencias pueden crear propiedades');
+    }
 
     const created = await this.createProperty.execute(dto, user.id);
     return PropertyResponseMapper.toResponse(created);
   }
 
   @Patch(':id')
-  @Profiles(UserProfile.PROPIETARIO, UserProfile.AGENCIA)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdatePropertyDTO,
+    @CurrentUser() user: User,
   ) {
+    if (user.tipo !== UserType.AGENCIA) {
+      throw new ForbiddenException('Solo agencias pueden editar propiedades');
+    }
+
     const updated = await this.updateProperty.execute(id, dto);
     return PropertyResponseMapper.toResponse(updated);
   }
 
   @Delete(':id')
   @Roles(UserRole.SUPERADMIN)
-  @Profiles(UserProfile.PROPIETARIO, UserProfile.AGENCIA)
   async delete(@Param('id', ParseIntPipe) id: number) {
     await this.deleteProperty.execute(id);
     return { message: 'Propiedad eliminada' };

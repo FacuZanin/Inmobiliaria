@@ -9,10 +9,9 @@ import {
 import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-repository.port';
 import type { AgenciasRepositoryPort } from '../ports/agencias-repository.port';
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
-
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
 
 import { AGENCIAS_REPOSITORY, AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 
@@ -49,7 +48,7 @@ export class AprobarSolicitudAgenciaUseCase {
       telefono: solicitud.usuario.telefono ?? '',
     });
 
-    solicitud.usuario.profile = UserProfile.AGENCIA;
+    solicitud.usuario.tipo = UserType.AGENCIA;
     solicitud.usuario.agencia = nuevaAgencia;
     await this.users.save(solicitud.usuario);
 

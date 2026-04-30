@@ -8,7 +8,6 @@ import {
   ParseIntPipe,
   Query,
   Get,
-  UseGuards,
 } from '@nestjs/common';
 
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -16,7 +15,6 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Audit } from '../../../../shared/security/decorators/audit.decorator';
-import { AllowIncompleteProfile } from '../../../../shared/security/decorators/allow-incomplete-profile.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { AuditAction } from '@shared/contracts/enums/audit-action.enum';
@@ -27,14 +25,12 @@ import { UpdateUserAdminUseCase } from '../../application/use-cases/update-user-
 import { UpdateMyProfileUseCase } from '../../application/use-cases/update-my-profile.usecase';
 import { RestoreUserUseCase } from '../../application/use-cases/restore-user.usecase';
 import { ListUsersUseCase } from '../../application/use-cases/list-users.usecase';
+import { BecomeAgencyUseCase } from '../../application/use-cases/become-agency.usecase';
 
 import { CreateUserDto } from '../../application/dto/create-user.dto';
 import { UpdateUserAdminDto } from '../../application/dto/update-user-admin.dto';
 import { UpdateMyProfileDto } from '../../application/dto/update-my-profile.dto';
 import { UserFiltersDto } from '../../application/dto/user-filters.dto';
-
-import { CompleteProfileUseCase } from '../../application/use-cases/complete-profile.usecase';
-import { CompleteProfileDto } from '../../application/dto/complete-profile.dto';
 
 import { User } from '../../domain/entities/user.entity';
 
@@ -47,7 +43,7 @@ export class UsersController {
     private readonly updateMyProfileUC: UpdateMyProfileUseCase,
     private readonly restoreUserUC: RestoreUserUseCase,
     private readonly listUsersUC: ListUsersUseCase,
-    private readonly completeProfileUC: CompleteProfileUseCase,
+    private readonly becomeAgencyUC: BecomeAgencyUseCase,
   ) {}
 
   @Auth()
@@ -96,10 +92,9 @@ export class UsersController {
     return this.restoreUserUC.execute(+id);
   }
 
-  @AllowIncompleteProfile()
+  @Patch('become-agency')
   @Auth()
-  @Patch('complete-profile')
-  completeProfile(@CurrentUser() user: User, @Body() dto: CompleteProfileDto) {
-    return this.completeProfileUC.execute(user.id, dto);
+  becomeAgency(@CurrentUser() user: User) {
+    return this.becomeAgencyUC.execute(user.id);
   }
 }

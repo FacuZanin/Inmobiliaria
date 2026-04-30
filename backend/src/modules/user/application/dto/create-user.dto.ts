@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 export class CreateUserDto {
   @IsEmail()
@@ -20,12 +20,12 @@ export class CreateUserDto {
   role!: UserRole;
 
   @IsOptional()
-  @IsEnum(UserProfile)
-  profile?: UserProfile | null;
-
-  @IsOptional()
   @IsString()
   nombre?: string;
+
+  @IsOptional()
+@IsEnum(UserType)
+tipo?: UserType;
 
   @IsOptional()
   @IsString()

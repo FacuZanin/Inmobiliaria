@@ -1,6 +1,6 @@
 // shared\src\index.ts
 export * from './enums/user-role.enum';
-export * from './enums/user-profile.enum';
+export * from './enums/user-type.enum';
 export * from './enums/operacion-estado.enum';
 export * from './enums/operacion-tipo.enum';
 export * from './enums/medio-operacion.enum';

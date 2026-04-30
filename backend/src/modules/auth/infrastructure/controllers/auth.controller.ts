@@ -16,7 +16,6 @@ import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Public } from '../../../../shared/security/decorators/public.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
-import { AllowIncompleteProfile } from '@/shared/security/decorators/allow-incomplete-profile.decorator';
 
 import { LoginDto } from '../../application/dto/login.dto';
 import { RegisterDto } from '../../application/dto/register.dto';
@@ -120,7 +119,6 @@ export class AuthController {
   }
 
   @Post('logout')
-  @AllowIncompleteProfile()
   @Auth()
   @ApiBearerAuth('access-token')
   async logout(

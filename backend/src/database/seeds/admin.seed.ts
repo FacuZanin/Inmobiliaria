@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from '../../modules/user/domain/entities/user.entity';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 export const seedAdmin = async (dataSource: DataSource): Promise<void> => {
   const userRepo = dataSource.getRepository(User);
@@ -24,7 +24,7 @@ export const seedAdmin = async (dataSource: DataSource): Promise<void> => {
     email: 'admin@admin.com',
     password,
     role: UserRole.SUPERADMIN,
-    profile: UserProfile.AGENCIA,
+    tipo: UserType.AGENCIA,
     nombre: 'Admin',
     apellido: 'Sistema',
   });

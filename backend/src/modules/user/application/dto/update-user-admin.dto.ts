@@ -2,7 +2,7 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
 export class UpdateUserAdminDto {
@@ -19,8 +19,8 @@ export class UpdateUserAdminDto {
   role?: UserRole;
 
   @IsOptional()
-  @IsEnum(UserProfile)
-  profile?: UserProfile;
+  @IsEnum(UserType)
+  tipo?: UserType;
 
   @IsOptional()
   @IsEnum(UserStatus)

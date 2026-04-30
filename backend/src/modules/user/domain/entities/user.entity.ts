@@ -12,7 +12,7 @@ import {
 import { Agencia } from '../../../agencias/domain/entities/agencia.entity';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
 import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-token.entity';
@@ -37,10 +37,10 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UserProfile,
-    nullable: true,
+    enum: UserType,
+    default: UserType.USER,
   })
-  profile!: UserProfile | null;
+  tipo!: UserType;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombre!: string | null;
@@ -78,6 +78,4 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   refreshTokenHash!: string | null;
-
-  
 }

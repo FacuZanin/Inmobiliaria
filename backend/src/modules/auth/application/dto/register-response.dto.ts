@@ -1,6 +1,6 @@
 // backend\src\modules\auth\application\dto\register-response.dto.ts
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
 
 export class RegisterResponseDto {
   id!: number;

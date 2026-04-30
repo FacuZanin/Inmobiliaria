@@ -24,7 +24,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/infrastructure/guards/jwt-auth.guard';
 
 import { RolesGuard } from './shared/security/guards/roles.guard';
-import { ProfilesGuard } from './shared/security/guards/profiles.guard';
 import { HttpExceptionFilter } from './shared/infrastructure/filters/http-exception.filter';
 import { LoggingInterceptor } from './shared/infrastructure/interceptors/logging.interceptor';
 import { TimingInterceptor } from './shared/infrastructure/interceptors/timing.interceptor';
@@ -75,10 +74,6 @@ import { HealthModule } from './health/health.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ProfilesGuard,
     },
     {
       provide: APP_GUARD,

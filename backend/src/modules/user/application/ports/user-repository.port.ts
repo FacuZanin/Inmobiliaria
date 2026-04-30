@@ -7,7 +7,6 @@ export interface UserRepositoryPort {
   findById(id: number): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   findByIdIncludingDeleted(id: number): Promise<User | null>;
-  create(data: CreateUserDto): Promise<User>;
   update(id: number, data: Partial<User>): Promise<User>;
   save(user: User): Promise<User>;
   softDelete(id: number): Promise<void>;
@@ -17,4 +16,5 @@ export interface UserRepositoryPort {
   getByIdOrFail(id: number): Promise<User>;
   getByEmailOrFail(email: string): Promise<User>;
   getTokenVersion(userId: number): Promise<number>;
+  create(data: Partial<User>): Promise<User>;
 }

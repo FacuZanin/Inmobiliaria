@@ -17,7 +17,7 @@ import { CreateDocumentoDto } from '../../application/dto/create-documento.dto';
 import { UpdateEstadoDocumentoDto } from '../../application/dto/update-estado.dto';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
-import { UserProfile } from '@shared/contracts/enums/user-profile.enum';
+import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
 import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { User } from '../../../../modules/user/domain/entities/user.entity';

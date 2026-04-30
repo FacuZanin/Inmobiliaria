@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.__shared = void 0;
 // shared\src\index.ts
 __exportStar(require("./enums/user-role.enum"), exports);
-__exportStar(require("./enums/user-profile.enum"), exports);
+__exportStar(require("./enums/user-type.enum"), exports);
 __exportStar(require("./enums/operacion-estado.enum"), exports);
 __exportStar(require("./enums/operacion-tipo.enum"), exports);
 __exportStar(require("./enums/medio-operacion.enum"), exports);
