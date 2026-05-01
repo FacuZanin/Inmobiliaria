@@ -4,16 +4,17 @@ import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from './roles.decorator';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
+import { UserTypeGuard } from '../guards/user-type.guard';
 
 export function Auth(...roles: UserRole[]) {
   if (roles.length === 0) {
     return applyDecorators(
-      UseGuards(JwtAuthGuard, RolesGuard),
+      UseGuards(JwtAuthGuard, RolesGuard, UserTypeGuard),
     );
   }
 
   return applyDecorators(
     Roles(...roles),
-    UseGuards(JwtAuthGuard, RolesGuard),
+    UseGuards(JwtAuthGuard, RolesGuard, UserTypeGuard),
   );
 }

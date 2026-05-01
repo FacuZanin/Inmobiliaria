@@ -1,7 +1,7 @@
 // backend\src\modules\operaciones\operaciones.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { AuthModule } from '../auth/auth.module';
 import { OperacionesController } from './operaciones.controller';
 
 // ORM ENTITY (ojo acá, te marco algo abajo)
@@ -26,6 +26,7 @@ import { CancelarOperacionUseCase } from './application/use-cases/cancel-operaci
 @Module({
   imports: [
     TypeOrmModule.forFeature([Operacion]),
+    AuthModule,
   ],
   controllers: [OperacionesController],
   providers: [

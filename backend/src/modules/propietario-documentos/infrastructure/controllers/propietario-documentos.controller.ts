@@ -17,10 +17,11 @@ import { CreateDocumentoDto } from '../../application/dto/create-documento.dto';
 import { UpdateEstadoDocumentoDto } from '../../application/dto/update-estado.dto';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
-import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
-import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
+import { UserTypes } from '../../../../shared/security/decorators/user-type.decorator';
+
 import { User } from '../../../../modules/user/domain/entities/user.entity';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 @Controller('propietario-documentos')
 export class PropietarioDocumentosController {
@@ -32,7 +33,7 @@ export class PropietarioDocumentosController {
   @Post()
   @UseInterceptors(FileInterceptor('archivo'))
   @Auth()
-  @Profiles(UserProfile.PROPIETARIO)
+  @UserTypes(UserType.USER)
   subirDoc(
     @UploadedFile() archivo: Express.Multer.File,
     @Body() dto: CreateDocumentoDto,
@@ -41,10 +42,13 @@ export class PropietarioDocumentosController {
     return this.subirDocumento.execute(dto, archivo, user);
   }
 
-  @Patch(':id/estado')
+  @Patch(':id')
   @Auth()
-  @Profiles(UserProfile.AGENCIA)
-  cambiar(@Param('id') id: string, @Body() dto: UpdateEstadoDocumentoDto) {
+  @UserTypes(UserType.AGENCIA)
+  cambiar(
+    @Param('id') id: string,
+    @Body() dto: UpdateEstadoDocumentoDto,
+  ) {
     return this.cambiarEstado.execute(Number(id), dto);
   }
 }

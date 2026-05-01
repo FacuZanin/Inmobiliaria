@@ -52,7 +52,6 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
   controllers: [AuthController],
 
   providers: [
-    
     RefreshTokenService,
     // Use cases
     LoginUseCase,
@@ -64,6 +63,11 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
     JwtStrategy,
     RolesGuard,
 
+    JwtAuthGuard,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
 
     {
       provide: TOKEN_SERVICE,
@@ -75,9 +79,6 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
     },
   ],
 
-  exports: [
-    PassportModule,
-    RefreshTokenService,
-  ],
+  exports: [PassportModule, RefreshTokenService, JwtAuthGuard],
 })
 export class AuthModule {}

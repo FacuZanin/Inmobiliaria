@@ -14,10 +14,10 @@ import {
 import { Auth } from '../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../shared/security/decorators/current-user.decorator';
 import { Roles } from '../../shared/security/decorators/roles.decorator';
-import { Profiles } from '../../shared/security/decorators/profiles.decorator';
+import { UserTypes } from '../../shared/security/decorators/user-type.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 import { User } from '../user/domain/entities/user.entity';
 
@@ -36,8 +36,9 @@ import { FinalizarOperacionUseCase } from './application/use-cases/finalizar-ope
 import { CancelarOperacionUseCase } from './application/use-cases/cancel-operacion.usecase';
 
 @Controller('operaciones')
-@Roles(UserRole.SUPERADMIN)
-@Profiles(UserProfile.AGENCIA)
+@Auth()
+@Roles(UserRole.SUPERADMIN)        // seguridad
+@UserTypes(UserType.AGENCIA)       // tipo de usuario
 export class OperacionesController {
   constructor(
     private readonly createOperacion: CreateOperacionUseCase,
