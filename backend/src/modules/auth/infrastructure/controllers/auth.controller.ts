@@ -11,7 +11,7 @@ import {
   Get,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
 
 import { Public } from '../../../../shared/security/decorators/public.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
@@ -42,16 +42,11 @@ export class AuthController {
     private readonly userRepository: UserRepositoryPort,
   ) {}
 
-  @ApiResponse({
-    status: 200,
-    description: 'Login exitoso',
+  @ApiBody({
     schema: {
       example: {
-        access_token: 'JWT_TOKEN_ACA',
-        user: {
-          id: 1,
-          email: 'test12345@gmail.com',
-        },
+        email: 'test123@gmail.com',
+        password: 'Password123',
       },
     },
   })
@@ -83,13 +78,35 @@ export class AuthController {
       user,
     };
   }
-
+  @ApiBody({
+    schema: {
+      example: {
+        email: 'test123@gmail.com',
+        repeatEmail: 'test123@gmail.com',
+        password: 'Password123',
+        repeatPassword: 'Password123',
+        nombre: 'Facundo',
+        apellido: 'Zanin',
+        telefono: '1122334455',
+      },
+    },
+  })
   @Public()
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.registerUC.execute(dto);
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Token refrescado correctamente',
+    schema: {
+      example: {
+        success: true,
+        access_token: 'JWT_TOKEN_ACA',
+      },
+    },
+  })
   @Public()
   @Post('refresh')
   async refresh(
@@ -114,6 +131,7 @@ export class AuthController {
     });
 
     return {
+      success: true,
       access_token,
     };
   }

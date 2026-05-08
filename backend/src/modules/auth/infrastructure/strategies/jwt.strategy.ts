@@ -14,7 +14,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     @Inject(USER_REPOSITORY)
     private readonly users: UserRepositoryPort,
   ) {
-    console.log('JWT SECRET:', process.env.JWT_SECRET);
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
@@ -32,9 +31,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException('Usuario inactivo');
     }
 
-    // 🔥 IMPORTANTE: devolver el payload + data actualizada
     return {
-      sub: payload.sub,
+      id: user.id,
       email: user.email,
       role: user.role,
       tokenVersion: user.tokenVersion,

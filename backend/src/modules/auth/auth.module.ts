@@ -1,10 +1,9 @@
 // backend/src/modules/auth/auth.module.ts
-import { Module, forwardRef } from '@nestjs/common';
+import { Module, forwardRef, Global } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
-import { Global } from '@nestjs/common';
 
 import { AuthController } from './infrastructure/controllers/auth.controller';
 
@@ -35,7 +34,6 @@ import { UsersModule } from '../user/users.module';
 import { AgenciasModule } from '../agencias/agencias.module';
 
 const JWT_SECRET = process.env.JWT_SECRET;
-console.log('JWT_SECRET MODULE:', JWT_SECRET);
 @Global()
 @Module({
   imports: [
@@ -79,6 +77,6 @@ console.log('JWT_SECRET MODULE:', JWT_SECRET);
     },
   ],
 
-  exports: [PassportModule, RefreshTokenService, JwtAuthGuard],
+  exports: [PassportModule, RefreshTokenService, JwtAuthGuard, JwtModule],
 })
 export class AuthModule {}

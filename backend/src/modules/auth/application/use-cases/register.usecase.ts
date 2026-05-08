@@ -1,6 +1,7 @@
 //backend\src\modules\auth\application\use-cases\register.usecase.ts
 import { Inject, BadRequestException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { PASSWORD_HASHER } from '../tokens';
+import type { PasswordHasherPort } from '../ports/password-hasher.port';
 
 import { USER_REPOSITORY } from '../../../user/application/tokens';
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
@@ -11,10 +12,13 @@ import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
 export class RegisterUseCase {
-  constructor(
-    @Inject(USER_REPOSITORY)
-    private readonly userRepository: UserRepositoryPort,
-  ) {}
+constructor(
+  @Inject(USER_REPOSITORY)
+  private readonly userRepository: UserRepositoryPort,
+
+  @Inject(PASSWORD_HASHER)
+  private readonly passwordHasher: PasswordHasherPort,
+) {}
 
   async execute(dto: RegisterDto) {
     if (dto.email !== dto.repeatEmail) {
@@ -31,7 +35,7 @@ export class RegisterUseCase {
       throw new BadRequestException('El email ya está registrado');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await this.passwordHasher.hash(dto.password);
 
     const user = await this.userRepository.create({
       email: dto.email,

@@ -3,10 +3,7 @@ import {
   Injectable,
   ExecutionContext,
   UnauthorizedException,
-  ForbiddenException,
 } from '@nestjs/common';
-
-import { FindUserByIdUseCase } from '@/modules/user/application/use-cases/find-user-by-id.usecase';
 
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
@@ -14,19 +11,11 @@ import { IS_PUBLIC_KEY } from '../../../../shared/security/decorators/public.dec
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(
-    private reflector: Reflector,
-    private readonly findUserByIdUseCase: FindUserByIdUseCase,
-  ) {
+  constructor(private reflector: Reflector) {
     super();
-    console.log('✅ NUEVO JwtAuthGuard cargado');
   }
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
-    console.log('HEADERS:', request.headers);
-
-    // 🔓 ENDPOINT PUBLICO
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -36,34 +25,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
-    // 👇 Ejecuta JWT
-    const result = (await super.canActivate(context)) as boolean;
-    const user = request.user;
-
-    // 🔥 VALIDAR USUARIO EN DB
-    const dbUser = await this.findUserByIdUseCase.execute(user.sub);
-
-    if (!dbUser) {
-      throw new UnauthorizedException('Usuario no existe');
-    }
-
-    request.user = dbUser;
-
-    console.log('TOKEN:', user);
-    console.log('DB USER:', dbUser);
-
-    // 🔐 tokenVersion
-    if (dbUser.tokenVersion !== user.tokenVersion) {
-      throw new UnauthorizedException('Token inválido');
-    }
-
-    return result;
+    return (await super.canActivate(context)) as boolean;
   }
 
-  handleRequest(err, user, info, context: ExecutionContext) {
+  handleRequest(err, user, info) {
     if (err || !user) {
-      console.log('JWT ERROR:', err, info);
-      throw err || new UnauthorizedException();
+      throw err || new UnauthorizedException('Unauthorized');
     }
     return user;
   }
