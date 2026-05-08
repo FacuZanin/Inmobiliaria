@@ -1,7 +1,7 @@
-// backend\src\modules\agencias\application\dto\solicitud-agencia.dto.ts
+// backend\src\modules\agencias\application\dto\create-solicitud-agencia.dto.ts
 import { IsString, IsNotEmpty, IsUrl } from 'class-validator';
 
-export class SolicitudAgenciaDto {
+export class CreateSolicitudAgenciaDto {
   @IsString()
   @IsNotEmpty()
   nombreTitular!: string;

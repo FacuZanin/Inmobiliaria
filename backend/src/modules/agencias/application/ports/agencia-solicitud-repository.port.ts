@@ -1,6 +1,6 @@
 // backend\src\modules\agencias\application\ports\agencia-solicitud-repository.port.ts
 import type { AgenciaSolicitud } from '../../domain/entities/agencia-solicitud.entity';
-import type { SolicitudAgenciaDto } from '../dto/solicitud-agencia.dto';
+import type { SolicitudAgenciaDto } from '../dto/create-solicitud-agencia.dto';
 import type { CrearSolicitudAgenciaDto } from '../dto/crear-solicitud-agencia.dto';
 
 export interface AgenciaSolicitudRepositoryPort {

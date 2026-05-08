@@ -1,5 +1,6 @@
 // backend\src\common\decorators\auth.decorator.ts
 import { applyDecorators, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from './roles.decorator';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
@@ -8,12 +9,11 @@ import { UserTypeGuard } from '../guards/user-type.guard';
 
 export function Auth(...roles: UserRole[]) {
   if (roles.length === 0) {
-    return applyDecorators(
-      UseGuards(JwtAuthGuard, RolesGuard, UserTypeGuard),
-    );
+    return applyDecorators(UseGuards(JwtAuthGuard, RolesGuard, UserTypeGuard));
   }
 
   return applyDecorators(
+    ApiBearerAuth(),
     Roles(...roles),
     UseGuards(JwtAuthGuard, RolesGuard, UserTypeGuard),
   );
