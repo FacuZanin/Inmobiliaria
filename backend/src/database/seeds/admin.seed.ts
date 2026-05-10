@@ -14,7 +14,7 @@ export const seedAdmin = async (dataSource: DataSource): Promise<void> => {
   });
 
   if (exists) {
-    console.log('✔ Admin ya existe');
+    console.log('✔ Admin ya existe');  
     return;
   }
 
@@ -24,7 +24,7 @@ export const seedAdmin = async (dataSource: DataSource): Promise<void> => {
     email: 'admin@admin.com',
     password,
     role: UserRole.SUPERADMIN,
-    tipo: UserType.AGENCIA,
+    tipo: UserType.USER,
     nombre: 'Admin',
     apellido: 'Sistema',
   });

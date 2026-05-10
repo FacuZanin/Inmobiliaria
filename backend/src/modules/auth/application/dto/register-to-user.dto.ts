@@ -1,6 +1,6 @@
 // backend\src\modules\auth\application\dto\register-to-user.dto.ts
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
 export class RegisterToUserDto {
@@ -9,7 +9,7 @@ export class RegisterToUserDto {
   email!: string;
   password!: string;
   role!: UserRole;
-  profile!: UserProfile;
+  profile!: UserType;
   status!: UserStatus;
   agenciaId?: number;
 }

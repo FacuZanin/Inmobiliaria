@@ -10,6 +10,7 @@ import type { CreateSolicitudAgenciaDto } from '../../../../application/dto/crea
 import { Agencia } from '../../../../domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
 
+
 @Injectable()
 export class AgenciaSolicitudTypeOrmRepository
   implements AgenciaSolicitudRepositoryPort
@@ -78,9 +79,9 @@ export class AgenciaSolicitudTypeOrmRepository
       ? await this.agenciaRepo!.save(agenciaEntity)
       : undefined;
 
-    // Actualizar usuario (asignar role y agencia)
+    // Actualizar usuario (asignar tipo y agencia)
     if (solicitud.usuario) {
-      (solicitud.usuario as any).role = 'AGENCIA';
+      (solicitud.usuario as any).tipo = 'AGENCIA';
       if (savedAgencia) (solicitud.usuario as any).agencia = savedAgencia;
       await this.userRepo.save(solicitud.usuario);
     }

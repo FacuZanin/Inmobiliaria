@@ -10,10 +10,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
-import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
 
 import { User } from '../../../../modules/user/domain/entities/user.entity';
 
@@ -34,7 +32,6 @@ export class InquilinoDocumentosController {
   @Post()
   @UseInterceptors(FileInterceptor('archivo'))
   @Roles(UserRole.USER)
-  @Profiles(UserProfile.INQUILINO)
   subir(
     @UploadedFile() archivo: Express.Multer.File,
     @Body() dto: CreateInquilinoDocumentoDto,

@@ -44,21 +44,6 @@ async function bootstrap() {
   // 🔹 Swagger
   const config = new DocumentBuilder()
     .setTitle('API Inmobiliaria')
-    .setDescription(
-      `
-API profesional para gestión inmobiliaria.
-
-Roles disponibles:
-- ADMIN
-- AGENCIA
-- PROPIETARIO
-- INQUILINO
-
-Autenticación:
-- JWT Bearer Token
-- Refresh Token por cookies httpOnly
-`,
-    )
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -93,8 +78,6 @@ Autenticación:
   // 🔹 Listen
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT);
-
-  console.log(`🚀 API corriendo en http://localhost:${PORT}`);
   console.log(`📚 Swagger en http://localhost:${PORT}/docs`);
 }
 

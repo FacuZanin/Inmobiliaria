@@ -14,10 +14,9 @@ import { VerHistorialDocumentoUseCase } from '../../application/use-cases/ver-hi
 import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum'
 
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
-import { Profiles } from '../../../../shared/security/decorators/profiles.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserProfile } from '@shared/contracts/dist/enums/user-type.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 
 @Controller('admin/documentos')
@@ -30,14 +29,14 @@ export class AdminDocumentosController {
 
   @Get()
   @Roles(UserRole.SUPERADMIN)
-  @Profiles(UserProfile.AGENCIA)
+  @Profiles(UserType.AGENCIA)
   listar(@Query() filtros: FiltroDocumentosDto) {
     return this.listarUC.execute(filtros);
   }
 
   @Get(':tipo/:id/historial')
   @Roles(UserRole.SUPERADMIN)
-  @Profiles(UserProfile.AGENCIA)
+  @Profiles(UserType.AGENCIA)
   historial(
     @Param('tipo') tipo: 'INQUILINO' | 'PROPIETARIO',
     @Param('id') id: string,
@@ -48,7 +47,7 @@ export class AdminDocumentosController {
 
   @Patch(':tipo/:id/estado')
   @Roles(UserRole.SUPERADMIN)
-  @Profiles(UserProfile.AGENCIA)
+  @Profiles(UserType.AGENCIA)
   cambiarEstado(
     @Param('tipo') tipo: 'INQUILINO' | 'PROPIETARIO',
     @Param('id') id: string,
