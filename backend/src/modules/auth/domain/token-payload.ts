@@ -3,6 +3,9 @@ import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
 export interface TokenPayload {
   sub: number;
+  email: string;
   role: UserRole;
   tokenVersion: number;
+  iat?: number;
+  exp?: number;
 }

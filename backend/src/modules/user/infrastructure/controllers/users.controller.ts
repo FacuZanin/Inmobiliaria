@@ -10,7 +10,16 @@ import {
   Get,
 } from '@nestjs/common';
 
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
@@ -31,9 +40,11 @@ import { CreateUserDto } from '../../application/dto/create-user.dto';
 import { UpdateUserAdminDto } from '../../application/dto/update-user-admin.dto';
 import { UpdateMyProfileDto } from '../../application/dto/update-my-profile.dto';
 import { UserFiltersDto } from '../../application/dto/user-filters.dto';
+import { UserResponseDto } from '../../application/dto/user-response.dto';
 
 import { User } from '../../domain/entities/user.entity';
 
+@ApiTags('Users')
 @ApiBearerAuth('access-token')
 @Controller('users')
 export class UsersController {
@@ -46,19 +57,47 @@ export class UsersController {
     private readonly becomeAgencyUC: BecomeAgencyUseCase,
   ) {}
 
-  @Auth()
   @Get('me')
-  getMe(@CurrentUser() user) {
+  @Auth()
+  @ApiOperation({
+    summary: 'Obtener usuario autenticado',
+  })
+  @ApiOkResponse({
+    description: 'Usuario autenticado',
+    type: UserResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'No autenticado',
+  })
+  getMe(@CurrentUser() user: User) {
     return user;
   }
 
   // 🛡️ SOLO SUPERADMIN
+  @ApiOperation({
+    summary: 'Listar usuarios',
+  })
+  @ApiOkResponse({
+    description: 'Listado de usuarios',
+    type: UserResponseDto,
+    isArray: true,
+  })
+  @ApiForbiddenResponse({
+    description: 'Solo SUPERADMIN',
+  })
   @Get()
   @Auth(UserRole.SUPERADMIN)
   findAll(@Query() filters: UserFiltersDto) {
     return this.listUsersUC.execute(filters);
   }
 
+  @ApiOperation({
+    summary: 'Crear usuario manualmente',
+  })
+  @ApiCreatedResponse({
+    description: 'Usuario creado',
+    type: UserResponseDto,
+  })
   @Post()
   @Auth(UserRole.SUPERADMIN)
   @Audit({ action: AuditAction.CREATE_USER, entity: AuditEntity.USER })
@@ -67,6 +106,13 @@ export class UsersController {
   }
 
   // 🔐 USUARIO LOGUEADO (solo su perfil)
+  @ApiOperation({
+    summary: 'Actualizar mi perfil',
+  })
+  @ApiOkResponse({
+    description: 'Perfil actualizado',
+    type: UserResponseDto,
+  })
   @Patch('me')
   @Auth()
   @Audit({ action: AuditAction.UPDATE_OWN_PROFILE, entity: AuditEntity.USER })
@@ -75,6 +121,13 @@ export class UsersController {
   }
 
   // 🧨 ADMIN modifica cualquier usuario
+  @ApiOperation({
+    summary: 'Actualizar usuario por admin',
+  })
+  @ApiOkResponse({
+    description: 'Usuario actualizado',
+    type: UserResponseDto,
+  })
   @Patch(':id')
   @Auth(UserRole.SUPERADMIN)
   @Audit({ action: AuditAction.UPDATE_USER, entity: AuditEntity.USER })
@@ -85,6 +138,9 @@ export class UsersController {
     return this.updateUserAdminUC.execute(id, dto);
   }
 
+  @ApiOperation({
+    summary: 'Restaurar usuario eliminado',
+  })
   @Patch(':id/restore')
   @Auth(UserRole.SUPERADMIN)
   @Audit({ action: AuditAction.RESTORE_USER, entity: AuditEntity.USER })
@@ -92,6 +148,9 @@ export class UsersController {
     return this.restoreUserUC.execute(+id);
   }
 
+  @ApiOperation({
+    summary: 'Convertirse en agencia',
+  })
   @Patch('become-agency')
   @Auth()
   becomeAgency(@CurrentUser() user: User) {

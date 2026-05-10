@@ -44,14 +44,28 @@ async function bootstrap() {
   // 🔹 Swagger
   const config = new DocumentBuilder()
     .setTitle('API Inmobiliaria')
-    .setDescription('Documentación de la API')
+    .setDescription(
+      `
+API profesional para gestión inmobiliaria.
+
+Roles disponibles:
+- ADMIN
+- AGENCIA
+- PROPIETARIO
+- INQUILINO
+
+Autenticación:
+- JWT Bearer Token
+- Refresh Token por cookies httpOnly
+`,
+    )
     .setVersion('1.0')
     .addBearerAuth(
       {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        name: 'Authorization',
+        description: 'Ingresar token JWT',
         in: 'header',
       },
       'access-token',
@@ -59,7 +73,18 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      displayRequestDuration: true,
+      docExpansion: 'none',
+      filter: true,
+      showExtensions: true,
+      tryItOutEnabled: true,
+    },
+    customSiteTitle: 'API Inmobiliaria Docs',
+  });
 
   // 🔹 Seed automático (solo si querés)
   const dataSource = app.get(DataSource);

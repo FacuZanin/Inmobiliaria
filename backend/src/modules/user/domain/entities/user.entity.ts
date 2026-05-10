@@ -51,6 +51,9 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: true })
   telefono!: string | null;
 
+  @Column({ type: 'varchar', nullable: true })
+  avatarUrl!: string | null;
+
   @ManyToOne(() => Agencia, {
     nullable: true,
     onDelete: 'SET NULL',

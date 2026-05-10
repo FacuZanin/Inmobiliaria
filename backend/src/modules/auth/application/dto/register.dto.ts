@@ -1,4 +1,3 @@
-// backend\src\modules\auth\application\dto\register.dto.ts
 import {
   IsEmail,
   IsNotEmpty,
@@ -10,28 +9,39 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'test123@gmail.com' })
+  @ApiProperty({
+    example: 'facundo@test.com',
+    description: 'Email del usuario',
+  })
   @IsEmail()
   @IsNotEmpty()
   email!: string;
 
-  @ApiProperty({ example: 'test123@gmail.com' })
+  @ApiProperty({
+    example: 'facundo@test.com',
+    description: 'Confirmación del email',
+  })
   @IsEmail()
   @IsNotEmpty()
   repeatEmail!: string;
 
   @ApiProperty({
     example: 'Password123',
+    description:
+      'Debe contener al menos una mayúscula y un número',
+    minLength: 8,
   })
   @IsNotEmpty()
   @MinLength(8)
   @Matches(/^(?=.*[A-Z])(?=.*\d).+$/, {
-    message: 'La contraseña debe tener al menos una mayúscula y un número',
+    message:
+      'La contraseña debe tener al menos una mayúscula y un número',
   })
   password!: string;
 
   @ApiProperty({
     example: 'Password123',
+    description: 'Confirmación de contraseña',
   })
   @IsNotEmpty()
   @MinLength(8)
@@ -39,6 +49,7 @@ export class RegisterDto {
 
   @ApiProperty({
     example: 'Facundo',
+    description: 'Nombre del usuario',
   })
   @IsString()
   @IsNotEmpty()
@@ -46,6 +57,7 @@ export class RegisterDto {
 
   @ApiProperty({
     example: 'Zanin',
+    description: 'Apellido del usuario',
   })
   @IsString()
   @IsNotEmpty()
@@ -53,6 +65,7 @@ export class RegisterDto {
 
   @ApiProperty({
     example: '1122334455',
+    description: 'Teléfono del usuario',
   })
   @IsString()
   @IsNotEmpty()

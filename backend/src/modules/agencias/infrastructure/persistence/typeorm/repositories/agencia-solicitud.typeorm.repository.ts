@@ -6,10 +6,9 @@ import { Repository } from 'typeorm';
 import type { AgenciaSolicitudRepositoryPort } from '../../../../application/ports/agencia-solicitud-repository.port';
 import { AgenciaSolicitud } from '../../../../domain/entities/agencia-solicitud.entity';
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
-import type { SolicitudAgenciaDto } from '../../../../application/dto/create-solicitud-agencia.dto';
+import type { CreateSolicitudAgenciaDto } from '../../../../application/dto/create-solicitud-agencia.dto';
 import { Agencia } from '../../../../domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
-import { CrearSolicitudAgenciaDto } from '../../../../application/dto/crear-solicitud-agencia.dto';
 
 @Injectable()
 export class AgenciaSolicitudTypeOrmRepository
@@ -27,7 +26,7 @@ export class AgenciaSolicitudTypeOrmRepository
   ) {}
 
   async create(
-    data: SolicitudAgenciaDto,
+    data: CreateSolicitudAgenciaDto,
     userId: number,
   ): Promise<AgenciaSolicitud> {
     // crear y castear explícitamente a la entidad para evitar inferencias indeseadas
@@ -91,12 +90,4 @@ export class AgenciaSolicitudTypeOrmRepository
     return this.repo.save(solicitud);
   }
 
-  async createBasic(dto: CrearSolicitudAgenciaDto) {
-    const solicitud = this.repo.create({
-      usuario: { id: dto.userId } as any,
-      estado: AgenciaSolicitudEstado.PENDIENTE,
-    });
-
-    return this.repo.save(solicitud);
-  }
 }

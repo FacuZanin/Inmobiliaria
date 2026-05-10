@@ -10,7 +10,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class CreateAgenciaDto {
   @ApiProperty({
     example: 'Zanin Propiedades',
-  })
+  })  
   @IsString()
   @IsNotEmpty()
   nombre!: string;

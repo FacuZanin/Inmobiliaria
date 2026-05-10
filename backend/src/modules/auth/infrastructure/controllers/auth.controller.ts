@@ -11,7 +11,17 @@ import {
   Get,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { ApiBearerAuth, ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiResponse,
+  ApiBody,
+  ApiOperation,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+} from '@nestjs/swagger';
 
 import { Public } from '../../../../shared/security/decorators/public.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
@@ -42,13 +52,24 @@ export class AuthController {
     private readonly userRepository: UserRepositoryPort,
   ) {}
 
-  @ApiBody({
+  @ApiOperation({
+    summary: 'Iniciar sesión',
+  })
+  @ApiOkResponse({
+    description: 'Login exitoso',
     schema: {
       example: {
-        email: 'test123@gmail.com',
-        password: 'Password123',
+        access_token: 'JWT_TOKEN',
+        user: {
+          id: 1,
+          email: 'admin@test.com',
+          role: 'ADMIN',
+        },
       },
     },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Credenciales inválidas',
   })
   @Public()
   @Post('login')
@@ -78,18 +99,14 @@ export class AuthController {
       user,
     };
   }
-  @ApiBody({
-    schema: {
-      example: {
-        email: 'test123@gmail.com',
-        repeatEmail: 'test123@gmail.com',
-        password: 'Password123',
-        repeatPassword: 'Password123',
-        nombre: 'Facundo',
-        apellido: 'Zanin',
-        telefono: '1122334455',
-      },
-    },
+  @ApiOperation({
+    summary: 'Registrar usuario',
+  })
+  @ApiCreatedResponse({
+    description: 'Usuario registrado correctamente',
+  })
+  @ApiBadRequestResponse({
+    description: 'Datos inválidos',
   })
   @Public()
   @Post('register')
@@ -97,15 +114,20 @@ export class AuthController {
     return this.registerUC.execute(dto);
   }
 
-  @ApiResponse({
-    status: 200,
+  @ApiOperation({
+    summary: 'Refrescar access token',
+  })
+  @ApiOkResponse({
     description: 'Token refrescado correctamente',
     schema: {
       example: {
         success: true,
-        access_token: 'JWT_TOKEN_ACA',
+        access_token: 'JWT_TOKEN',
       },
     },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Refresh token inválido o expirado',
   })
   @Public()
   @Post('refresh')
@@ -136,21 +158,34 @@ export class AuthController {
     };
   }
 
+  @ApiOperation({
+    summary: 'Cerrar sesión',
+  })
+  @ApiOkResponse({
+    description: 'Logout exitoso',
+  })
   @Post('logout')
   @Auth()
   @ApiBearerAuth('access-token')
   async logout(
     @CurrentUser() user: any,
-    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    // 🔥 invalidar refresh tokens
     await this.refreshTokenService.revokeAllUserTokens(user.id);
 
+    // 🔥 invalidar TODOS los access tokens JWT
+    await this.userRepository.incrementTokenVersion(user.id);
+
+    // 🍪 limpiar cookie refresh
     res.clearCookie('refresh_token', {
       path: '/auth/refresh',
     });
 
-    return { success: true };
+    return {
+      success: true,
+      message: 'Logout exitoso',
+    };
   }
 
   @Get('perfil')

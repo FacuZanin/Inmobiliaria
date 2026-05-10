@@ -17,7 +17,7 @@ import type { User } from '../../../user/domain/entities/user.entity';
 
 import { CreateAgenciaDto } from '../../application/dto/create-agencia.dto';
 import { UpdateAgenciaDto } from '../../application/dto/update-agencia.dto';
-import { SolicitudAgenciaDto } from '../../application/dto/create-solicitud-agencia.dto';
+import { CreateSolicitudAgenciaDto } from '../../application/dto/create-solicitud-agencia.dto';
 
 import { CreateAgenciaUseCase } from '../../application/use-cases/create-agencia.usecase';
 import { ListarSolicitudesUseCase } from '../../application/use-cases/listar-solicitudes.usecase';
@@ -42,7 +42,7 @@ export class AgenciasController {
   @Auth()
   @Post('solicitar')
   solicitar(
-    @Body() dto: SolicitudAgenciaDto,
+    @Body() dto: CreateSolicitudAgenciaDto,
     @CurrentUser() user: User,
   ) {
     return this.solicitarUC.execute(dto, user.id);
