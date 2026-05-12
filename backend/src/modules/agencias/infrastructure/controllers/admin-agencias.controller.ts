@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 
 import {
@@ -17,14 +18,15 @@ import {
 } from '@nestjs/swagger';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
-
+// Enums
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-
+// DTOs
+import { FilterAgenciasDto } from '../../application/dto/filter-agencias.dto';
+// Use Cases
 import { ListarSolicitudesUseCase } from '../../application/use-cases/listar-solicitudes.usecase';
-
 import { AprobarSolicitudAgenciaUseCase } from '../../application/use-cases/aprobar-solicitud-agencia.usecase';
-
 import { RechazarSolicitudAgenciaUseCase } from '../../application/use-cases/rechazar-solicitud-agencia.usecase';
+import { ListarAgenciasUseCase } from '../../application/use-cases/listar-agencias.usecase';
 
 @ApiTags('Admin - Agencias')
 @ApiBearerAuth('access-token')
@@ -37,6 +39,8 @@ export class AdminAgenciasController {
     private readonly aprobarUC: AprobarSolicitudAgenciaUseCase,
 
     private readonly rechazarUC: RechazarSolicitudAgenciaUseCase,
+
+    private readonly listarAgenciasUC: ListarAgenciasUseCase,
   ) {}
 
   @Get('solicitudes')
@@ -84,9 +88,7 @@ export class AdminAgenciasController {
     status: 404,
     description: 'Solicitud no encontrada',
   })
-  aprobar(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  aprobar(@Param('id', ParseIntPipe) id: number) {
     return this.aprobarUC.execute(id);
   }
 
@@ -115,9 +117,21 @@ export class AdminAgenciasController {
     status: 404,
     description: 'Solicitud no encontrada',
   })
-  rechazar(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  rechazar(@Param('id', ParseIntPipe) id: number) {
     return this.rechazarUC.execute(id);
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: 'Listar agencias aprobadas',
+  })
+  listarAgencias(@Query() query: FilterAgenciasDto) {
+    return this.listarAgenciasUC.execute({
+      nombre: query.nombre,
+      localidad: query.localidad,
+      activa: query.activa !== undefined ? query.activa === 'true' : undefined,
+      page: query.page ? Number(query.page) : 1,
+      limit: query.limit ? Number(query.limit) : 10,
+    });
   }
 }

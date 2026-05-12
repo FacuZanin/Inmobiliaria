@@ -1,10 +1,6 @@
 // backend/src/modules/agencias/application/use-cases/solicitar-agencia.usecase.ts
 
-import {
-  Injectable,
-  Inject,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 
 import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-repository.port';
 
@@ -38,29 +34,17 @@ export class SolicitarAgenciaUseCase {
     }
 
     if (usuario.tipo === UserType.AGENCIA) {
-      throw new BadRequestException(
-        'El usuario ya pertenece a una agencia',
-      );
+      throw new BadRequestException('El usuario ya pertenece a una agencia');
     }
 
-    const pendientes = await this.solicitudesRepository.findPendientes();
-
-    const yaTienePendiente = pendientes.some(
-      (s) =>
-        s.usuario?.id === userId &&
-        s.estado === AgenciaSolicitudEstado.PENDIENTE,
-    );
+    const yaTienePendiente =
+      await this.solicitudesRepository.findPendienteByUserId(userId);
 
     if (yaTienePendiente) {
-      throw new BadRequestException(
-        'Ya tienes una solicitud pendiente',
-      );
+      throw new BadRequestException('Ya tienes una solicitud pendiente');
     }
 
-    const solicitud = await this.solicitudesRepository.create(
-      dto,
-      userId,
-    );
+    const solicitud = await this.solicitudesRepository.create(dto, userId);
 
     return {
       message: 'Solicitud enviada correctamente',

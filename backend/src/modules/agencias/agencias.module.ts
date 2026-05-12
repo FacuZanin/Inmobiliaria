@@ -19,6 +19,7 @@ import { AgenciaSolicitudTypeOrmRepository } from './infrastructure/persistence/
 import { CreateAgenciaUseCase } from './application/use-cases/create-agencia.usecase';
 import { UpdateAgenciaUseCase } from './application/use-cases/update-agencia.usecase';
 import { ObtenerAgenciaUseCase } from './application/use-cases/obtener-agencia.usecase';
+import { ListarAgenciasUseCase } from './application/use-cases/listar-agencias.usecase';
 
 import { SolicitarAgenciaUseCase } from './application/use-cases/solicitar-agencia.usecase';
 import { ListarSolicitudesUseCase } from './application/use-cases/listar-solicitudes.usecase';
@@ -57,6 +58,7 @@ import {
     ListarSolicitudesUseCase,
     AprobarSolicitudAgenciaUseCase,
     RechazarSolicitudAgenciaUseCase,
+    ListarAgenciasUseCase,
   ],
     exports: [
     AGENCIAS_REPOSITORY,

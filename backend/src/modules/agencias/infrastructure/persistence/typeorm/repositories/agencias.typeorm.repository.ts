@@ -1,7 +1,7 @@
 // backend\src\modules\agencias\infrastructure\persistence\typeorm\repositories\agencias.typeorm.repository.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 
 import type { AgenciasRepositoryPort } from '../../../../application/ports/agencias-repository.port';
 import { Agencia } from '../../../../domain/entities/agencia.entity';
@@ -76,5 +76,55 @@ export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
     });
 
     return this.repo.save(agencia);
+  }
+
+  async findWithFilters(filters?: {
+    nombre?: string;
+    localidad?: string;
+    activa?: boolean;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    data: Agencia[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const page = filters?.page || 1;
+    const limit = filters?.limit || 10;
+
+    const qb = this.repo.createQueryBuilder('agencia');
+
+    if (filters?.nombre) {
+      qb.andWhere('LOWER(agencia.nombre) LIKE LOWER(:nombre)', {
+        nombre: `%${filters.nombre}%`,
+      });
+    }
+
+    if (filters?.localidad) {
+      qb.andWhere('LOWER(agencia.localidad) LIKE LOWER(:localidad)', {
+        localidad: `%${filters.localidad}%`,
+      });
+    }
+
+    if (filters?.activa !== undefined) {
+      qb.andWhere('agencia.activa = :activa', {
+        activa: filters.activa,
+      });
+    }
+
+    qb.orderBy('agencia.id', 'DESC');
+
+    qb.skip((page - 1) * limit);
+    qb.take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 }

@@ -10,11 +10,8 @@ import type { CreateSolicitudAgenciaDto } from '../../../../application/dto/crea
 import { Agencia } from '../../../../domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
 
-
 @Injectable()
-export class AgenciaSolicitudTypeOrmRepository
-  implements AgenciaSolicitudRepositoryPort
-{
+export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudRepositoryPort {
   constructor(
     @InjectRepository(AgenciaSolicitud)
     private readonly repo: Repository<AgenciaSolicitud>,
@@ -91,4 +88,17 @@ export class AgenciaSolicitudTypeOrmRepository
     return this.repo.save(solicitud);
   }
 
+  async findPendienteByUserId(userId: number): Promise<boolean> {
+    const solicitud = await this.repo.findOne({
+      where: {
+        usuario: {
+          id: userId,
+        },
+        estado: AgenciaSolicitudEstado.PENDIENTE,
+      },
+      relations: ['usuario'],
+    });
+
+    return !!solicitud;
+  }
 }

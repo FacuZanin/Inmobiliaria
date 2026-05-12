@@ -7,24 +7,55 @@ export class Agencia {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
   nombre!: string | null;
 
-  @Column({ length: 50 })
-  direccion!: string;
+  @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  direccion!: string | null;
 
-  @Column({ length: 100 })
-  localidad!: string;
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  localidad!: string | null;
 
-  @Column({ unique: true, length: 150 })
-  email!: string;
+  @Column({
+    type: 'varchar',
+    unique: true,
+    length: 150,
+    nullable: true,
+  })
+  email!: string | null;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
   telefono!: string | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   logoUrl!: string | null;
 
   @OneToMany(() => User, (user) => user.agencia)
   empleados!: User[];
+
+  @Column({ type: 'boolean', default: true })
+  activa!: boolean;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  creadaEn!: Date;
 }

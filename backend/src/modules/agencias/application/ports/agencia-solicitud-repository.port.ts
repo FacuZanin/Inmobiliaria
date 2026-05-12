@@ -8,4 +8,5 @@ export interface AgenciaSolicitudRepositoryPort {
   findPendientes(): Promise<AgenciaSolicitud[]>;
   findOne(id: number): Promise<AgenciaSolicitud | null>;
   save(solicitud: AgenciaSolicitud): Promise<AgenciaSolicitud>;
+  findPendienteByUserId(userId: number,): Promise<boolean>;
 }

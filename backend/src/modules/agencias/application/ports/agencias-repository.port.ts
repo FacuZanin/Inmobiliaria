@@ -10,4 +10,16 @@ export interface AgenciasRepositoryPort {
   update(id: number, data: UpdateAgenciaDto): Promise<Agencia>;
   delete(id: number): Promise<void>;
   createBasic(data: { nombre: string }): Promise<Agencia>;
+  findWithFilters(filters?: {
+  nombre?: string;
+  localidad?: string;
+  activa?: boolean;
+  page?: number;
+  limit?: number;
+}): Promise<{
+  data: Agencia[];
+  total: number;
+  page: number;
+  limit: number;
+}>;
 }
