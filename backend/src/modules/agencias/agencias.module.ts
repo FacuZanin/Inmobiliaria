@@ -1,5 +1,5 @@
 // backend\src\modules\agencias\agencias.module.ts
-import { Module, forwardRef  } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../user/users.module';
 
@@ -20,7 +20,10 @@ import { CreateAgenciaUseCase } from './application/use-cases/create-agencia.use
 import { UpdateAgenciaUseCase } from './application/use-cases/update-agencia.usecase';
 import { ObtenerAgenciaUseCase } from './application/use-cases/obtener-agencia.usecase';
 import { ListarAgenciasUseCase } from './application/use-cases/listar-agencias.usecase';
-
+import { SuspenderAgenciaUseCase } from './application/use-cases/suspender-agencia.usecase';
+import { ReactivarAgenciaUseCase } from './application/use-cases/reactivar-agencia.usecase';
+import { SoftDeleteAgenciaUseCase } from './application/use-cases/soft-delete-agencia.usecase';
+import { RestoreAgenciaUseCase } from './application/use-cases/restore-agencia.usecase';
 import { SolicitarAgenciaUseCase } from './application/use-cases/solicitar-agencia.usecase';
 import { ListarSolicitudesUseCase } from './application/use-cases/listar-solicitudes.usecase';
 import { AprobarSolicitudAgenciaUseCase } from './application/use-cases/aprobar-solicitud-agencia.usecase';
@@ -33,13 +36,10 @@ import {
 
 @Module({
   imports: [
-  TypeOrmModule.forFeature([Agencia, AgenciaSolicitud, User]),
-  forwardRef(() => UsersModule),
+    TypeOrmModule.forFeature([Agencia, AgenciaSolicitud, User]),
+    forwardRef(() => UsersModule),
   ],
-  controllers: [
-    AgenciasController,
-    AdminAgenciasController,
-  ],
+  controllers: [AgenciasController, AdminAgenciasController],
   providers: [
     {
       provide: AGENCIAS_REPOSITORY,
@@ -59,10 +59,11 @@ import {
     AprobarSolicitudAgenciaUseCase,
     RechazarSolicitudAgenciaUseCase,
     ListarAgenciasUseCase,
+    SuspenderAgenciaUseCase,
+    ReactivarAgenciaUseCase,
+    SoftDeleteAgenciaUseCase,
+    RestoreAgenciaUseCase,
   ],
-    exports: [
-    AGENCIAS_REPOSITORY,
-    SolicitarAgenciaUseCase,
-  ],
+  exports: [AGENCIAS_REPOSITORY, SolicitarAgenciaUseCase],
 })
 export class AgenciasModule {}

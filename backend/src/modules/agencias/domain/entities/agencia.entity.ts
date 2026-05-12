@@ -1,6 +1,15 @@
 // backend\src\modules\agencias\domain\entities\agencia.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  DeleteDateColumn,
+} from 'typeorm';
+
 import { User } from '../../../user/domain/entities/user.entity';
+
+import { AgenciaStatus } from '@shared/contracts/enums/agencia-status.enum';
 
 @Entity('agencias')
 export class Agencia {
@@ -53,9 +62,34 @@ export class Agencia {
   @OneToMany(() => User, (user) => user.agencia)
   empleados!: User[];
 
-  @Column({ type: 'boolean', default: true })
-  activa!: boolean;
+  @Column({
+    type: 'enum',
+    enum: AgenciaStatus,
+    default: AgenciaStatus.ACTIVA,
+  })
+  status!: AgenciaStatus;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  motivoSuspension!: string | null;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  suspendidaEn!: Date | null;
+
+  @DeleteDateColumn({
+    type: 'timestamp',
+    nullable: true,
+  })
+  deletedAt!: Date | null;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   creadaEn!: Date;
 }

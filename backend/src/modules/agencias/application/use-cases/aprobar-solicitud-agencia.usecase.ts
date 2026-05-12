@@ -68,7 +68,6 @@ export class AprobarSolicitudAgenciaUseCase {
         id: nuevaAgencia.id,
         nombre: nuevaAgencia.nombre,
         localidad: nuevaAgencia.localidad,
-        activa: nuevaAgencia.activa,
       },
     };
   }

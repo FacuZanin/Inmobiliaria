@@ -8,18 +8,21 @@ export interface AgenciasRepositoryPort {
   findById(id: number): Promise<Agencia | null>;
   create(data: CreateAgenciaDto): Promise<Agencia>;
   update(id: number, data: UpdateAgenciaDto): Promise<Agencia>;
-  delete(id: number): Promise<void>;
   createBasic(data: { nombre: string }): Promise<Agencia>;
   findWithFilters(filters?: {
-  nombre?: string;
-  localidad?: string;
-  activa?: boolean;
-  page?: number;
-  limit?: number;
-}): Promise<{
-  data: Agencia[];
-  total: number;
-  page: number;
-  limit: number;
-}>;
+    nombre?: string;
+    localidad?: string;
+    activa?: boolean;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    data: Agencia[];
+    total: number;
+    page: number;
+    limit: number;
+  }>;
+  suspender(id: number, motivo: string): Promise<Agencia>;
+  reactivar(id: number): Promise<Agencia>;
+  softDelete(id: number): Promise<void>;
+  restore(id: number): Promise<void>;
 }

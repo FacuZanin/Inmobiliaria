@@ -7,6 +7,8 @@ import {
   Patch,
   ParseIntPipe,
   Query,
+  Delete,
+  Body,
 } from '@nestjs/common';
 
 import {
@@ -22,11 +24,16 @@ import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 // DTOs
 import { FilterAgenciasDto } from '../../application/dto/filter-agencias.dto';
+import { SuspenderAgenciaDto } from '../../application/dto/suspender-agencia.dto';
 // Use Cases
 import { ListarSolicitudesUseCase } from '../../application/use-cases/listar-solicitudes.usecase';
 import { AprobarSolicitudAgenciaUseCase } from '../../application/use-cases/aprobar-solicitud-agencia.usecase';
 import { RechazarSolicitudAgenciaUseCase } from '../../application/use-cases/rechazar-solicitud-agencia.usecase';
 import { ListarAgenciasUseCase } from '../../application/use-cases/listar-agencias.usecase';
+import { SuspenderAgenciaUseCase } from '../../application/use-cases/suspender-agencia.usecase';
+import { ReactivarAgenciaUseCase } from '../../application/use-cases/reactivar-agencia.usecase';
+import { SoftDeleteAgenciaUseCase } from '../../application/use-cases/soft-delete-agencia.usecase';
+import { RestoreAgenciaUseCase } from '../../application/use-cases/restore-agencia.usecase';
 
 @ApiTags('Admin - Agencias')
 @ApiBearerAuth('access-token')
@@ -35,12 +42,13 @@ import { ListarAgenciasUseCase } from '../../application/use-cases/listar-agenci
 export class AdminAgenciasController {
   constructor(
     private readonly listarSolicitudesUC: ListarSolicitudesUseCase,
-
     private readonly aprobarUC: AprobarSolicitudAgenciaUseCase,
-
     private readonly rechazarUC: RechazarSolicitudAgenciaUseCase,
-
     private readonly listarAgenciasUC: ListarAgenciasUseCase,
+    private readonly suspenderAgenciaUC: SuspenderAgenciaUseCase,
+    private readonly reactivarAgenciaUC: ReactivarAgenciaUseCase,
+    private readonly softDeleteAgenciaUC: SoftDeleteAgenciaUseCase,
+    private readonly restoreAgenciaUC: RestoreAgenciaUseCase,
   ) {}
 
   @Get('solicitudes')
@@ -133,5 +141,27 @@ export class AdminAgenciasController {
       page: query.page ? Number(query.page) : 1,
       limit: query.limit ? Number(query.limit) : 10,
     });
+  }
+  @Patch(':id/suspender')
+  suspender(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: SuspenderAgenciaDto,
+  ) {
+    return this.suspenderAgenciaUC.execute(id, dto.motivo);
+  }
+
+  @Patch(':id/reactivar')
+  reactivar(@Param('id', ParseIntPipe) id: number) {
+    return this.reactivarAgenciaUC.execute(id);
+  }
+
+  @Delete(':id')
+  softDelete(@Param('id', ParseIntPipe) id: number) {
+    return this.softDeleteAgenciaUC.execute(id);
+  }
+
+  @Patch(':id/restaurar')
+  restore(@Param('id', ParseIntPipe) id: number) {
+    return this.restoreAgenciaUC.execute(id);
   }
 }

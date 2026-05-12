@@ -1,12 +1,16 @@
 // backend\src\modules\agencias\infrastructure\persistence\typeorm\repositories\agencias.typeorm.repository.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import type { AgenciasRepositoryPort } from '../../../../application/ports/agencias-repository.port';
+
 import { Agencia } from '../../../../domain/entities/agencia.entity';
+
 import type { CreateAgenciaDto } from '../../../../application/dto/create-agencia.dto';
 import type { UpdateAgenciaDto } from '../../../../application/dto/update-agencia.dto';
+
+import { AgenciaStatus } from '@shared/contracts/enums/agencia-status.enum';
 
 @Injectable()
 export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
@@ -63,11 +67,43 @@ export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
     return saved as Agencia;
   }
 
+  async suspender(id: number, motivo: string): Promise<Agencia> {
+    const agencia = await this.findOne(id);
+
+    if (!agencia) {
+      throw new BadRequestException('Agencia no encontrada');
+    }
+
+    agencia.status = AgenciaStatus.SUSPENDIDA;
+    agencia.motivoSuspension = motivo;
+    agencia.suspendidaEn = new Date();
+
+    return this.repo.save(agencia);
+  }
+
+  async reactivar(id: number): Promise<Agencia> {
+    const agencia = await this.findOne(id);
+
+    if (!agencia) {
+      throw new BadRequestException('Agencia no encontrada');
+    }
+
+    agencia.status = AgenciaStatus.ACTIVA;
+    agencia.motivoSuspension = null;
+    agencia.suspendidaEn = null;
+
+    return this.repo.save(agencia);
+  }
+
+  async restore(id: number): Promise<void> {
+    await this.repo.restore(id);
+  }
+
   /**
    * Borra la agencia
    */
-  async delete(id: number): Promise<void> {
-    await this.repo.delete(id);
+  async softDelete(id: number): Promise<void> {
+    await this.repo.softDelete(id);
   }
 
   async createBasic(data: { nombre: string }): Promise<Agencia> {
