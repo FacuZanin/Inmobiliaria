@@ -34,6 +34,7 @@ import { SuspenderAgenciaUseCase } from '../../application/use-cases/suspender-a
 import { ReactivarAgenciaUseCase } from '../../application/use-cases/reactivar-agencia.usecase';
 import { SoftDeleteAgenciaUseCase } from '../../application/use-cases/soft-delete-agencia.usecase';
 import { RestoreAgenciaUseCase } from '../../application/use-cases/restore-agencia.usecase';
+import { AdminDashboardUseCase } from '../../application/use-cases/admin-dashboard.usecase';
 
 @ApiTags('Admin - Agencias')
 @ApiBearerAuth('access-token')
@@ -49,7 +50,16 @@ export class AdminAgenciasController {
     private readonly reactivarAgenciaUC: ReactivarAgenciaUseCase,
     private readonly softDeleteAgenciaUC: SoftDeleteAgenciaUseCase,
     private readonly restoreAgenciaUC: RestoreAgenciaUseCase,
+    private readonly adminDashboardUC: AdminDashboardUseCase,
   ) {}
+
+  @Get('dashboard')
+  @ApiOperation({
+    summary: 'Dashboard administrativo',
+  })
+  dashboard() {
+    return this.adminDashboardUC.execute();
+  }
 
   @Get('solicitudes')
   @ApiOperation({

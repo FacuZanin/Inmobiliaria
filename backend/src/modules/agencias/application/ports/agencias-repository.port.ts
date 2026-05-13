@@ -3,6 +3,8 @@ import { Agencia } from '../../domain/entities/agencia.entity';
 import { CreateAgenciaDto } from '../dto/create-agencia.dto';
 import { UpdateAgenciaDto } from '../dto/update-agencia.dto';
 
+import { AgenciaStatus } from '@shared/contracts/enums/agencia-status.enum';
+
 export interface AgenciasRepositoryPort {
   findAll(): Promise<Agencia[]>;
   findById(id: number): Promise<Agencia | null>;
@@ -25,4 +27,15 @@ export interface AgenciasRepositoryPort {
   reactivar(id: number): Promise<Agencia>;
   softDelete(id: number): Promise<void>;
   restore(id: number): Promise<void>;
+  countAll(): Promise<number>;
+  countByStatus(status: AgenciaStatus): Promise<number>;
+  countDeleted(): Promise<number>;
+  countNewAgenciasThisMonth(): Promise<number>;
+  getAgenciasCreatedByMonth(): Promise<
+    {
+      month: string;
+      total: number;
+    }[]
+  >;
+  findRecentAgencias(limit: number): Promise<Agencia[]>;
 }

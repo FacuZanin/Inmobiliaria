@@ -28,6 +28,7 @@ import { SolicitarAgenciaUseCase } from './application/use-cases/solicitar-agenc
 import { ListarSolicitudesUseCase } from './application/use-cases/listar-solicitudes.usecase';
 import { AprobarSolicitudAgenciaUseCase } from './application/use-cases/aprobar-solicitud-agencia.usecase';
 import { RechazarSolicitudAgenciaUseCase } from './application/use-cases/rechazar-solicitud-agencia.usecase';
+import { AdminDashboardUseCase } from './application/use-cases/admin-dashboard.usecase';
 
 import {
   AGENCIAS_REPOSITORY,
@@ -63,6 +64,7 @@ import {
     ReactivarAgenciaUseCase,
     SoftDeleteAgenciaUseCase,
     RestoreAgenciaUseCase,
+    AdminDashboardUseCase,
   ],
   exports: [AGENCIAS_REPOSITORY, SolicitarAgenciaUseCase],
 })

@@ -1,15 +1,17 @@
 // backend\src\modules\agencias\infrastructure\persistence\typeorm\repositories\agencia-solicitud.typeorm.repository.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 
 import type { AgenciaSolicitudRepositoryPort } from '../../../../application/ports/agencia-solicitud-repository.port';
-import { AgenciaSolicitud } from '../../../../domain/entities/agencia-solicitud.entity';
+
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
+
 import type { CreateSolicitudAgenciaDto } from '../../../../application/dto/create-solicitud-agencia.dto';
+
 import { Agencia } from '../../../../domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
-
+import { AgenciaSolicitud } from '../../../../domain/entities/agencia-solicitud.entity';
 @Injectable()
 export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudRepositoryPort {
   constructor(
@@ -100,5 +102,50 @@ export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudReposi
     });
 
     return !!solicitud;
+  }
+
+  async countByEstado(estado: AgenciaSolicitudEstado): Promise<number> {
+    return this.repo.count({
+      where: {
+        estado,
+      },
+    });
+  }
+
+  async countThisMonth(): Promise<number> {
+    const now = new Date();
+
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    return this.repo.count({
+      where: {
+        creadaEn: Between(start, now),
+      },
+    });
+  }
+
+  async getSolicitudesByMonth(): Promise<
+    {
+      month: string;
+      total: number;
+    }[]
+  > {
+    return this.repo
+      .createQueryBuilder('solicitud')
+      .select(`TO_CHAR(solicitud."creadaEn", 'YYYY-MM')`, 'month')
+      .addSelect('COUNT(*)', 'total')
+      .groupBy(`TO_CHAR(solicitud."creadaEn", 'YYYY-MM')`)
+      .orderBy('month', 'ASC')
+      .getRawMany();
+  }
+
+  async findRecent(limit: number): Promise<AgenciaSolicitud[]> {
+    return this.repo.find({
+      order: {
+        creadaEn: 'DESC',
+      },
+      take: limit,
+      relations: ['usuario'],
+    });
   }
 }

@@ -1,7 +1,7 @@
 // backend\src\modules\agencias\infrastructure\persistence\typeorm\repositories\agencias.typeorm.repository.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, IsNull, Between } from 'typeorm';
 
 import type { AgenciasRepositoryPort } from '../../../../application/ports/agencias-repository.port';
 
@@ -19,9 +19,6 @@ export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
     private readonly repo: Repository<Agencia>,
   ) {}
 
-  /**
-   * Crea y guarda una agencia. Se hace un cast explícito para evitar inferencias raras.
-   */
   async create(data: CreateAgenciaDto): Promise<Agencia> {
     try {
       const partial: Partial<Agencia> = { ...data } as Partial<Agencia>;
@@ -34,31 +31,19 @@ export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
     }
   }
 
-  /**
-   * Devuelve todas las agencias.
-   */
   async findAll(): Promise<Agencia[]> {
     const list = await this.repo.find();
     return list as Agencia[];
   }
 
-  /**
-   * findOne mantiene compatibilidad con varias firmas de port (findOne o findById).
-   */
   async findOne(id: number): Promise<Agencia | null> {
     return (await this.repo.findOne({ where: { id } })) as Agencia | null;
   }
 
-  /**
-   * Alias: algunos ports llaman a este método 'findById' — lo implementamos para compatibilidad.
-   */
   async findById(id: number): Promise<Agencia | null> {
     return this.findOne(id);
   }
 
-  /**
-   * Actualiza la agencia
-   */
   async update(id: number, data: UpdateAgenciaDto): Promise<Agencia> {
     const existing = await this.findOne(id);
     if (!existing) throw new BadRequestException('Agencia no encontrada');
@@ -99,9 +84,6 @@ export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
     await this.repo.restore(id);
   }
 
-  /**
-   * Borra la agencia
-   */
   async softDelete(id: number): Promise<void> {
     await this.repo.softDelete(id);
   }
@@ -162,5 +144,62 @@ export class AgenciasTypeOrmRepository implements AgenciasRepositoryPort {
       page,
       limit,
     };
+  }
+
+  async countAll(): Promise<number> {
+    return this.repo.count();
+  }
+
+  async countByStatus(status: AgenciaStatus): Promise<number> {
+    return this.repo.count({
+      where: {
+        status,
+      },
+    });
+  }
+
+  async countDeleted(): Promise<number> {
+    return this.repo.count({
+      withDeleted: true,
+      where: {
+        deletedAt: Not(IsNull()),
+      },
+    });
+  }
+
+  async countNewAgenciasThisMonth(): Promise<number> {
+    const now = new Date();
+
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    return this.repo.count({
+      where: {
+        creadaEn: Between(start, now),
+      },
+    });
+  }
+
+  async getAgenciasCreatedByMonth(): Promise<
+    {
+      month: string;
+      total: number;
+    }[]
+  > {
+    return this.repo
+      .createQueryBuilder('agencia')
+      .select(`TO_CHAR(agencia."creadaEn", 'YYYY-MM')`, 'month')
+      .addSelect('COUNT(*)', 'total')
+      .groupBy(`TO_CHAR(agencia."creadaEn", 'YYYY-MM')`)
+      .orderBy('month', 'ASC')
+      .getRawMany();
+  }
+
+  async findRecentAgencias(limit: number): Promise<Agencia[]> {
+    return this.repo.find({
+      order: {
+        creadaEn: 'DESC',
+      },
+      take: limit,
+    });
   }
 }

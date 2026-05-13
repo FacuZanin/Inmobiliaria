@@ -17,4 +17,13 @@ export interface UserRepositoryPort {
   getByEmailOrFail(email: string): Promise<User>;
   getTokenVersion(userId: number): Promise<number>;
   create(data: Partial<User>): Promise<User>;
+  countAgencyUsers(): Promise<number>;
+  countNewUsersThisMonth(): Promise<number>;
+  getUsersCreatedByMonth(): Promise<
+    {
+      month: string;
+      total: number;
+    }[]
+  >;
+  findRecentUsers(limit: number): Promise<User[]>;
 }

@@ -1,13 +1,17 @@
 // backend\src\modules\user\infrastructure\persistence\typeorm\user.typeorm.repository.ts
-import { Injectable, NotFoundException} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 
 import { User } from '../../../domain/entities/user.entity';
+
 import { UserRepositoryPort } from '../../../application/ports/user-repository.port';
+
 import { CreateUserDto } from '../../../application/dto/create-user.dto';
 import { UpdateUserDto } from '../../../application/dto/update-user.dto';
 import { UserFiltersDto } from '../../../application/dto/user-filters.dto';
+
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 @Injectable()
 export class UserTypeOrmRepository implements UserRepositoryPort {
@@ -67,7 +71,7 @@ export class UserTypeOrmRepository implements UserRepositoryPort {
   }
 
   async findAll(filters: UserFiltersDto): Promise<User[]> {
-    const qb = this.repo.createQueryBuilder('user');
+    const qb = this.repo.createQueryBuilder('u');
 
     if (filters.includeDeleted) {
       qb.withDeleted();
@@ -78,9 +82,9 @@ export class UserTypeOrmRepository implements UserRepositoryPort {
     }
 
     if (filters.isActive !== undefined) {
-     qb.andWhere('user.status = :status', {
-  status: filters.isActive ? 'ACTIVE' : 'INACTIVE',
-});
+      qb.andWhere('user.status = :status', {
+        status: filters.isActive ? 'ACTIVE' : 'INACTIVE',
+      });
     }
 
     if (filters.search) {
@@ -109,29 +113,76 @@ export class UserTypeOrmRepository implements UserRepositoryPort {
   }
 
   async getByIdOrFail(id: number): Promise<User> {
-  const user = await this.findById(id);
-  if (!user) {
-    throw new NotFoundException('Usuario no encontrado');
+    const user = await this.findById(id);
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return user;
   }
-  return user;
-}
 
-async getByEmailOrFail(email: string): Promise<User> {
-  const user = await this.findByEmail(email);
-  if (!user) {
-    throw new NotFoundException('Usuario no encontrado');
+  async getByEmailOrFail(email: string): Promise<User> {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    return user;
   }
-  return user;
+
+  async getTokenVersion(userId: number): Promise<number> {
+    const user = await this.repo.findOne({
+      where: { id: userId },
+      select: ['tokenVersion'],
+    });
+
+    return user?.tokenVersion ?? 0;
+  }
+
+  async countAgencyUsers(): Promise<number> {
+    return this.repo.count({
+      where: {
+        tipo: UserType.AGENCIA,
+      },
+    });
+  }
+
+  async countNewUsersThisMonth(): Promise<number> {
+    const now = new Date();
+
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    return this.repo.count({
+      where: {
+        createdAt: Between(start, now),
+      },
+    });
+  }
+
+async getUsersCreatedByMonth(): Promise<
+  {
+    month: string;
+    total: number;
+  }[]
+> {
+  return this.repo
+    .createQueryBuilder('u')
+    .select(
+      `TO_CHAR(u."createdAt", 'YYYY-MM')`,
+      'month',
+    )
+    .addSelect('COUNT(*)', 'total')
+    .groupBy(
+      `TO_CHAR(u."createdAt", 'YYYY-MM')`,
+    )
+    .orderBy('month', 'ASC')
+    .getRawMany();
 }
 
-async getTokenVersion(userId: number): Promise<number> {
-  const user = await this.repo.findOne({
-    where: { id: userId },
-    select: ['tokenVersion'],
-  });
-
-  return user?.tokenVersion ?? 0;
-}
-
-
+  async findRecentUsers(limit: number): Promise<User[]> {
+    return this.repo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      take: limit,
+    });
+  }
 }
