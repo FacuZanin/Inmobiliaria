@@ -9,10 +9,13 @@ import {
   JoinColumn,
   DeleteDateColumn,
   CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { Agencia } from '../../../../../agencias/domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
+import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
 
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
@@ -226,4 +229,16 @@ export class Propiedad {
     nullable: true,
   })
   deletedAt!: Date | null;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.property)
+  favorites!: Favorite[];
+
+  favoriteCount?: number;
+  isFavorite?: boolean;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

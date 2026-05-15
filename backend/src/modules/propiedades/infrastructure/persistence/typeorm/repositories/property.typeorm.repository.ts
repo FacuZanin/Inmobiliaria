@@ -119,7 +119,9 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
       offset?: number;
     },
   ) {
-    const qb = this.propiedadRepo.createQueryBuilder('p');
+    const qb = this.propiedadRepo.createQueryBuilder('p').loadRelationCountAndMap(
+    'p.favoriteCount',
+    'p.favorites',);
 
     qb.leftJoinAndSelect('p.agencia', 'agencia');
 

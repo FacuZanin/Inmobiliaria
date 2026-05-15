@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { Agencia } from '../../../agencias/domain/entities/agencia.entity';
+import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
@@ -81,4 +82,7 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   refreshTokenHash!: string | null;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  favorites!: Favorite[];
 }
