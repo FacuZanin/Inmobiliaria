@@ -10,6 +10,7 @@ export * from './enums/audit-action.enum';
 export * from './enums/audit-entity.enum';
 export * from './enums/user-status.enum';
 export * from './enums/propiedad-tipo.enum';
+export * from './enums/property-status.enum';
 
 export const __shared = true;
 

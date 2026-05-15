@@ -1,4 +1,5 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\entities\propiedad.entity.ts
+
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,12 +7,16 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
+  DeleteDateColumn,
+  CreateDateColumn,
 } from 'typeorm';
 
 import { Agencia } from '../../../../../agencias/domain/entities/agencia.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
+
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
+import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
 import { PropiedadCasa } from './propiedad-casa.entity';
 import { PropiedadDepartamento } from './propiedad-departamento.entity';
@@ -24,57 +29,117 @@ import { PropiedadPozo } from './propiedad-pozo.entity';
 
 @Entity('propiedades')
 export class Propiedad {
+  // ---------------------------------------------------
+  // BASE
+  // ---------------------------------------------------
+
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @Column({ length: 150 })
-  titulo: string;
+  @Column({
+    type: 'varchar',
+    length: 150,
+  })
+  titulo!: string;
 
-  @Column({ type: 'text', nullable: true })
-  descripcion: string;
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  descripcion!: string | null;
 
-  @Column({ type: 'enum', enum: PropiedadTipo })
-  tipo: PropiedadTipo;
+  @Column({
+    type: 'enum',
+    enum: PropiedadTipo,
+  })
+  tipo!: PropiedadTipo;
 
-  @Column({ type: 'enum', enum: OperacionTipo })
-  operacion: OperacionTipo;
+  @Column({
+    type: 'enum',
+    enum: OperacionTipo,
+  })
+  operacion!: OperacionTipo;
 
-  @Column({ nullable: true, type: 'int' })
-  precio: number | null;
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  precio!: number | null;
 
-  @Column({ length: 200 })
-  direccion: string;
+  // ---------------------------------------------------
+  // UBICACIÓN
+  // ---------------------------------------------------
 
-  @Column({ length: 120 })
-  localidad: string;
+  @Column({
+    type: 'varchar',
+    length: 200,
+  })
+  direccion!: string;
 
-  @Column({ nullable: true })
-  ambientes: number;
+  @Column({
+    type: 'varchar',
+    length: 120,
+  })
+  localidad!: string;
 
-  @Column({ nullable: true })
-  dormitorios: number;
+  // ---------------------------------------------------
+  // GENERALES
+  // ---------------------------------------------------
 
-  @Column({ nullable: true })
-  banos: number;
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  ambientes!: number | null;
 
-  @Column({ nullable: true })
-  metrosCubiertos: number;
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  dormitorios!: number | null;
 
-  @Column({ nullable: true })
-  metrosTotales: number;
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  banos!: number | null;
 
-  @Column('simple-array', { nullable: true })
-  imagenes: string[];
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  metrosCubiertos!: number | null;
 
-  @ManyToOne(() => Agencia, (agencia) => agencia.id)
-  agencia: Agencia;
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  metrosTotales!: number | null;
 
-  @ManyToOne(() => User, (user) => user.id)
-  creadoPor: User;
+  @Column('simple-array', {
+    nullable: true,
+  })
+  imagenes!: string[] | null;
 
-  // ------------------------------
-  // RELACIONES CON DETALLES
-  // ------------------------------
+  // ---------------------------------------------------
+  // RELACIONES
+  // ---------------------------------------------------
+
+  @ManyToOne(() => Agencia, (agencia) => agencia.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  agencia!: Agencia | null;
+
+  @ManyToOne(() => User, (user) => user.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  creadoPor!: User | null;
+
+  // ---------------------------------------------------
+  // DETALLES
+  // ---------------------------------------------------
 
   @OneToOne(() => PropiedadCasa, (l) => l.propiedad, {
     nullable: true,
@@ -82,7 +147,7 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  casa: PropiedadCasa;
+  casa!: PropiedadCasa | null;
 
   @OneToOne(() => PropiedadDepartamento, (l) => l.propiedad, {
     nullable: true,
@@ -90,7 +155,7 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  departamento: PropiedadDepartamento;
+  departamento!: PropiedadDepartamento | null;
 
   @OneToOne(() => PropiedadLote, (l) => l.propiedad, {
     nullable: true,
@@ -98,7 +163,7 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  lote: PropiedadLote;
+  lote!: PropiedadLote | null;
 
   @OneToOne(() => PropiedadLocal, (l) => l.propiedad, {
     nullable: true,
@@ -106,7 +171,7 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  local: PropiedadLocal;
+  local!: PropiedadLocal | null;
 
   @OneToOne(() => PropiedadOficina, (l) => l.propiedad, {
     nullable: true,
@@ -114,7 +179,7 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  oficina: PropiedadOficina;
+  oficina!: PropiedadOficina | null;
 
   @OneToOne(() => PropiedadCampo, (l) => l.propiedad, {
     nullable: true,
@@ -122,7 +187,7 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  campo: PropiedadCampo;
+  campo!: PropiedadCampo | null;
 
   @OneToOne(() => PropiedadPH, (l) => l.propiedad, {
     nullable: true,
@@ -130,7 +195,7 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  ph: PropiedadPH;
+  ph!: PropiedadPH | null;
 
   @OneToOne(() => PropiedadPozo, (l) => l.propiedad, {
     nullable: true,
@@ -138,11 +203,27 @@ export class Propiedad {
     eager: false,
   })
   @JoinColumn()
-  pozo: PropiedadPozo;
+  pozo!: PropiedadPozo | null;
 
-  @Column({ default: true })
-  activo: boolean;
+  // ---------------------------------------------------
+  // ESTADO
+  // ---------------------------------------------------
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  creadoEn: Date;
+  @Column({
+    type: 'enum',
+    enum: PropertyStatus,
+    default: PropertyStatus.BORRADOR,
+  })
+  status!: PropertyStatus;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
+  creadoEn!: Date;
+
+  @DeleteDateColumn({
+    type: 'timestamp',
+    nullable: true,
+  })
+  deletedAt!: Date | null;
 }

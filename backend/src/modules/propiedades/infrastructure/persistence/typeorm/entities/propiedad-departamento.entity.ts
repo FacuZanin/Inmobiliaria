@@ -5,7 +5,7 @@ import { Propiedad } from './propiedad.entity';
 @Entity('propiedad_departamentos')
 export class PropiedadDepartamento {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ nullable: true })
   piso?: number;

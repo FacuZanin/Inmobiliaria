@@ -4,8 +4,10 @@ import { Propiedad } from '../entities/propiedad.entity';
 
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
+import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
 import { PropertyAggregate } from '../../../../domain/entities/property.aggregate';
+
 import { AddressVO } from '../../../../domain/value-objects/address.vo';
 import { PriceVO } from '../../../../domain/value-objects/price.vo';
 import { SuperficieVO } from '../../../../domain/value-objects/superficie.vo';
@@ -32,7 +34,7 @@ export class PropertyMapper {
       imagenes: entity.imagenes ?? [],
 
       creadoPorId: entity.creadoPor?.id ?? null,
-      activo: entity.activo,
+      status: entity.status,
       creadoEn: entity.creadoEn,
 
       ambientes: entity.ambientes ?? null,
@@ -82,7 +84,7 @@ export class PropertyMapper {
       metrosCubiertos: superficie?.metrosCubiertos ?? undefined,
       metrosTotales: superficie?.metrosTotales ?? undefined,
 
-      activo: property.activo,
+      status: property.status as PropertyStatus,
       creadoEn: property.creadoEn,
     };
   }

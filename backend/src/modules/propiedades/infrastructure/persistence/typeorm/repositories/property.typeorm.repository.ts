@@ -51,9 +51,6 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     private readonly pozoRepo: Repository<PropiedadPozo>,
   ) {}
 
-  // ---------------------------------------------------
-  // SAVE
-  // ---------------------------------------------------
   async save(property: PropertyAggregate): Promise<PropertyAggregate> {
     try {
       // 1️⃣ map aggregate -> base ORM
@@ -64,10 +61,7 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
       const savedBase = await this.propiedadRepo.save(baseOrm);
 
       // 2️⃣ map & persist detalles (si existen)
-      const detailEntity = PropertyDetailsMapper.toOrm(
-        property,
-        savedBase,
-      );
+      const detailEntity = PropertyDetailsMapper.toOrm(property, savedBase);
 
       if (detailEntity) {
         const repo = this.getDetailRepo(property.tipo);
@@ -98,9 +92,6 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     }
   }
 
-  // ---------------------------------------------------
-  // FIND
-  // ---------------------------------------------------
   async findById(id: number): Promise<PropertyAggregate | null> {
     const entity = await this.propiedadRepo.findOne({
       where: { id },
@@ -121,23 +112,103 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     return entity ? PropertyMapper.toDomain(entity) : null;
   }
 
-  async findAll(filters: any = {}, opts?: { limit?: number; offset?: number }) {
+  async findAll(
+    filters: any = {},
+    opts?: {
+      limit?: number;
+      offset?: number;
+    },
+  ) {
     const qb = this.propiedadRepo.createQueryBuilder('p');
 
-    if (filters?.tipo) qb.andWhere('p.tipo = :tipo', { tipo: filters.tipo });
-    if (filters?.operacion) qb.andWhere('p.operacion = :operacion', { operacion: filters.operacion });
-    if (filters?.localidad) qb.andWhere('p.localidad ILIKE :localidad', { localidad: `%${filters.localidad}%` });
+    qb.leftJoinAndSelect('p.agencia', 'agencia');
 
-    qb.orderBy('p.id', 'DESC');
+    qb.where('p.deletedAt IS NULL');
 
-    if (opts?.limit) qb.take(opts.limit);
-    if (opts?.offset) qb.skip(opts.offset);
+    if (filters.tipo) {
+      qb.andWhere('p.tipo = :tipo', {
+        tipo: filters.tipo,
+      });
+    }
 
-    const [entities, count] = await qb.getManyAndCount();
+    if (filters.operacion) {
+      qb.andWhere('p.operacion = :operacion', {
+        operacion: filters.operacion,
+      });
+    }
+
+    if (filters.localidad) {
+      qb.andWhere('LOWER(p.localidad) LIKE LOWER(:localidad)', {
+        localidad: `%${filters.localidad}%`,
+      });
+    }
+
+    if (filters.precioMin !== undefined) {
+      qb.andWhere('p.precio >= :precioMin', {
+        precioMin: filters.precioMin,
+      });
+    }
+
+    if (filters.precioMax !== undefined) {
+      qb.andWhere('p.precio <= :precioMax', {
+        precioMax: filters.precioMax,
+      });
+    }
+
+    if (filters.ambientes !== undefined) {
+      qb.andWhere('p.ambientes = :ambientes', {
+        ambientes: filters.ambientes,
+      });
+    }
+
+    if (filters.dormitorios !== undefined) {
+      qb.andWhere('p.dormitorios = :dormitorios', {
+        dormitorios: filters.dormitorios,
+      });
+    }
+
+    if (filters.banos !== undefined) {
+      qb.andWhere('p.banos = :banos', {
+        banos: filters.banos,
+      });
+    }
+
+    if (filters.agenciaId !== undefined) {
+      qb.andWhere('p.agenciaId = :agenciaId', {
+        agenciaId: filters.agenciaId,
+      });
+    }
+
+    if (filters.search) {
+      qb.andWhere(
+        `
+      (
+        LOWER(p.titulo) LIKE LOWER(:search)
+        OR LOWER(p.descripcion) LIKE LOWER(:search)
+        OR LOWER(p.localidad) LIKE LOWER(:search)
+      )
+      `,
+        {
+          search: `%${filters.search}%`,
+        },
+      );
+    }
+    if (filters.status) {
+      qb.andWhere('p.status = :status', {
+        status: filters.status,
+      });
+    }
+
+    qb.orderBy('p.creadoEn', filters.sort === 'ASC' ? 'ASC' : 'DESC');
+
+    qb.take(opts?.limit ?? 20);
+    qb.skip(opts?.offset ?? 0);
+
+    const [entities, total] = await qb.getManyAndCount();
 
     return {
       items: entities.map(PropertyMapper.toDomain),
-      total: count,
+      total,
     };
   }
 
@@ -146,23 +217,28 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     return this.findById(id);
   }
 
-  async delete(id: number): Promise<void> {
-    await this.propiedadRepo.delete(id);
+  async softDelete(id: number): Promise<void> {
+    await this.propiedadRepo.softDelete(id);
   }
 
-  // ---------------------------------------------------
-  // PRIVATE
-  // ---------------------------------------------------
   private getDetailRepo(tipo: string): Repository<any> {
     switch (tipo) {
-      case 'CASA': return this.casaRepo;
-      case 'DEPARTAMENTO': return this.deptoRepo;
-      case 'LOTE': return this.loteRepo;
-      case 'LOCAL': return this.localRepo;
-      case 'OFICINA': return this.oficinaRepo;
-      case 'CAMPO': return this.campoRepo;
-      case 'PH': return this.phRepo;
-      case 'POZO': return this.pozoRepo;
+      case 'CASA':
+        return this.casaRepo;
+      case 'DEPARTAMENTO':
+        return this.deptoRepo;
+      case 'LOTE':
+        return this.loteRepo;
+      case 'LOCAL':
+        return this.localRepo;
+      case 'OFICINA':
+        return this.oficinaRepo;
+      case 'CAMPO':
+        return this.campoRepo;
+      case 'PH':
+        return this.phRepo;
+      case 'POZO':
+        return this.pozoRepo;
       default:
         throw new Error(`Tipo de propiedad no soportado: ${tipo}`);
     }

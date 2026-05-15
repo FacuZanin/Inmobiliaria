@@ -11,5 +11,5 @@ export interface PropertyRepositoryPort {
   ): Promise<{ items: PropertyAggregate[]; total: number }>;
 
   update(id: number, partial: any): Promise<PropertyAggregate | null>;
-  delete(id: number): Promise<void>;
+  softDelete(id: number): Promise<void>;
 }

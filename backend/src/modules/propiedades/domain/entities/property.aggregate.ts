@@ -1,6 +1,10 @@
 // backend\src\modules\propiedades\domain\entities\property.aggregate.ts
+
 import type { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
+
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
+
+import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
 import { AddressVO } from '../value-objects/address.vo';
 import { PriceVO } from '../value-objects/price.vo';
@@ -19,7 +23,6 @@ import {
 
 /**
  * Detalles válidos por tipo de propiedad
- * (Value Objects polimórficos)
  */
 export type PropertyDetails =
   | CasaDetails
@@ -33,26 +36,44 @@ export type PropertyDetails =
 
 /**
  * Props internas del Aggregate
- * (explícitas para evitar problemas con constructor privado)
  */
 type PropertyAggregateProps = {
   id?: number | null;
+
   titulo: string;
+
   descripcion?: string | null;
+
   tipo: PropiedadTipo;
+
   operacion: OperacionTipo;
+
+  status?: PropertyStatus;
+
   precio?: PriceVO | null;
+
   direccion: AddressVO;
+
   localidad: string;
+
   imagenes?: string[];
+
   creadoPorId?: number | null;
+
   activo?: boolean;
+
   creadoEn?: Date;
+
   ambientes?: number | null;
+
   dormitorios?: number | null;
+
   banos?: number | null;
+
   superficie?: SuperficieVO | null;
+
   agenciaId?: number | null;
+
   detalles?: PropertyDetails;
 };
 
@@ -60,63 +81,106 @@ type PropertyAggregateProps = {
  * Aggregate Root: Property
  */
 export class PropertyAggregate {
-  // ---------- STATE ----------
+  // ---------------------------------------------------
+  // STATE
+  // ---------------------------------------------------
+
   private _id: number | null;
+
   private _titulo: string;
+
   private _descripcion: string | null;
-  private _tipo: PropiedadTipo;;
+
+  private _tipo: PropiedadTipo;
+
   private _operacion: OperacionTipo;
+
+  private _status: PropertyStatus;
+
   private _precio: PriceVO | null;
 
   private _direccion: AddressVO;
+
   private _localidad: string;
+
   private _imagenes: string[];
 
   private _creadoPorId: number | null;
+
   private _activo: boolean;
+
   private _creadoEn?: Date;
 
   private _ambientes: number | null;
+
   private _dormitorios: number | null;
+
   private _banos: number | null;
+
   private _superficie: SuperficieVO | null;
+
   private _agenciaId: number | null;
 
   private _detalles?: PropertyDetails;
 
-  // ---------- CONSTRUCTOR ----------
+  // ---------------------------------------------------
+  // CONSTRUCTOR
+  // ---------------------------------------------------
+
   private constructor(props: PropertyAggregateProps) {
     this._id = props.id ?? null;
+
     this._titulo = props.titulo;
+
     this._descripcion = props.descripcion ?? null;
+
     this._tipo = props.tipo;
+
     this._operacion = props.operacion;
+
+    this._status =
+      props.status ?? PropertyStatus.PUBLICADA;
+
     this._precio = props.precio ?? null;
 
     this._direccion = props.direccion;
+
     this._localidad = props.localidad;
+
     this._imagenes = props.imagenes ?? [];
 
-    this._creadoPorId = props.creadoPorId ?? null;
+    this._creadoPorId =
+      props.creadoPorId ?? null;
+
     this._activo = props.activo ?? true;
+
     this._creadoEn = props.creadoEn;
 
     this._ambientes = props.ambientes ?? null;
-    this._dormitorios = props.dormitorios ?? null;
-    this._banos = props.banos ?? null;
-    this._superficie = props.superficie ?? null;
 
-    this._agenciaId = props.agenciaId ?? null;
+    this._dormitorios =
+      props.dormitorios ?? null;
+
+    this._banos = props.banos ?? null;
+
+    this._superficie =
+      props.superficie ?? null;
+
+    this._agenciaId =
+      props.agenciaId ?? null;
+
     this._detalles = props.detalles;
   }
 
-  // ---------- FACTORIES ----------
+  // ---------------------------------------------------
+  // FACTORIES
+  // ---------------------------------------------------
 
-  /**
-   * Creación de una nueva propiedad (caso de negocio)
-   */
   static create(
-    props: Omit<PropertyAggregateProps, 'id' | 'activo' | 'creadoEn'>,
+    props: Omit<
+      PropertyAggregateProps,
+      'id' | 'activo' | 'creadoEn'
+    >,
   ): PropertyAggregate {
     return new PropertyAggregate({
       ...props,
@@ -126,14 +190,16 @@ export class PropertyAggregate {
     });
   }
 
-  /**
-   * Reconstrucción desde persistencia
-   */
-  static rehydrate(props: PropertyAggregateProps): PropertyAggregate {
+  static rehydrate(
+    props: PropertyAggregateProps,
+  ): PropertyAggregate {
     return new PropertyAggregate(props);
   }
 
-  // ---------- GETTERS ----------
+  // ---------------------------------------------------
+  // GETTERS
+  // ---------------------------------------------------
+
   get id(): number | null {
     return this._id;
   }
@@ -152,6 +218,10 @@ export class PropertyAggregate {
 
   get operacion(): OperacionTipo {
     return this._operacion;
+  }
+
+  get status(): PropertyStatus {
+    return this._status;
   }
 
   get precio(): number | null {
@@ -206,36 +276,90 @@ export class PropertyAggregate {
     return this._detalles;
   }
 
-  // ---------- DOMAIN BEHAVIORS ----------
+  // ---------------------------------------------------
+  // DOMAIN BEHAVIORS
+  // ---------------------------------------------------
 
-  updateGeneral(data: Partial<{
-    titulo: string;
-    descripcion: string | null;
-    operacion: OperacionTipo;
-    precio: PriceVO | null;
-    direccion: AddressVO;
-    localidad: string;
-    imagenes: string[];
-    ambientes: number | null;
-    dormitorios: number | null;
-    banos: number | null;
-    superficie: SuperficieVO | null;
-    agenciaId: number | null;
-  }>) {
-    if (data.titulo !== undefined) this._titulo = data.titulo;
-    if (data.descripcion !== undefined) this._descripcion = data.descripcion;
-    if (data.operacion !== undefined) this._operacion = data.operacion;
-    if (data.precio !== undefined) this._precio = data.precio;
-    if (data.direccion !== undefined) this._direccion = data.direccion;
-    if (data.localidad !== undefined) this._localidad = data.localidad;
-    if (data.imagenes !== undefined) this._imagenes = data.imagenes;
+  updateGeneral(
+    data: Partial<{
+      titulo: string;
 
-    if (data.ambientes !== undefined) this._ambientes = data.ambientes;
-    if (data.dormitorios !== undefined) this._dormitorios = data.dormitorios;
-    if (data.banos !== undefined) this._banos = data.banos;
-    if (data.superficie !== undefined) this._superficie = data.superficie;
+      descripcion: string | null;
 
-    if (data.agenciaId !== undefined) this._agenciaId = data.agenciaId;
+      operacion: OperacionTipo;
+
+      status: PropertyStatus;
+
+      precio: PriceVO | null;
+
+      direccion: AddressVO;
+
+      localidad: string;
+
+      imagenes: string[];
+
+      ambientes: number | null;
+
+      dormitorios: number | null;
+
+      banos: number | null;
+
+      superficie: SuperficieVO | null;
+
+      agenciaId: number | null;
+    }>,
+  ) {
+    if (data.titulo !== undefined) {
+      this._titulo = data.titulo;
+    }
+
+    if (data.descripcion !== undefined) {
+      this._descripcion = data.descripcion;
+    }
+
+    if (data.operacion !== undefined) {
+      this._operacion = data.operacion;
+    }
+
+    if (data.status !== undefined) {
+      this._status = data.status;
+    }
+
+    if (data.precio !== undefined) {
+      this._precio = data.precio;
+    }
+
+    if (data.direccion !== undefined) {
+      this._direccion = data.direccion;
+    }
+
+    if (data.localidad !== undefined) {
+      this._localidad = data.localidad;
+    }
+
+    if (data.imagenes !== undefined) {
+      this._imagenes = data.imagenes;
+    }
+
+    if (data.ambientes !== undefined) {
+      this._ambientes = data.ambientes;
+    }
+
+    if (data.dormitorios !== undefined) {
+      this._dormitorios = data.dormitorios;
+    }
+
+    if (data.banos !== undefined) {
+      this._banos = data.banos;
+    }
+
+    if (data.superficie !== undefined) {
+      this._superficie = data.superficie;
+    }
+
+    if (data.agenciaId !== undefined) {
+      this._agenciaId = data.agenciaId;
+    }
   }
 
   setDetalles(detalles: PropertyDetails) {

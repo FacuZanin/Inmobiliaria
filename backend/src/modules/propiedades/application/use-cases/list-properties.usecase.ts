@@ -12,8 +12,22 @@ export class ListPropertiesUseCase {
     private readonly repo: PropertyRepositoryPort,
   ) {}
 
-  async execute(filters: any = {}, limit = 20, offset = 0): Promise<{ items: PropertyAggregate[]; total: number }> {
-    const result = await this.repo.findAll(filters, { limit, offset });
-    return { items: result.items, total: result.total };
+  async execute(filters: any = {}, limit = 20, offset = 0) {
+    const result = await this.repo.findAll(filters, {
+      limit,
+      offset,
+    });
+
+    return {
+      items: result.items,
+      pagination: {
+        total: result.total,
+        limit,
+        offset,
+        totalPages: Math.ceil(result.total / limit),
+        hasNext: offset + limit < result.total,
+        hasPrev: offset > 0,
+      },
+    };
   }
 }

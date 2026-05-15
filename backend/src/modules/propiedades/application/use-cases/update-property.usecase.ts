@@ -1,16 +1,25 @@
 // backend\src\modules\propiedades\application\use-cases\update-property.usecase.ts
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 
 import type { PropertyRepositoryPort } from '../ports/property-repository.port';
 import type { UpdatePropertyDTO } from '../dto/update-property.dto';
 
 import { PropertyAggregate } from '../../domain/entities/property.aggregate';
+
 import { AddressVO } from '../../domain/value-objects/address.vo';
 import { PriceVO } from '../../domain/value-objects/price.vo';
 import { SuperficieVO } from '../../domain/value-objects/superficie.vo';
 
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
+import { UserRole } from '@shared/contracts/enums/user-role.enum';
+
+import { User } from '../../../user/domain/entities/user.entity';
 
 import { PROPERTY_REPOSITORY } from '../tokens';
 
@@ -35,16 +44,26 @@ export class UpdatePropertyUseCase {
   async execute(
     id: number,
     dto: UpdatePropertyDTO,
+    user: User,
   ): Promise<PropertyAggregate> {
     const property = await this.repo.findById(id);
     if (!property) {
       throw new NotFoundException('Propiedad no encontrada');
+    }
+    const isSuperAdmin = user.role === UserRole.SUPERADMIN;
+
+    const isOwner =
+      property.creadoPorId === user.id || property.agenciaId === user.id;
+
+    if (!isSuperAdmin && !isOwner) {
+      throw new ForbiddenException('No puedes editar esta propiedad');
     }
 
     // 1️⃣ Update generales
     property.updateGeneral({
       titulo: dto.titulo,
       descripcion: dto.descripcion ?? null,
+      status: dto.status,
       operacion: dto.operacion as OperacionTipo,
       direccion: dto.direccion ? new AddressVO(dto.direccion) : undefined,
       localidad: dto.localidad,
@@ -61,7 +80,7 @@ export class UpdatePropertyUseCase {
             )
           : undefined,
       precio:
-        dto.precioVenta ?? dto.precioAlquiler
+        (dto.precioVenta ?? dto.precioAlquiler)
           ? new PriceVO(dto.precioVenta ?? dto.precioAlquiler!)
           : undefined,
     });

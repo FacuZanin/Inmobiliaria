@@ -27,4 +27,5 @@ __exportStar(require("./enums/audit-action.enum"), exports);
 __exportStar(require("./enums/audit-entity.enum"), exports);
 __exportStar(require("./enums/user-status.enum"), exports);
 __exportStar(require("./enums/propiedad-tipo.enum"), exports);
+__exportStar(require("./enums/property-status.enum"), exports);
 exports.__shared = true;
