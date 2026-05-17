@@ -38,7 +38,7 @@ export class UpdateUserAdminDto {
 
   @ApiPropertyOptional({
     enum: UserType,
-    example: UserType.USER,
+    example: UserType.PARTICULAR,
   })
   @IsOptional()
   @IsEnum(UserType)

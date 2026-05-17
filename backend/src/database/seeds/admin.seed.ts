@@ -24,7 +24,7 @@ export const seedAdmin = async (dataSource: DataSource): Promise<void> => {
     email: 'admin@admin.com',
     password,
     role: UserRole.SUPERADMIN,
-    tipo: UserType.USER,
+    tipo: UserType.PARTICULAR,
     nombre: 'Admin',
     apellido: 'Sistema',
   });

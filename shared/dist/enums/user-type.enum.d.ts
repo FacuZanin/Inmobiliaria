@@ -1,5 +1,5 @@
 export declare enum UserType {
-    USER = "USER",
+    PARTICULAR = "PARTICULAR",
     AGENCIA = "AGENCIA"
 }
 //# sourceMappingURL=user-type.enum.d.ts.map

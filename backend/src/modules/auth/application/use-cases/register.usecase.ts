@@ -43,7 +43,7 @@ constructor(
       nombre: dto.nombre,
       apellido: dto.apellido,
       telefono: dto.telefono,
-      tipo: UserType.USER,
+      tipo: UserType.PARTICULAR,
       role: UserRole.USER,
       status: UserStatus.ACTIVE,
     });

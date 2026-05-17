@@ -19,6 +19,7 @@ import { User } from '../../../user/domain/entities/user.entity';
 
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Roles } from '../../../../shared/security/decorators/roles.decorator';
+import { Public } from '@/shared/security/decorators/public.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
@@ -41,8 +42,6 @@ import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guar
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Propiedades')
-@ApiBearerAuth('access-token')
-@UseGuards(JwtAuthGuard)
 @Controller('propiedades')
 export class PropiedadesController {
   constructor(
@@ -54,6 +53,8 @@ export class PropiedadesController {
   ) {}
 
   @Post()
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
     type: PropertyResponseDto,
   })
@@ -70,6 +71,8 @@ export class PropiedadesController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
     type: PropertyResponseDto,
   })
@@ -87,6 +90,8 @@ export class PropiedadesController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: User,
@@ -100,6 +105,7 @@ export class PropiedadesController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({
     summary: 'Listar propiedades',
   })
@@ -118,6 +124,7 @@ export class PropiedadesController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOkResponse({
     type: PropertyResponseDto,
   })

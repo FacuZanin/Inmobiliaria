@@ -33,7 +33,7 @@ export class PropietarioDocumentosController {
   @Post()
   @UseInterceptors(FileInterceptor('archivo'))
   @Auth()
-  @UserTypes(UserType.USER)
+  @UserTypes(UserType.PARTICULAR)
   subirDoc(
     @UploadedFile() archivo: Express.Multer.File,
     @Body() dto: CreateDocumentoDto,

@@ -39,7 +39,7 @@ export class User {
   @Column({
     type: 'enum',
     enum: UserType,
-    default: UserType.USER,
+    default: UserType.PARTICULAR,
   })
   tipo!: UserType;
 

@@ -44,7 +44,11 @@ export class ValidationPipe implements PipeTransform {
 
       throw new BadRequestException({
         message: 'Error en validación',
-        errors: messages,
+        errors: errors.map((err) => ({
+          property: err.property,
+          constraints: err.constraints,
+          value: err.value,
+        })),
       });
     }
 

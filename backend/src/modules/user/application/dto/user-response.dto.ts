@@ -24,7 +24,7 @@ export class UserResponseDto {
 
   @ApiProperty({
     enum: UserType,
-    example: UserType.USER,
+    example: UserType.PARTICULAR,
   })
   tipo!: UserType;
 
