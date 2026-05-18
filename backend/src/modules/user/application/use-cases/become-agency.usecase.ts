@@ -17,16 +17,16 @@ export class BecomeAgencyUseCase {
       throw new BadRequestException('Usuario no encontrado');
     }
 
-    if (user.tipo === UserType.AGENCIA) {
-      throw new BadRequestException('Ya sos agencia');
+    if (user.tipo === UserType.INMOBILIARIA) {
+      throw new BadRequestException('Ya sos Agencia Inmobiliaria');
     }
 
-    user.tipo = UserType.AGENCIA;
+    user.tipo = UserType.INMOBILIARIA;
 
     await this.userRepository.save(user);
 
     return {
-      message: 'Ahora sos agencia',
+      message: 'Ahora sos Agencia Inmobiliaria',
     };
   }
 }

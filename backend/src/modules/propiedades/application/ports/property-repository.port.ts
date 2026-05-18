@@ -12,4 +12,5 @@ export interface PropertyRepositoryPort {
 
   update(id: number, partial: any): Promise<PropertyAggregate | null>;
   softDelete(id: number): Promise<void>;
+  countByUser(userId: number): Promise<number>;
 }

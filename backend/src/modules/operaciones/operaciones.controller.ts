@@ -38,7 +38,7 @@ import { CancelarOperacionUseCase } from './application/use-cases/cancel-operaci
 @Controller('operaciones')
 @Auth()
 @Roles(UserRole.SUPERADMIN)        // seguridad
-@UserTypes(UserType.AGENCIA)       // tipo de usuario
+@UserTypes(PROPERTY_PUBLISHERS.includes(user.tipo))       // tipo de usuario
 export class OperacionesController {
   constructor(
     private readonly createOperacion: CreateOperacionUseCase,

@@ -1,1 +1,1 @@
-{"version":3,"file":"user-type.enum.d.ts","sourceRoot":"","sources":["../../src/enums/user-type.enum.ts"],"names":[],"mappings":"AACA,oBAAY,QAAQ;IAClB,UAAU,eAAe;IACzB,OAAO,YAAY;CAIpB"}
+{"version":3,"file":"user-type.enum.d.ts","sourceRoot":"","sources":["../../src/enums/user-type.enum.ts"],"names":[],"mappings":"AACA,oBAAY,QAAQ;IAClB,UAAU,eAAe;IAEzB,YAAY,iBAAiB;IAC7B,QAAQ,aAAa;IACrB,UAAU,eAAe;IACzB,MAAM,WAAW;IAEjB,aAAa,kBAAkB;IAC/B,WAAW,gBAAgB;IAE3B,UAAU,eAAe;IACzB,SAAS,cAAc;IACvB,OAAO,YAAY;CACpB"}

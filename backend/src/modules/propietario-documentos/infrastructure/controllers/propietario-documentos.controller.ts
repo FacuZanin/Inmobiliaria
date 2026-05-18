@@ -44,7 +44,7 @@ export class PropietarioDocumentosController {
 
   @Patch(':id')
   @Auth()
-  @UserTypes(UserType.AGENCIA)
+  @UserTypes(PROPERTY_PUBLISHERS.includes(user.tipo))
   cambiar(
     @Param('id') id: string,
     @Body() dto: UpdateEstadoDocumentoDto,

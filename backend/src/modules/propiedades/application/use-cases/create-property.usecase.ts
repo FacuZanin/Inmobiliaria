@@ -8,16 +8,22 @@ import {
 } from '@nestjs/common';
 
 import type { PropertyRepositoryPort } from '../ports/property-repository.port';
-import type { CreatePropertyDTO } from '../dto/create-property.dto';
 import type { DocsCheckerPort } from '../ports/docs-checker.port';
 
+import type { CreatePropertyDTO } from '../dto/create-property.dto';
+
 import { PropertyAggregate } from '../../domain/entities/property.aggregate';
+
 import { AddressVO } from '../../domain/value-objects/address.vo';
 import { PriceVO } from '../../domain/value-objects/price.vo';
 import { SuperficieVO } from '../../domain/value-objects/superficie.vo';
 
+import { User } from '@/modules/user/domain/entities/user.entity';
+
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
+
+import { PropertyLimitsService } from '@/modules/subscriptions/application/services/property-limits.service';
 
 import { PROPERTY_REPOSITORY, DOCS_CHECKER } from '../tokens';
 
@@ -40,13 +46,28 @@ export class CreatePropertyUseCase {
 
     @Inject(DOCS_CHECKER)
     private readonly docsChecker: DocsCheckerPort,
+
+    private readonly propertyLimitsService: PropertyLimitsService,
   ) {}
 
   async execute(
     dto: CreatePropertyDTO,
-    currentUserId: number,
+    currentUser: User,
   ): Promise<PropertyAggregate> {
-    const ownerId = dto.propietarioId ?? currentUserId;
+    const ownerId = dto.propietarioId ?? currentUser.id;
+
+    const totalProperties = await this.repo.countByUser(currentUser.id);
+
+    const canCreate = this.propertyLimitsService.canCreateProperty(
+      currentUser.plan,
+      totalProperties,
+    );
+
+    if (!canCreate) {
+      throw new ForbiddenException(
+        'Has alcanzado el límite de publicaciones de tu plan actual',
+      );
+    }
 
     const docs = await this.docsChecker.hasApprovedDocs(ownerId);
     if (!docs.dni || !docs.escritura) {
@@ -80,10 +101,7 @@ export class CreatePropertyUseCase {
           )
         : null;
 
-    const detalles = this.buildDetails(
-      dto.tipo as PropiedadTipo,
-      dto.detalles,
-    );
+    const detalles = this.buildDetails(dto.tipo as PropiedadTipo, dto.detalles);
 
     const property = PropertyAggregate.create({
       titulo: dto.titulo,
@@ -107,10 +125,7 @@ export class CreatePropertyUseCase {
   }
 
   // 🔧 Helper privado (Application layer)
-  private buildDetails(
-    tipo: PropiedadTipo,
-    detalles?: Record<string, any>,
-  ) {
+  private buildDetails(tipo: PropiedadTipo, detalles?: Record<string, any>) {
     if (!detalles) return undefined;
 
     switch (tipo) {

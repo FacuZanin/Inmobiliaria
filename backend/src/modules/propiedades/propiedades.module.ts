@@ -17,6 +17,7 @@ import {
 import { PropiedadesController } from './infrastructure/controllers/propiedades.controller';
 
 import { PropertyTypeOrmRepository } from './infrastructure/persistence/typeorm/repositories/property.typeorm.repository';
+
 import { DocsCheckerImpl } from './infrastructure/docs/docs-checker.impl';
 
 import { PROPERTY_REPOSITORY, DOCS_CHECKER } from './application/tokens';
@@ -28,6 +29,7 @@ import { ListPropertiesUseCase } from './application/use-cases/list-properties.u
 import { ViewPropertyUseCase } from './application/use-cases/view-property.usecase';
 
 import { PropietarioDocumentosModule } from '../propietario-documentos/propietario-documentos.module';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -43,6 +45,7 @@ import { PropietarioDocumentosModule } from '../propietario-documentos/propietar
       PropiedadPozo,
     ]),
     PropietarioDocumentosModule,
+    SubscriptionsModule,
   ],
   controllers: [PropiedadesController],
   providers: [

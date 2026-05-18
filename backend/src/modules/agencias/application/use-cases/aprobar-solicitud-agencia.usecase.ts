@@ -10,8 +10,10 @@ import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-
 import type { AgenciasRepositoryPort } from '../ports/agencias-repository.port';
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 
-import { UserType } from '@shared/contracts/enums/user-type.enum';
+import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
+
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 import { AGENCIAS_REPOSITORY, AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 import { USER_REPOSITORY } from '../../../user/application/tokens';
@@ -55,7 +57,7 @@ export class AprobarSolicitudAgenciaUseCase {
       throw new BadRequestException('La solicitud no tiene usuario asociado');
     }
 
-    solicitud.usuario.tipo = UserType.AGENCIA;
+    solicitud.usuario.tipo = UserType.INMOBILIARIA;
     solicitud.usuario.agencia = nuevaAgencia;
     await this.users.save(solicitud.usuario);
 

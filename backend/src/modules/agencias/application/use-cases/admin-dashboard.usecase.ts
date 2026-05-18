@@ -69,7 +69,7 @@ export class AdminDashboardUseCase {
         AgenciaSolicitudEstado.RECHAZADA,
       ),
 
-      this.usersRepository.countAgencyUsers(),
+      this.usersRepository.countProfessionalUsers(),
 
       this.agenciasRepository.countNewAgenciasThisMonth(),
 

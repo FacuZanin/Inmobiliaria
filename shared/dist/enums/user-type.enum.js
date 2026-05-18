@@ -5,8 +5,13 @@ exports.UserType = void 0;
 var UserType;
 (function (UserType) {
     UserType["PARTICULAR"] = "PARTICULAR";
-    UserType["AGENCIA"] = "AGENCIA";
-    /*CORREDOR = "CORREDOR",
-    DESARROLLADORA = "DESARROLLADORA",
-    INMOBILIARIA = "INMOBILIARIA",*/
+    UserType["INMOBILIARIA"] = "INMOBILIARIA";
+    UserType["CORREDOR"] = "CORREDOR";
+    UserType["MARTILLERO"] = "MARTILLERO";
+    UserType["BROKER"] = "BROKER";
+    UserType["DESARROLLADOR"] = "DESARROLLADOR";
+    UserType["CONSTRUCTOR"] = "CONSTRUCTOR";
+    UserType["ARQUITECTO"] = "ARQUITECTO";
+    UserType["DECORADOR"] = "DECORADOR";
+    UserType["TASADOR"] = "TASADOR";
 })(UserType || (exports.UserType = UserType = {}));

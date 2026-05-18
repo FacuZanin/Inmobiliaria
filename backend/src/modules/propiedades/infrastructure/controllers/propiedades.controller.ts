@@ -24,14 +24,16 @@ import { Public } from '@/shared/security/decorators/public.decorator';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
 
+import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
+
 import { CreatePropertyUseCase } from '../../application/use-cases/create-property.usecase';
 import { UpdatePropertyUseCase } from '../../application/use-cases/update-property.usecase';
 import { DeletePropertyUseCase } from '../../application/use-cases/delete-property.usecase';
 import { ListPropertiesUseCase } from '../../application/use-cases/list-properties.usecase';
 import { ViewPropertyUseCase } from '../../application/use-cases/view-property.usecase';
 
-import type { CreatePropertyDTO } from '../../application/dto/create-property.dto';
-import type { UpdatePropertyDTO } from '../../application/dto/update-property.dto';
+import { CreatePropertyDTO } from '../../application/dto/create-property.dto';
+import { UpdatePropertyDTO } from '../../application/dto/update-property.dto';
 import { FilterPropiedadesDto } from '../../application/dto/filter-propiedades.dto';
 import { PropertyResponseDto } from '../../application/dto/property-response.dto';
 
@@ -59,14 +61,18 @@ export class PropiedadesController {
     type: PropertyResponseDto,
   })
   async create(@Body() dto: CreatePropertyDTO, @CurrentUser() user: User) {
-    if (!user?.id) throw new BadRequestException('Usuario no autenticado');
-
-    // 🔥 VALIDACIÓN NUEVA (reemplazo de Profiles)
-    if (user.tipo !== UserType.AGENCIA) {
-      throw new ForbiddenException('Solo agencias pueden crear propiedades');
+    if (!user?.id) {
+      throw new BadRequestException('Usuario no autenticado');
     }
 
-    const created = await this.createProperty.execute(dto, user.id);
+    if (!PROPERTY_PUBLISHERS.includes(user.tipo)) {
+      throw new ForbiddenException(
+        'Tu tipo de cuenta no puede publicar propiedades',
+      );
+    }
+
+    const created = await this.createProperty.execute(dto, user);
+
     return PropertyResponseMapper.toResponse(created);
   }
 
@@ -81,10 +87,6 @@ export class PropiedadesController {
     @Body() dto: UpdatePropertyDTO,
     @CurrentUser() user: User,
   ) {
-    if (user.tipo !== UserType.AGENCIA) {
-      throw new ForbiddenException('Solo agencias pueden editar propiedades');
-    }
-
     const updated = await this.updateProperty.execute(id, dto, user);
     return PropertyResponseMapper.toResponse(updated);
   }

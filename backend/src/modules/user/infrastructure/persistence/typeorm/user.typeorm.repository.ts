@@ -137,12 +137,20 @@ export class UserTypeOrmRepository implements UserRepositoryPort {
     return user?.tokenVersion ?? 0;
   }
 
-  async countAgencyUsers(): Promise<number> {
-    return this.repo.count({
-      where: {
-        tipo: UserType.AGENCIA,
-      },
-    });
+  async countProfessionalUsers(): Promise<number> {
+    return this.repo
+      .createQueryBuilder('u')
+      .where('u.tipo IN (:...types)', {
+        types: [
+          UserType.INMOBILIARIA,
+          UserType.CORREDOR,
+          UserType.MARTILLERO,
+          UserType.BROKER,
+          UserType.DESARROLLADOR,
+          UserType.CONSTRUCTOR,
+        ],
+      })
+      .getCount();
   }
 
   async countNewUsersThisMonth(): Promise<number> {
@@ -157,25 +165,20 @@ export class UserTypeOrmRepository implements UserRepositoryPort {
     });
   }
 
-async getUsersCreatedByMonth(): Promise<
-  {
-    month: string;
-    total: number;
-  }[]
-> {
-  return this.repo
-    .createQueryBuilder('u')
-    .select(
-      `TO_CHAR(u."createdAt", 'YYYY-MM')`,
-      'month',
-    )
-    .addSelect('COUNT(*)', 'total')
-    .groupBy(
-      `TO_CHAR(u."createdAt", 'YYYY-MM')`,
-    )
-    .orderBy('month', 'ASC')
-    .getRawMany();
-}
+  async getUsersCreatedByMonth(): Promise<
+    {
+      month: string;
+      total: number;
+    }[]
+  > {
+    return this.repo
+      .createQueryBuilder('u')
+      .select(`TO_CHAR(u."createdAt", 'YYYY-MM')`, 'month')
+      .addSelect('COUNT(*)', 'total')
+      .groupBy(`TO_CHAR(u."createdAt", 'YYYY-MM')`)
+      .orderBy('month', 'ASC')
+      .getRawMany();
+  }
 
   async findRecentUsers(limit: number): Promise<User[]> {
     return this.repo.find({

@@ -3,16 +3,17 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 
 import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-repository.port';
+import type { UserRepositoryPort } from '@/modules/user/application/ports/user-repository.port';
 
 import { AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
 
-import { UserType } from '@shared/contracts/enums/user-type.enum';
+import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
 
 import type { CreateSolicitudAgenciaDto } from '../dto/create-solicitud-agencia.dto';
 
-import type { UserRepositoryPort } from '@/modules/user/application/ports/user-repository.port';
+
 
 import { USER_REPOSITORY } from '@/modules/user/application/tokens';
 
@@ -33,7 +34,7 @@ export class SolicitarAgenciaUseCase {
       throw new BadRequestException('Usuario no encontrado');
     }
 
-    if (usuario.tipo === UserType.AGENCIA) {
+    if (PROPERTY_PUBLISHERS.includes(usuario.tipo)) {
       throw new BadRequestException('El usuario ya pertenece a una agencia');
     }
 

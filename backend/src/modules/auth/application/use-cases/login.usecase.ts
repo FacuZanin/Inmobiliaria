@@ -70,6 +70,8 @@ export class LoginUseCase {
         role: user.role,
         nombre: user.nombre,
         apellido: user.apellido,
+        tipo: user.tipo,
+        plan: user.plan,
       },
     };
   }

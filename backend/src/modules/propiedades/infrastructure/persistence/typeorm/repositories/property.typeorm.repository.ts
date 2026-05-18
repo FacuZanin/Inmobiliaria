@@ -223,6 +223,16 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     await this.propiedadRepo.softDelete(id);
   }
 
+  async countByUser(userId: number): Promise<number> {
+  return this.propiedadRepo.count({
+    where: {
+      creadoPor: {
+        id: userId,
+      },
+    },
+  });
+}
+
   private getDetailRepo(tipo: string): Repository<any> {
     switch (tipo) {
       case 'CASA':

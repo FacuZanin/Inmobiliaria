@@ -15,6 +15,7 @@ import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
+import { SubscriptionPlan } from '@shared/contracts/enums/subscription-plan.enum';
 
 import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-token.entity';
 
@@ -42,6 +43,13 @@ export class User {
     default: UserType.PARTICULAR,
   })
   tipo!: UserType;
+
+  @Column({
+    type: 'enum',
+    enum: SubscriptionPlan,
+    default: SubscriptionPlan.FREE,
+  })
+  plan!: SubscriptionPlan;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombre!: string | null;
