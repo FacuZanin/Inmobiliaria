@@ -10,6 +10,7 @@ import { DocumentoAuditAction } from '@shared/contracts/enums/documento-audit-ac
 import { Inquilino } from '../inquilinos/domain/entities/inquilino.entity';
 
 import { UploadsModule } from '../uploads/uploads.module';
+import { AuthModule } from '../auth/auth.module';
 
 import { InquilinoDocumentosTypeOrmRepository } from './infrastructure/persistence/typeorm/inquilino-documentos.typeorm.repository';
 
@@ -24,9 +25,11 @@ import { InquilinoDocumento } from './domain/entities/inquilino-documento.entity
   imports: [
     TypeOrmModule.forFeature([
       InquilinoDocumento,
+      Inquilino,
       DocumentoAudit,
     ]),
     UploadsModule,
+    AuthModule,
   ],
   controllers: [InquilinoDocumentosController],
   providers: [

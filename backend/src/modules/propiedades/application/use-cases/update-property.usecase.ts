@@ -20,6 +20,7 @@ import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
 import { User } from '../../../user/domain/entities/user.entity';
+import { getUserTypeCapabilities } from '@/modules/user/domain/capabilities/property-publishers';
 
 import { PROPERTY_REPOSITORY } from '../tokens';
 
@@ -50,10 +51,15 @@ export class UpdatePropertyUseCase {
     if (!property) {
       throw new NotFoundException('Propiedad no encontrada');
     }
+    const userCapabilities = getUserTypeCapabilities(user.tipo);
+    const resolvedAgencyId = userCapabilities.requiresAgencyOnApproval
+      ? user.agencia?.id ?? null
+      : null;
     const isSuperAdmin = user.role === UserRole.SUPERADMIN;
 
     const isOwner =
-      property.creadoPorId === user.id || property.agenciaId === user.id;
+      property.creadoPorId === user.id ||
+      property.agenciaId === user.agencia?.id;
 
     if (!isSuperAdmin && !isOwner) {
       throw new ForbiddenException('No puedes editar esta propiedad');
@@ -71,7 +77,7 @@ export class UpdatePropertyUseCase {
       ambientes: dto.ambientes,
       dormitorios: dto.dormitorios,
       banos: dto.banos,
-      agenciaId: dto.agenciaId ?? null,
+      agenciaId: resolvedAgencyId,
       superficie:
         dto.metrosCubiertos !== undefined || dto.metrosTotales !== undefined
           ? new SuperficieVO(

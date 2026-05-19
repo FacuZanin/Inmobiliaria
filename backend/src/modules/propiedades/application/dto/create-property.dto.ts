@@ -169,20 +169,13 @@ export class CreatePropertyDTO {
 
   @ApiPropertyOptional({
     example: 1,
+    description:
+      'ID del propietario real de la propiedad. Si no se envia, se usa el usuario autenticado.',
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   propietarioId?: number;
-
-  @ApiPropertyOptional({
-    example: 1,
-    nullable: true,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  agenciaId?: number | null;
 
   // ------------------------------------------------
   // DETALLES POLIMÓRFICOS

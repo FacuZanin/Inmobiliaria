@@ -11,7 +11,7 @@ import { CreateUserDto } from '../../../application/dto/create-user.dto';
 import { UpdateUserDto } from '../../../application/dto/update-user.dto';
 import { UserFiltersDto } from '../../../application/dto/user-filters.dto';
 
-import { UserType } from '@shared/contracts/enums/user-type.enum';
+import { PROFESSIONAL_USER_TYPES } from '../../../domain/capabilities/property-publishers';
 
 @Injectable()
 export class UserTypeOrmRepository implements UserRepositoryPort {
@@ -141,14 +141,7 @@ export class UserTypeOrmRepository implements UserRepositoryPort {
     return this.repo
       .createQueryBuilder('u')
       .where('u.tipo IN (:...types)', {
-        types: [
-          UserType.INMOBILIARIA,
-          UserType.CORREDOR,
-          UserType.MARTILLERO,
-          UserType.BROKER,
-          UserType.DESARROLLADOR,
-          UserType.CONSTRUCTOR,
-        ],
+        types: PROFESSIONAL_USER_TYPES,
       })
       .getCount();
   }

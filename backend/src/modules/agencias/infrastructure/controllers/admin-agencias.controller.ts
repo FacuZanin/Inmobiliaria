@@ -36,7 +36,7 @@ import { SoftDeleteAgenciaUseCase } from '../../application/use-cases/soft-delet
 import { RestoreAgenciaUseCase } from '../../application/use-cases/restore-agencia.usecase';
 import { AdminDashboardUseCase } from '../../application/use-cases/admin-dashboard.usecase';
 
-@ApiTags('Admin - Agencias')
+@ApiTags('Admin - Perfiles Profesionales')
 @ApiBearerAuth('access-token')
 @Auth(UserRole.SUPERADMIN)
 @Controller('admin/agencias')
@@ -63,7 +63,7 @@ export class AdminAgenciasController {
 
   @Get('solicitudes')
   @ApiOperation({
-    summary: 'Listar solicitudes pendientes de agencias',
+    summary: 'Listar solicitudes pendientes de perfiles profesionales',
   })
   @ApiResponse({
     status: 200,
@@ -83,7 +83,7 @@ export class AdminAgenciasController {
 
   @Patch('solicitudes/:id/aprobar')
   @ApiOperation({
-    summary: 'Aprobar solicitud de agencia',
+    summary: 'Aprobar solicitud de perfil profesional',
   })
   @ApiParam({
     name: 'id',
@@ -112,7 +112,7 @@ export class AdminAgenciasController {
 
   @Patch('solicitudes/:id/rechazar')
   @ApiOperation({
-    summary: 'Rechazar solicitud de agencia',
+    summary: 'Rechazar solicitud de perfil profesional',
   })
   @ApiParam({
     name: 'id',

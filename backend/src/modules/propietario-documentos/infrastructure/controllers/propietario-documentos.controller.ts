@@ -22,7 +22,16 @@ import { UserTypes } from '../../../../shared/security/decorators/user-type.deco
 
 import { User } from '../../../../modules/user/domain/entities/user.entity';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
+import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Propietario Documentos')
 @Controller('propietario-documentos')
 export class PropietarioDocumentosController {
   constructor(
@@ -34,6 +43,38 @@ export class PropietarioDocumentosController {
   @UseInterceptors(FileInterceptor('archivo'))
   @Auth()
   @UserTypes(UserType.PARTICULAR)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Subir documento de propietario',
+    description:
+      'Recibe multipart/form-data con tipoDocumento, propietarioId, propiedadId opcional y el archivo en el campo archivo.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['tipoDocumento', 'propietarioId', 'archivo'],
+      properties: {
+        tipoDocumento: {
+          type: 'string',
+          enum: ['DNI_FRENTE', 'DNI_DORSO', 'ESCRITURA', 'IMPUESTO'],
+        },
+        propietarioId: {
+          type: 'integer',
+          example: 1,
+        },
+        propiedadId: {
+          type: 'integer',
+          nullable: true,
+          example: 10,
+        },
+        archivo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   subirDoc(
     @UploadedFile() archivo: Express.Multer.File,
     @Body() dto: CreateDocumentoDto,
@@ -44,7 +85,8 @@ export class PropietarioDocumentosController {
 
   @Patch(':id')
   @Auth()
-  @UserTypes(PROPERTY_PUBLISHERS.includes(user.tipo))
+  @UserTypes(...PROPERTY_PUBLISHERS)
+  @ApiBearerAuth('access-token')
   cambiar(
     @Param('id') id: string,
     @Body() dto: UpdateEstadoDocumentoDto,

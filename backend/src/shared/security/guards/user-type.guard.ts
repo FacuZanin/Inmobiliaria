@@ -30,7 +30,7 @@ export class UserTypeGuard implements CanActivate {
       throw new UnauthorizedException('No autenticado');
     }
 
-    const userType = user.userType as UserType;
+    const userType = user.tipo as UserType;
 
     if (!requiredTypes.includes(userType)) {
       throw new ForbiddenException('Tipo de usuario no autorizado');

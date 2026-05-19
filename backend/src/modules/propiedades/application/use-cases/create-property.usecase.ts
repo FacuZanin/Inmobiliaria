@@ -19,6 +19,7 @@ import { PriceVO } from '../../domain/value-objects/price.vo';
 import { SuperficieVO } from '../../domain/value-objects/superficie.vo';
 
 import { User } from '@/modules/user/domain/entities/user.entity';
+import { getUserTypeCapabilities } from '@/modules/user/domain/capabilities/property-publishers';
 
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
@@ -54,7 +55,26 @@ export class CreatePropertyUseCase {
     dto: CreatePropertyDTO,
     currentUser: User,
   ): Promise<PropertyAggregate> {
+    const userCapabilities = getUserTypeCapabilities(currentUser.tipo);
     const ownerId = dto.propietarioId ?? currentUser.id;
+    const resolvedAgencyId = userCapabilities.requiresAgencyOnApproval
+      ? currentUser.agencia?.id ?? null
+      : null;
+
+    if (!userCapabilities.canPublishProperties) {
+      throw new ForbiddenException(
+        'Tu tipo de cuenta no puede publicar propiedades',
+      );
+    }
+
+    if (
+      userCapabilities.requiresAgencyOnApproval &&
+      resolvedAgencyId === null
+    ) {
+      throw new BadRequestException(
+        'El perfil profesional requiere una agencia asociada para publicar',
+      );
+    }
 
     const totalProperties = await this.repo.countByUser(currentUser.id);
 
@@ -117,8 +137,8 @@ export class CreatePropertyUseCase {
       detalles,
       imagenes: dto.imagenes ?? [],
 
-      creadoPorId: ownerId,
-      agenciaId: dto.agenciaId ?? null,
+      creadoPorId: currentUser.id,
+      agenciaId: resolvedAgencyId,
     });
 
     return this.repo.save(property);

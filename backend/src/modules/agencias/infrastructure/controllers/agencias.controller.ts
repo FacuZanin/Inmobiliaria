@@ -23,7 +23,7 @@ import { CreateSolicitudAgenciaDto } from '../../application/dto/create-solicitu
 
 import { SolicitarAgenciaUseCase } from '../../application/use-cases/solicitar-agencia.usecase';
 
-@ApiTags('Agencias')
+@ApiTags('Perfiles Profesionales')
 @ApiBearerAuth()
 @Controller('agencias')
 export class AgenciasController {
@@ -38,7 +38,7 @@ export class AgenciasController {
   @Auth()
   @Post('solicitar')
   @ApiOperation({
-    summary: 'Solicitar creación de agencia',
+    summary: 'Solicitar activacion de perfil profesional',
   })
   @ApiResponse({
     status: 201,

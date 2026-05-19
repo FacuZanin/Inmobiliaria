@@ -9,7 +9,10 @@ import { AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
 
-import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
+import {
+  AGENCY_USER_TYPES,
+  PROFESSIONAL_USER_TYPES,
+} from '@/modules/user/domain/capabilities/property-publishers';
 
 import type { CreateSolicitudAgenciaDto } from '../dto/create-solicitud-agencia.dto';
 
@@ -34,8 +37,12 @@ export class SolicitarAgenciaUseCase {
       throw new BadRequestException('Usuario no encontrado');
     }
 
-    if (PROPERTY_PUBLISHERS.includes(usuario.tipo)) {
+    if (usuario.agencia || AGENCY_USER_TYPES.includes(usuario.tipo)) {
       throw new BadRequestException('El usuario ya pertenece a una agencia');
+    }
+
+    if (PROFESSIONAL_USER_TYPES.includes(usuario.tipo)) {
+      throw new BadRequestException('El usuario ya tiene un perfil profesional');
     }
 
     const yaTienePendiente =

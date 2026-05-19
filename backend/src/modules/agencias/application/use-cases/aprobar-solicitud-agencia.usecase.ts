@@ -9,11 +9,9 @@ import {
 import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-repository.port';
 import type { AgenciasRepositoryPort } from '../ports/agencias-repository.port';
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
-
-import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
+import { getUserTypeCapabilities } from '@/modules/user/domain/capabilities/property-publishers';
 
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
-import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 import { AGENCIAS_REPOSITORY, AGENCIA_SOLICITUD_REPOSITORY } from '../tokens';
 import { USER_REPOSITORY } from '../../../user/application/tokens';
@@ -41,23 +39,29 @@ export class AprobarSolicitudAgenciaUseCase {
       throw new BadRequestException('Solicitud ya procesada');
     }
 
-    if (solicitud.usuario.agencia) {
-      throw new BadRequestException('El usuario ya pertenece a una agencia');
-    }
-
-    const nuevaAgencia = await this.agencias.create({
-      nombre: `${solicitud.nombreTitular} Inmobiliaria`,
-      direccion: null,
-      localidad: solicitud.provincia ?? null,
-      email: solicitud.usuario.email ?? null,
-      telefono: solicitud.usuario.telefono ?? null,
-    });
-
     if (!solicitud.usuario) {
       throw new BadRequestException('La solicitud no tiene usuario asociado');
     }
 
-    solicitud.usuario.tipo = UserType.INMOBILIARIA;
+    const requestedCapabilities = getUserTypeCapabilities(
+      solicitud.tipoSolicitado,
+    );
+
+    if (solicitud.usuario.agencia) {
+      throw new BadRequestException('El usuario ya pertenece a una agencia');
+    }
+
+    const nuevaAgencia = requestedCapabilities.requiresAgencyOnApproval
+      ? await this.agencias.create({
+          nombre: `${solicitud.nombreTitular} Inmobiliaria`,
+          direccion: null,
+          localidad: solicitud.provincia ?? null,
+          email: solicitud.usuario.email ?? null,
+          telefono: solicitud.usuario.telefono ?? null,
+        })
+      : null;
+
+    solicitud.usuario.tipo = solicitud.tipoSolicitado;
     solicitud.usuario.agencia = nuevaAgencia;
     await this.users.save(solicitud.usuario);
 
@@ -67,9 +71,20 @@ export class AprobarSolicitudAgenciaUseCase {
     return {
       message: 'Solicitud aprobada correctamente',
       data: {
-        id: nuevaAgencia.id,
-        nombre: nuevaAgencia.nombre,
-        localidad: nuevaAgencia.localidad,
+        perfilAprobado: solicitud.tipoSolicitado,
+        requiereAgencia: requestedCapabilities.requiresAgencyOnApproval,
+        usuario: {
+          id: solicitud.usuario.id,
+          tipo: solicitud.usuario.tipo,
+        },
+        capacidades: requestedCapabilities,
+        agencia: nuevaAgencia
+          ? {
+              id: nuevaAgencia.id,
+              nombre: nuevaAgencia.nombre,
+              localidad: nuevaAgencia.localidad,
+            }
+          : null,
       },
     };
   }

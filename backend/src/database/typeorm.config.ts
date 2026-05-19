@@ -17,7 +17,7 @@ const ormconfig: TypeOrmModuleOptions = {
   migrations: [__dirname + '/../database/migrations/*.{ts,js}'],
 
   synchronize: true,
-  autoLoadEntities: false,
+  autoLoadEntities: true,
 };
 
 export default ormconfig;

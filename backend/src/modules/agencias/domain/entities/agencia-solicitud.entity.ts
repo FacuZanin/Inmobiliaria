@@ -9,6 +9,7 @@ import {
 import { User } from '../../../user/domain/entities/user.entity';
 
 import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 @Entity('agencia_solicitudes')
 export class AgenciaSolicitud {
@@ -23,6 +24,13 @@ export class AgenciaSolicitud {
 
   @Column({ length: 150 })
   nombreTitular!: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserType,
+    default: UserType.INMOBILIARIA,
+  })
+  tipoSolicitado!: UserType;
 
   @Column({ length: 20 })
   dni!: string;

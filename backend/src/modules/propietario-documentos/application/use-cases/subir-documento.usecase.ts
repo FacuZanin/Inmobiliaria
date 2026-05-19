@@ -33,6 +33,12 @@ export class SubirDocumentoPropietarioUseCase {
   ) {
     if (!archivo) throw new BadRequestException('Archivo requerido');
 
+    if (dto.propietarioId !== user.id) {
+      throw new ForbiddenException(
+        'Solo puedes subir documentos para tu propio perfil de propietario',
+      );
+    }
+
     const owner = await this.repo.findOwnerById(dto.propietarioId);
     if (!owner) throw new NotFoundException('Propietario no encontrado');
 

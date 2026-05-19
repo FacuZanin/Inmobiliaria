@@ -19,6 +19,7 @@ import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 
+@Auth(UserRole.SUPERADMIN)
 @Controller('admin/documentos')
 export class AdminDocumentosController {
   constructor(
@@ -28,15 +29,11 @@ export class AdminDocumentosController {
   ) {}
 
   @Get()
-  @Roles(UserRole.SUPERADMIN)
-
   listar(@Query() filtros: FiltroDocumentosDto) {
     return this.listarUC.execute(filtros);
   }
 
   @Get(':tipo/:id/historial')
-  @Roles(UserRole.SUPERADMIN)
-
   historial(
     @Param('tipo') tipo: 'INQUILINO' | 'PROPIETARIO',
     @Param('id') id: string,
@@ -46,8 +43,6 @@ export class AdminDocumentosController {
   }
 
   @Patch(':tipo/:id/estado')
-  @Roles(UserRole.SUPERADMIN)
-
   cambiarEstado(
     @Param('tipo') tipo: 'INQUILINO' | 'PROPIETARIO',
     @Param('id') id: string,

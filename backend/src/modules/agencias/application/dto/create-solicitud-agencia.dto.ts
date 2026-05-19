@@ -6,14 +6,31 @@ import {
   IsUrl,
   Length,
   Matches,
+  IsEnum,
+  IsIn,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
+import { UserType } from '@shared/contracts/enums/user-type.enum';
+import { PROFESSIONAL_USER_TYPES } from '@/modules/user/domain/capabilities/property-publishers';
 
 export class CreateSolicitudAgenciaDto {
   @ApiProperty({
-    example: 'Juan Pérez',
-    description: 'Nombre completo del titular de la inmobiliaria',
+    enum: UserType,
+    enumName: 'UserType',
+    example: UserType.CORREDOR,
+    description: 'Perfil profesional que el usuario solicita activar',
+    required: true,
+  })
+  @IsEnum(UserType)
+  @IsIn(PROFESSIONAL_USER_TYPES, {
+    message: 'El tipo solicitado debe ser un perfil profesional valido',
+  })
+  tipoSolicitado!: UserType;
+
+  @ApiProperty({
+    example: 'Juan Perez',
+    description: 'Nombre completo del titular o profesional solicitante',
     required: true,
   })
   @IsString()
@@ -29,7 +46,7 @@ export class CreateSolicitudAgenciaDto {
   @IsNotEmpty()
   @Length(7, 10)
   @Matches(/^[0-9]+$/, {
-    message: 'El DNI solo debe contener números',
+    message: 'El DNI solo debe contener numeros',
   })
   dni!: string;
 
@@ -41,13 +58,13 @@ export class CreateSolicitudAgenciaDto {
   @IsString()
   @IsNotEmpty()
   @Matches(/^\d{2}-\d{8}-\d$/, {
-    message: 'Formato de CUIT inválido',
+    message: 'Formato de CUIT invalido',
   })
   cuit!: string;
 
   @ApiProperty({
     example: 'MAT-458721',
-    description: 'Número de matrícula profesional',
+    description: 'Numero de matricula profesional o registro equivalente',
     required: true,
   })
   @IsString()
@@ -56,7 +73,7 @@ export class CreateSolicitudAgenciaDto {
 
   @ApiProperty({
     example: 'Colegio Profesional Inmobiliario CABA',
-    description: 'Colegio profesional al que pertenece',
+    description: 'Colegio, entidad profesional o registro al que pertenece',
     required: true,
   })
   @IsString()
@@ -65,7 +82,7 @@ export class CreateSolicitudAgenciaDto {
 
   @ApiProperty({
     example: 'Buenos Aires',
-    description: 'Provincia donde opera la agencia',
+    description: 'Provincia donde opera',
     required: true,
   })
   @IsString()
@@ -106,7 +123,7 @@ export class CreateSolicitudAgenciaDto {
 
   @ApiProperty({
     example: 'https://storage.com/certificado-matricula.pdf',
-    description: 'URL del certificado de matrícula',
+    description: 'URL del certificado de matricula',
     required: true,
   })
   @IsUrl()

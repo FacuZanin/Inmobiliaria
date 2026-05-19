@@ -57,6 +57,11 @@ export class PropiedadesController {
   @Post()
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Crear propiedad',
+    description:
+      'La agencia se resuelve automaticamente desde el usuario autenticado cuando el perfil la requiere.',
+  })
   @ApiOkResponse({
     type: PropertyResponseDto,
   })

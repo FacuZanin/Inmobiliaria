@@ -7,9 +7,16 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
+import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
-import { Roles } from '../../../../shared/security/decorators/roles.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
@@ -21,6 +28,7 @@ import { SubirDocumentoInquilinoUseCase } from '../../application/use-cases/subi
 import { CambiarEstadoInquilinoDocumentoUseCase } from '../../application/use-cases/cambiar-estado.usecase';
 import { ListarMisDocumentosUseCase } from '../../application/use-cases/listar-mis-documentos.usecase';
 
+@ApiTags('Inquilino Documentos')
 @Controller('inquilino-documentos')
 export class InquilinoDocumentosController {
   constructor(
@@ -31,7 +39,30 @@ export class InquilinoDocumentosController {
 
   @Post()
   @UseInterceptors(FileInterceptor('archivo'))
-  @Roles(UserRole.USER)
+  @Auth(UserRole.USER)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Subir documento de inquilino',
+    description:
+      'Recibe multipart/form-data con tipoDocumento y el archivo en el campo archivo.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['tipoDocumento', 'archivo'],
+      properties: {
+        tipoDocumento: {
+          type: 'string',
+          enum: ['DNI', 'RECIBO_SUELDO', 'GARANTIA'],
+        },
+        archivo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   subir(
     @UploadedFile() archivo: Express.Multer.File,
     @Body() dto: CreateInquilinoDocumentoDto,

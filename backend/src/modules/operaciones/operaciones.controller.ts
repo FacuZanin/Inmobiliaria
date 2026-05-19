@@ -17,9 +17,9 @@ import { Roles } from '../../shared/security/decorators/roles.decorator';
 import { UserTypes } from '../../shared/security/decorators/user-type.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 import { User } from '../user/domain/entities/user.entity';
+import { OPERATION_CREATORS } from '../user/domain/capabilities/property-publishers';
 
 import { CreateOperacionDto } from './application/dto/create-operacion.dto';
 import { UpdateOperacionDto } from './application/dto/update-operacion.dto';
@@ -37,8 +37,7 @@ import { CancelarOperacionUseCase } from './application/use-cases/cancel-operaci
 
 @Controller('operaciones')
 @Auth()
-@Roles(UserRole.SUPERADMIN)        // seguridad
-@UserTypes(PROPERTY_PUBLISHERS.includes(user.tipo))       // tipo de usuario
+@UserTypes(...OPERATION_CREATORS)       // tipo de usuario
 export class OperacionesController {
   constructor(
     private readonly createOperacion: CreateOperacionUseCase,
@@ -54,7 +53,7 @@ export class OperacionesController {
   // CREATE
   @Post()
   create(@Body() dto: CreateOperacionDto, @CurrentUser() user: User) {
-    return this.createOperacion.execute(dto, user.id);
+    return this.createOperacion.execute(dto, user);
   }
 
   // READ
