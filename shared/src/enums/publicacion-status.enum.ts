@@ -1,0 +1,16 @@
+//shared\src\enums\publicacion-status.enum.ts
+export enum PublicacionStatus {
+  BORRADOR = 'BORRADOR',
+
+  EN_REVISION_DOCUMENTAL = 'EN_REVISION_DOCUMENTAL',
+
+  EN_REVISION_ADMIN = 'EN_REVISION_ADMIN',
+
+  PUBLICADA = 'PUBLICADA',
+
+  OBSERVADA = 'OBSERVADA',
+
+  RECHAZADA = 'RECHAZADA',
+
+  PAUSADA = 'PAUSADA',
+}

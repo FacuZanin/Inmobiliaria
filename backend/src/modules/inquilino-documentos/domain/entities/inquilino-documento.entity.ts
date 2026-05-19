@@ -16,30 +16,30 @@ import { TipoDocumentoInquilino } from '@shared/contracts/enums/tipo-documento-i
 @Entity('inquilino_documentos')
 export class InquilinoDocumento {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(() => Inquilino, { eager: true })
-  inquilino: Inquilino;
+  inquilino!: Inquilino;
 
   @Column({
     type: 'enum',
     enum: TipoDocumentoInquilino,
   })
-  tipoDocumento: TipoDocumentoInquilino;
+  tipoDocumento!: TipoDocumentoInquilino;
 
   @Column()
-  archivoUrl: string;
+  archivoUrl!: string;
 
   @Column({
     type: 'enum',
     enum: DocumentoEstado,
     default: DocumentoEstado.PENDIENTE,
   })
-  estado: DocumentoEstado;
+  estado!: DocumentoEstado;
 
   @Column({ type: 'text', nullable: true })
-  comentarioRechazo: string | null;
+  comentarioRechazo!: string | null;
 
   @CreateDateColumn()
-  fechaSubida: Date;
+  fechaSubida!: Date;
 }

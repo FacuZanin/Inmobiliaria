@@ -40,7 +40,13 @@ export class PropietarioDocumentosController {
   ) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('archivo'))
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      limits: {
+        fileSize: 10 * 1024 * 1024,
+      },
+    }),
+  )
   @Auth()
   @UserTypes(UserType.PARTICULAR)
   @ApiBearerAuth('access-token')
@@ -87,10 +93,7 @@ export class PropietarioDocumentosController {
   @Auth()
   @UserTypes(...PROPERTY_PUBLISHERS)
   @ApiBearerAuth('access-token')
-  cambiar(
-    @Param('id') id: string,
-    @Body() dto: UpdateEstadoDocumentoDto,
-  ) {
+  cambiar(@Param('id') id: string, @Body() dto: UpdateEstadoDocumentoDto) {
     return this.cambiarEstado.execute(Number(id), dto);
   }
 }

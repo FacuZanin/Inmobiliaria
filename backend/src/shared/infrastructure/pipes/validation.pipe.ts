@@ -32,10 +32,14 @@ export class ValidationPipe implements PipeTransform {
     }
 
     // Ahora sí, dto válido → instanciar
-    const object = plainToInstance(metatype, value);
+    const object = plainToInstance(metatype, value, {
+      enableImplicitConversion: true,
+    });
 
-    const errors = await validate(object);
-
+    const errors = await validate(object, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
     if (errors.length > 0) {
       throw new BadRequestException({
         message: 'Error en validación',

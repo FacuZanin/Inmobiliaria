@@ -33,6 +33,12 @@ export class SubirDocumentoPropietarioUseCase {
   ) {
     if (!archivo) throw new BadRequestException('Archivo requerido');
 
+    const allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+
+    if (!allowedMimeTypes.includes(archivo.mimetype)) {
+      throw new BadRequestException('Formato inválido. Solo PDF, JPG y PNG.');
+    }
+
     if (dto.propietarioId !== user.id) {
       throw new ForbiddenException(
         'Solo puedes subir documentos para tu propio perfil de propietario',
@@ -42,11 +48,10 @@ export class SubirDocumentoPropietarioUseCase {
     const owner = await this.repo.findOwnerById(dto.propietarioId);
     if (!owner) throw new NotFoundException('Propietario no encontrado');
 
-    const existente =
-      await this.repo.findDocumentoByPropietarioAndTipo(
-        dto.propietarioId,
-        dto.tipoDocumento,
-      );
+    const existente = await this.repo.findDocumentoByPropietarioAndTipo(
+      dto.propietarioId,
+      dto.tipoDocumento,
+    );
 
     const archivoUrl = await this.storage.save(archivo);
 

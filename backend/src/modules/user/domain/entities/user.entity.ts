@@ -11,13 +11,13 @@ import {
 
 import { Agencia } from '../../../agencias/domain/entities/agencia.entity';
 import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
+import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-token.entity';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 import { SubscriptionPlan } from '@shared/contracts/enums/subscription-plan.enum';
-
-import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-token.entity';
+import { VerificationStatus } from '@shared/contracts/enums/verification-status.enum';
 
 @Entity('users')
 export class User {
@@ -75,6 +75,13 @@ export class User {
     default: UserStatus.ACTIVE,
   })
   status!: UserStatus;
+
+  @Column({
+    type: 'enum',
+    enum: VerificationStatus,
+    default: VerificationStatus.PENDIENTE,
+  })
+  verificationStatus!: VerificationStatus;
 
   @DeleteDateColumn()
   deletedAt?: Date;
