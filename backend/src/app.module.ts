@@ -18,6 +18,7 @@ import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { SecurityModule } from './shared/security/security.module';
 import { FavoritosModule } from './modules/favoritos/favoritos.module';
+import { PublicacionesModule } from './modules/publicaciones/publicaciones.module';
 
 // GLOBALS
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
@@ -66,6 +67,7 @@ import { HealthModule } from './health/health.module';
     InquilinosModule,
     UploadsModule,
     FavoritosModule,
+    PublicacionesModule,
 
     // Security
     SecurityModule,
@@ -73,10 +75,10 @@ import { HealthModule } from './health/health.module';
   controllers: [AppController],
   providers: [
     // 🔐 AUTH GLOBAL
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
+//    {
+//      provide: APP_GUARD,
+//      useClass: JwtAuthGuard,
+//    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

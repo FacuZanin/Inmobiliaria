@@ -1,10 +1,13 @@
-// backend\src\modules\publicaciones\application\dto\create-publicacion.dto.ts
+// backend/src/modules/publicaciones/application/dto/create-publicacion.dto.ts
+
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsString,
   IsNumber,
   IsOptional,
+  IsLatitude,
+  IsLongitude,
 } from 'class-validator';
 
 export class CreatePublicacionDto {
@@ -25,21 +28,25 @@ export class CreatePublicacionDto {
   @IsString()
   direccion!: string;
 
-  @ApiProperty({
-    type: 'string',
-    format: 'binary',
-  })
-  escritura!: any;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @IsLatitude()
+  latitud?: number;
 
-  @ApiProperty({
-    type: 'string',
-    format: 'binary',
-  })
-  dniFrente!: any;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Type(() => Number)
+  @IsLongitude()
+  longitud?: number;
 
-  @ApiProperty({
-    type: 'string',
-    format: 'binary',
-  })
-  dniDorso!: any;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  tipoOperacion?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  tipoPropiedad?: string;
 }

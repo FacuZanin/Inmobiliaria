@@ -5,10 +5,10 @@ exports.PublicacionStatus = void 0;
 var PublicacionStatus;
 (function (PublicacionStatus) {
     PublicacionStatus["BORRADOR"] = "BORRADOR";
-    PublicacionStatus["EN_REVISION_DOCUMENTAL"] = "EN_REVISION_DOCUMENTAL";
-    PublicacionStatus["EN_REVISION_ADMIN"] = "EN_REVISION_ADMIN";
-    PublicacionStatus["PUBLICADA"] = "PUBLICADA";
+    PublicacionStatus["EN_REVISION"] = "EN_REVISION";
     PublicacionStatus["OBSERVADA"] = "OBSERVADA";
     PublicacionStatus["RECHAZADA"] = "RECHAZADA";
+    PublicacionStatus["PUBLICADA_VERIFICADA"] = "PUBLICADA_VERIFICADA";
     PublicacionStatus["PAUSADA"] = "PAUSADA";
+    PublicacionStatus["ELIMINADA"] = "ELIMINADA";
 })(PublicacionStatus || (exports.PublicacionStatus = PublicacionStatus = {}));
