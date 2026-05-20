@@ -1,177 +1,142 @@
 import { Injectable } from '@nestjs/common';
 
-import { DataSource }
-  from 'typeorm';
+import { DataSource } from 'typeorm';
 
-import { CreatePublicacionCommand }
-  from '../commands/create-publicacion.command';
+import { CreatePublicacionCommand } from '../commands/create-publicacion.command';
 
-import { DocumentosService }
-  from '../services/documentos.service';
+import { DocumentosService } from '../services/documentos.service';
 
-import { ValidacionesService }
-  from '../services/validaciones.service';
+import { ValidacionesService } from '../services/validaciones.service';
 
-import { ModerationService }
-  from '../services/moderation.service';
+import { ModerationService } from '../services/moderation.service';
 
-import { PublicacionApplicationService }
-  from '../services/publicacion-application.service';
+import { PublicacionApplicationService } from '../services/publicacion-application.service';
 
-import { PropertyApplicationService }
-  from '@/modules/propiedades/application/services/property-application.service';
+import { PropertyApplicationService } from '@/modules/propiedades/application/services/property-application.service';
 
-import { UploadsApplicationService }
-  from '@/modules/uploads/application/services/uploads-application.service';
+import { UploadsApplicationService } from '@/modules/uploads/application/services/uploads-application.service';
 
 @Injectable()
 export class CreatePublicacionUseCase {
   constructor(
-    private readonly dataSource:
-      DataSource,
+    private readonly dataSource: DataSource,
 
-    private readonly propertyApplicationService:
-      PropertyApplicationService,
+    private readonly propertyApplicationService: PropertyApplicationService,
 
-    private readonly uploadsApplicationService:
-      UploadsApplicationService,
+    private readonly uploadsApplicationService: UploadsApplicationService,
 
-    private readonly documentosService:
-      DocumentosService,
+    private readonly documentosService: DocumentosService,
 
-    private readonly validacionesService:
-      ValidacionesService,
+    private readonly validacionesService: ValidacionesService,
 
-    private readonly moderationService:
-      ModerationService,
+    private readonly moderationService: ModerationService,
 
-    private readonly publicacionApplicationService:
-      PublicacionApplicationService,
+    private readonly publicacionApplicationService: PublicacionApplicationService,
   ) {}
 
-  async execute(
-    command: CreatePublicacionCommand,
-  ) {
-    const queryRunner =
-      this.dataSource.createQueryRunner();
+  async execute(command: CreatePublicacionCommand) {
+    const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
 
     await queryRunner.startTransaction();
 
     try {
-      const {
-        dto,
-        files,
-        userId,
-      } = command;
+      const { dto, files, userId } = command;
 
       // ---------------------------------------------------
       // VALIDACIONES
       // ---------------------------------------------------
 
-      await this.validacionesService
-        .validate(dto);
+      await this.validacionesService.validate(dto);
 
       // ---------------------------------------------------
       // PROPERTY
       // ---------------------------------------------------
 
-      const property =
-        await this
-          .propertyApplicationService
-          .create({
-            dto,
+      const property = await this.propertyApplicationService.create({
+        dto,
 
-            userId,
+        userId,
 
-            queryRunner,
-          });
+        queryRunner,
+      });
 
       // ---------------------------------------------------
       // UPLOADS
       // ---------------------------------------------------
 
       const uploads =
-        await this
-          .uploadsApplicationService
-          .processPublicacionFiles({
-            propertyId:
-              property.id!,
+        await this.uploadsApplicationService.processPublicacionFiles({
+          propertyId: property.id!,
 
-            files,
-          });
+          files,
+        });
 
       // ---------------------------------------------------
       // DOCUMENTOS
       // ---------------------------------------------------
 
-      await this
-        .documentosService
-        .attachDocuments({
-          propertyId:
-            property.id!,
+      await this.documentosService.attachDocuments({
+        propertyId: property.id!,
 
-          dto,
+        dto,
 
-          uploads,
-        });
+        uploads,
+      });
 
       // ---------------------------------------------------
       // MODERATION
       // ---------------------------------------------------
 
-      const moderation =
-        await this
-          .moderationService
-          .generateInitialStatus({
-            dto,
+      const moderation = await this.moderationService.generateInitialStatus({
+        dto,
 
-            uploads,
-          });
+        uploads,
+      });
 
       // ---------------------------------------------------
       // PUBLICACION
       // ---------------------------------------------------
 
-      const publicacion =
-        await this
-          .publicacionApplicationService
-          .create({
-            propertyId:
-              property.id!,
+      const publicacion = await this.publicacionApplicationService.create({
+        propertyId: property.id!,
 
-            moderation,
-          });
+        moderation,
+      });
 
       // ---------------------------------------------------
       // COMMIT
       // ---------------------------------------------------
 
-      await queryRunner
-        .commitTransaction();
+      await queryRunner.commitTransaction();
 
       // ---------------------------------------------------
       // RESPONSE
       // ---------------------------------------------------
-
       return {
         success: true,
 
-        property,
+        message: 'Publicación creada correctamente',
 
-        publicacion,
+        data: {
+          propertyId: property.id,
 
-        moderation,
+          publicacionId: publicacion.id,
+
+          status: publicacion.status,
+
+          moderation,
+
+          uploads,
+        },
       };
     } catch (error) {
-      await queryRunner
-        .rollbackTransaction();
+      await queryRunner.rollbackTransaction();
 
       throw error;
     } finally {
-      await queryRunner
-        .release();
+      await queryRunner.release();
     }
   }
 }

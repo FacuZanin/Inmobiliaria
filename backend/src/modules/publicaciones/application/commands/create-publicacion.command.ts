@@ -5,5 +5,5 @@ import { CreatePublicacionDto } from '../dto/create-publicacion.dto';
 export interface CreatePublicacionCommand {
   dto: CreatePublicacionDto;
   files: Express.Multer.File[];
-  userId: string;
+  userId: number;
 }

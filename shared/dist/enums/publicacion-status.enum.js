@@ -8,6 +8,7 @@ var PublicacionStatus;
     PublicacionStatus["EN_REVISION"] = "EN_REVISION";
     PublicacionStatus["OBSERVADA"] = "OBSERVADA";
     PublicacionStatus["RECHAZADA"] = "RECHAZADA";
+    PublicacionStatus["PUBLICADA_NO_VERIFICADA"] = "PUBLICADA_NO_VERIFICADA";
     PublicacionStatus["PUBLICADA_VERIFICADA"] = "PUBLICADA_VERIFICADA";
     PublicacionStatus["PAUSADA"] = "PAUSADA";
     PublicacionStatus["ELIMINADA"] = "ELIMINADA";

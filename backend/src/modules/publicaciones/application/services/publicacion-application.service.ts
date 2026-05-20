@@ -1,21 +1,15 @@
 // backend\src\modules\publicaciones\application\services\publicacion-application.service.ts
-import {
-  Injectable,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 
-import { PublicacionAggregate }
-  from '../../domain/entities/publicacion.aggregate';
+import { PublicacionRepository } from '../../domain/repositories/publicacion.repository';
 
-import { PublicacionRepository }
-  from '../../domain/repositories/publicacion.repository';
+import { PublicacionAggregate } from '../../domain/entities/publicacion.aggregate';
 
 @Injectable()
 export class PublicacionApplicationService {
   constructor(
     @Inject(PublicacionRepository)
-    private readonly publicacionRepository:
-      PublicacionRepository,
+    private readonly publicacionRepository: PublicacionRepository,
   ) {}
 
   async create({
@@ -25,40 +19,43 @@ export class PublicacionApplicationService {
     propertyId: number;
 
     moderation: {
-      score?: number | null;
-
+      status: string;
+      score: number;
       notes?: string | null;
     };
   }) {
-    // ---------------------------------------------------
+    // -----------------------------------------
     // AGGREGATE
-    // ---------------------------------------------------
+    // -----------------------------------------
 
-    const publicacion =
-      PublicacionAggregate.create({
-        propertyId,
+    const publicacion = PublicacionAggregate.create({
+      propertyId,
+    });
 
-        moderationScore:
-          moderation.score ?? null,
+    // -----------------------------------------
+    // MODERATION
+    // -----------------------------------------
 
-        moderationNotes:
-          moderation.notes ?? null,
-      });
+    publicacion.updateModerationScore(moderation.score);
 
-    // ---------------------------------------------------
-    // WORKFLOW
-    // ---------------------------------------------------
+    if (moderation.notes) {
+      publicacion.updateModerationNotes(moderation.notes);
+    }
 
-    publicacion.sendToReview();
+    publicacion.publishAsPendingReview();
 
-    // ---------------------------------------------------
-    // PERSISTENCIA
-    // ---------------------------------------------------
+    // -----------------------------------------
+    // SAVE
+    // -----------------------------------------
 
-    const saved =
-      await this.publicacionRepository
-        .save(publicacion);
+    return this.publicacionRepository.save(publicacion);
+  }
 
-    return saved;
+  async findById(id: number) {
+    return this.publicacionRepository.findById(id);
+  }
+
+  async update(id: number, partial: Partial<PublicacionAggregate>) {
+    return this.publicacionRepository.update(id, partial);
   }
 }

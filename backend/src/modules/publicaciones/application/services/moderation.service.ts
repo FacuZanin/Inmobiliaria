@@ -12,8 +12,7 @@ export class ModerationService {
     uploads,
   }: {
     dto: any;
-
-    uploads: string[];
+    uploads: any[];
   }) {
     let score = 100;
 

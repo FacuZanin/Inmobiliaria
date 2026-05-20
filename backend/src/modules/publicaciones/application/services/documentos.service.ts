@@ -10,10 +10,8 @@ export class DocumentosService {
     uploads,
   }: {
     propertyId: number;
-
     dto: any;
-
-    uploads: string[];
+    uploads: any[];
   }) {
     // ---------------------------------------------------
     // PLACEHOLDER ENTERPRISE

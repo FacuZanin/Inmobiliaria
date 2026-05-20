@@ -8,8 +8,8 @@ import { InjectRepository }
 import { Repository }
   from 'typeorm';
 
-import { PublicacionRepository }
-  from '../../../../domain/repositories/publicacion.repository';
+import { PublicacionRepositoryPort }
+from '../../../../application/ports/publicacion-repository.port';
 
 import { PublicacionAggregate }
   from '../../../../domain/entities/publicacion.aggregate';
@@ -22,7 +22,7 @@ import { PublicacionMapper }
 
 @Injectable()
 export class PublicacionTypeOrmRepository
-  implements PublicacionRepository
+  implements PublicacionRepositoryPort
 {
   constructor(
     @InjectRepository(PublicacionEntity)

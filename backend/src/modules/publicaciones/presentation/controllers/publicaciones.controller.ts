@@ -20,7 +20,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { CreatePublicacionDto } from '../../application/dto/create-publicacion.dto';
 
-import { CreatePublicacionUseCase } from '../../use-cases/create-publicacion.usecase';
+import { CreatePublicacionUseCase } from '../../application/use-cases/create-publicacion.usecase';
 
 import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
 
@@ -66,7 +66,7 @@ export class PublicacionesController {
     return this.createPublicacionUseCase.execute({
       dto,
       files,
-      userId: user.sub,
+      userId: Number(user.sub),
     });
   }
 }

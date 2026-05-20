@@ -1,31 +1,24 @@
 // backend\src\modules\propiedades\application\services\property-application.service.ts
-import { Injectable, Inject }
-  from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 
-import { QueryRunner }
-  from 'typeorm';
+import { QueryRunner } from 'typeorm';
 
-import { PropertyAggregate }
-  from '../../domain/entities/property.aggregate';
+import { PropertyAggregate } from '../../domain/entities/property.aggregate';
 
-import { PropertyRepositoryPort }
-  from '../ports/property-repository.port';
+import { PropertyRepositoryPort } from '../ports/property-repository.port';
 
-import { AddressVO }
-  from '../../domain/value-objects/address.vo';
+import { PROPERTY_REPOSITORY } from '../tokens';
 
-import { PriceVO }
-  from '../../domain/value-objects/price.vo';
+import { AddressVO } from '../../domain/value-objects/address.vo';
+import { PriceVO } from '../../domain/value-objects/price.vo';
 
-import { PropertyStatus }
-  from '@shared/contracts/enums/property-status.enum';
+import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
 @Injectable()
 export class PropertyApplicationService {
   constructor(
-    @Inject('PropertyRepositoryPort')
-    private readonly propertyRepository:
-      PropertyRepositoryPort,
+    @Inject(PROPERTY_REPOSITORY)
+    private readonly propertyRepository: PropertyRepositoryPort,
   ) {}
 
   async create({
@@ -43,68 +36,47 @@ export class PropertyApplicationService {
     // VALUE OBJECTS
     // ---------------------------------------------------
 
-    const address =
-      AddressVO.create({
-        direccion:
-          dto.direccion,
-      });
+    const address = new AddressVO(dto.direccion);
 
-    const price =
-      PriceVO.create(
-        dto.precio,
-      );
+    const price = new PriceVO(Number(dto.precio));
 
     // ---------------------------------------------------
     // AGGREGATE
     // ---------------------------------------------------
 
-    const property =
-      PropertyAggregate.create({
-        titulo:
-          dto.titulo,
+    const property = PropertyAggregate.create({
+      titulo: dto.titulo,
 
-        descripcion:
-          dto.descripcion,
+      descripcion: dto.descripcion,
 
-        tipo:
-          dto.tipoPropiedad,
+      tipo: dto.tipoPropiedad?.toUpperCase(),
 
-        operacion:
-          dto.tipoOperacion,
+      operacion: dto.tipoOperacion?.toUpperCase(),
 
-        status:
-          PropertyStatus.PUBLICADA,
+      status: PropertyStatus.PUBLICADA,
 
-        precio: price,
+      precio: price,
 
-        direccion: address,
+      direccion: address,
 
-        localidad:
-          dto.localidad ??
-          'Sin localidad',
+      localidad: dto.localidad ?? 'Sin localidad',
 
-        creadoPorId:
-          userId,
+      creadoPorId: userId,
 
-        imagenes: [],
+      imagenes: [],
 
-        ambientes:
-          dto.ambientes,
+      ambientes: dto.ambientes ? Number(dto.ambientes) : undefined,
 
-        dormitorios:
-          dto.dormitorios,
+      dormitorios: dto.dormitorios ? Number(dto.dormitorios) : undefined,
 
-        banos:
-          dto.banos,
-      });
+      banos: dto.banos ? Number(dto.banos) : undefined,
+    });
 
     // ---------------------------------------------------
     // PERSISTENCIA
     // ---------------------------------------------------
 
-    const saved =
-      await this.propertyRepository
-        .save(property);
+    const saved = await this.propertyRepository.save(property);
 
     return saved;
   }

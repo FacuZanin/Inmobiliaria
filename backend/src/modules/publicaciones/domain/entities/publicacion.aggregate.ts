@@ -52,16 +52,12 @@ export class PublicacionAggregate {
   // CONSTRUCTOR
   // ---------------------------------------------------
 
-  private constructor(
-    props: PublicacionAggregateProps,
-  ) {
+  private constructor(props: PublicacionAggregateProps) {
     this._id = props.id ?? null;
 
     this._propertyId = props.propertyId;
 
-    this._status =
-      props.status ??
-      PublicacionStatus.EN_REVISION;
+    this._status = props.status ?? PublicacionStatus.EN_REVISION;
 
     this._visible = props.visible ?? true;
 
@@ -69,14 +65,11 @@ export class PublicacionAggregate {
 
     this._featured = props.featured ?? false;
 
-    this._moderationScore =
-      props.moderationScore ?? null;
+    this._moderationScore = props.moderationScore ?? null;
 
-    this._moderationNotes =
-      props.moderationNotes ?? null;
+    this._moderationNotes = props.moderationNotes ?? null;
 
-    this._publicadoEn =
-      props.publicadoEn ?? null;
+    this._publicadoEn = props.publicadoEn ?? null;
 
     this._creadoEn = props.creadoEn;
   }
@@ -116,9 +109,7 @@ export class PublicacionAggregate {
     });
   }
 
-  static rehydrate(
-    props: PublicacionAggregateProps,
-  ): PublicacionAggregate {
+  static rehydrate(props: PublicacionAggregateProps): PublicacionAggregate {
     return new PublicacionAggregate(props);
   }
 
@@ -171,8 +162,7 @@ export class PublicacionAggregate {
   // ---------------------------------------------------
 
   approve() {
-    this._status =
-      PublicacionStatus.PUBLICADA_VERIFICADA;
+    this._status = PublicacionStatus.PUBLICADA_VERIFICADA;
 
     this._verified = true;
 
@@ -182,15 +172,13 @@ export class PublicacionAggregate {
   }
 
   sendToReview() {
-    this._status =
-      PublicacionStatus.EN_REVISION;
+    this._status = PublicacionStatus.EN_REVISION;
 
     this._verified = false;
   }
 
   reject(reason?: string) {
-    this._status =
-      PublicacionStatus.RECHAZADA;
+    this._status = PublicacionStatus.RECHAZADA;
 
     this._visible = false;
 
@@ -200,8 +188,7 @@ export class PublicacionAggregate {
   }
 
   observe(reason?: string) {
-    this._status =
-      PublicacionStatus.OBSERVADA;
+    this._status = PublicacionStatus.OBSERVADA;
 
     if (reason) {
       this._moderationNotes = reason;
@@ -209,15 +196,13 @@ export class PublicacionAggregate {
   }
 
   pause() {
-    this._status =
-      PublicacionStatus.PAUSADA;
+    this._status = PublicacionStatus.PAUSADA;
 
     this._visible = false;
   }
 
   restore() {
-    this._status =
-      PublicacionStatus.PUBLICADA_VERIFICADA;
+    this._status = PublicacionStatus.PUBLICADA_VERIFICADA;
 
     this._visible = true;
   }
@@ -250,5 +235,12 @@ export class PublicacionAggregate {
     if (!this._id) {
       this._id = id;
     }
+  }
+
+  publishAsPendingReview() {
+    this._status = PublicacionStatus.PUBLICADA_NO_VERIFICADA;
+    this._visible = true;
+    this._verified = false;
+    this._publicadoEn = new Date();
   }
 }
