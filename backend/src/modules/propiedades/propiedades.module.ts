@@ -31,6 +31,9 @@ import { ViewPropertyUseCase } from './application/use-cases/view-property.useca
 import { PropietarioDocumentosModule } from '../propietario-documentos/propietario-documentos.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
+import { PropertyApplicationService }
+from './application/services/property-application.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -65,6 +68,7 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
     DeletePropertyUseCase,
     ListPropertiesUseCase,
     ViewPropertyUseCase,
+    PropertyApplicationService,
   ],
   exports: [
     PROPERTY_REPOSITORY,
@@ -73,6 +77,7 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
     DeletePropertyUseCase,
     ListPropertiesUseCase,
     ViewPropertyUseCase,
+    PropertyApplicationService,
   ],
 })
 export class PropiedadesModule {}
