@@ -5,33 +5,36 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 
-import { AuthController } from './infrastructure/controllers/auth.controller';
+import { AuthController } from '@modules/auth/infrastructure/controllers/auth.controller';
 
 // Use cases
-import { LoginUseCase } from './application/use-cases/login.usecase';
-import { RegisterUseCase } from './application/use-cases/register.usecase';
-import { RefreshTokenUseCase } from './application/use-cases/refresh-token.usecase';
-import { LogoutUseCase } from './application/use-cases/logout.usecase';
+import { LoginUseCase } from '@modules/auth/application/use-cases/login.usecase';
+import { RegisterUseCase } from '@modules/auth/application/use-cases/register.usecase';
+import { RefreshTokenUseCase } from '@modules/auth/application/use-cases/refresh-token.usecase';
+import { LogoutUseCase } from '@modules/auth/application/use-cases/logout.usecase';
 
 // Services
-import { JwtTokenService } from './infrastructure/services/jwt-token.service';
-import { PasswordHasherService } from './infrastructure/services/password-hasher.service';
-import { RefreshTokenService } from './application/services/refresh-token.service';
+import { JwtTokenService } from '@modules/auth/infrastructure/services/jwt-token.service';
+import { PasswordHasherService } from '@modules/auth/infrastructure/services/password-hasher.service';
+import { RefreshTokenService } from '@modules/auth/application/services/refresh-token.service';
 
 // Entities
-import { RefreshToken } from './infrastructure/entities/refresh-token.entity';
+import { RefreshToken } from '@modules/auth/infrastructure/entities/refresh-token.entity';
 
 // Guards / Strategy
-import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
-import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
-import { RolesGuard } from '../../shared/security/guards/roles.guard';
+import { JwtStrategy } from '@modules/auth/infrastructure/strategies/jwt.strategy';
+import { JwtAuthGuard } from '@modules/auth/infrastructure/guards/jwt-auth.guard';
+import { RolesGuard } from '@/shared/security/guards/roles.guard';
 
 // Ports
-import { TOKEN_SERVICE, PASSWORD_HASHER } from './application/tokens';
+import {
+  TOKEN_SERVICE,
+  PASSWORD_HASHER,
+} from '@modules/auth/application/tokens';
 
 // User module
-import { UsersModule } from '../user/users.module';
-import { AgenciasModule } from '../agencias/agencias.module';
+import { UsersModule } from '@modules/user/users.module';
+import { AgenciasModule } from '@modules/agencias/agencias.module';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 @Global()
@@ -51,32 +54,35 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
   providers: [
     RefreshTokenService,
-    // Use cases
+
     LoginUseCase,
     RegisterUseCase,
     RefreshTokenUseCase,
     LogoutUseCase,
 
-    // Security
     JwtStrategy,
-    RolesGuard,
 
-    JwtAuthGuard,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
 
     {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+
+    {
       provide: TOKEN_SERVICE,
       useClass: JwtTokenService,
     },
+
     {
       provide: PASSWORD_HASHER,
       useClass: PasswordHasherService,
     },
   ],
 
-  exports: [PassportModule, RefreshTokenService, JwtAuthGuard, JwtModule],
+  exports: [PassportModule, RefreshTokenService, JwtModule],
 })
 export class AuthModule {}

@@ -11,5 +11,5 @@ export class CreateInquilinoDocumentoDto {
     description: 'Tipo de documento del inquilino a subir',
   })
   @IsEnum(TipoDocumentoInquilino)
-  tipoDocumento: TipoDocumentoInquilino;
+  tipoDocumento!: TipoDocumentoInquilino;
 }

@@ -3,7 +3,7 @@ import { Injectable, Inject }
   from '@nestjs/common';
 
 import type { FileStoragePort }
-  from '../ports/file-storage.port';
+  from '@modules/uploads/application/ports/file-storage.port';
 
 import { FILE_STORAGE }
   from '../tokens';

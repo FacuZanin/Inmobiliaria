@@ -9,11 +9,11 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { Auth } from '../../../../shared/security/decorators/auth.decorator';
+import { Auth } from '@/shared/security/decorators/auth.decorator';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
-import type { FileStoragePort } from '../../application/ports/file-storage.port';
-import { FILE_STORAGE } from '../../application/tokens';
+import type { FileStoragePort } from '@modules/uploads/application/ports/file-storage.port';
+import { FILE_STORAGE } from '@modules/uploads/application/tokens';
 
 @Controller('uploads')
 @Auth(UserRole.SUPERADMIN, UserRole.MODERATOR)

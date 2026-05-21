@@ -1,7 +1,7 @@
 // backend\src\modules\propietario-documentos\infrastructure\persistence\typeorm\propietario-documento.mapper.ts
-import { PropietarioDocumentoModel } from '../../../domain/entities/propietario-documento.model';
-import { Owner } from '../../../domain/entities/owner';
-import { PropietarioDocumento as PropietarioDocumentoOrm } from '../../../domain/entities/propietario-documento.domain';
+import { PropietarioDocumentoModel } from '@modules/propietario-documentos/domain/entities/propietario-documento.model';
+import { Owner } from '@modules/propietario-documentos/domain/entities/owner';
+import { PropietarioDocumento as PropietarioDocumentoOrm } from '@modules/propietario-documentos/domain/entities/propietario-documento.domain';
 import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
 
 export const toDomain = (e: PropietarioDocumentoOrm): PropietarioDocumentoModel => {

@@ -1,10 +1,10 @@
 // backend\src\modules\uploads\uploads.module.ts
 import { Module, forwardRef } from '@nestjs/common';
-import { UploadsController } from './infrastructure/controllers/uploads.controller';
-import { LocalFileStorageService } from './infrastructure/storage/local-file-storage.service';
-import { FILE_STORAGE } from './application/tokens';
-import { UsersModule } from '../user/users.module';
-import { UploadsApplicationService } from './application/services/uploads-application.service';
+import { UploadsController } from '@modules/uploads/infrastructure/controllers/uploads.controller';
+import { LocalFileStorageService } from '@modules/uploads/infrastructure/storage/local-file-storage.service';
+import { FILE_STORAGE } from '@modules/uploads/application/tokens';
+import { UsersModule } from '@modules/user/users.module';
+import { UploadsApplicationService } from '@modules/uploads/application/services/uploads-application.service';
 
 @Module({
   imports: [forwardRef(() => UsersModule)],

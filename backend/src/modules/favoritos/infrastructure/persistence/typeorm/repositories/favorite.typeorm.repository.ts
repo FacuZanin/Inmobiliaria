@@ -14,7 +14,7 @@ import { FavoriteRepositoryPort } from '@/modules/favoritos/application/ports/fa
 
 import { User } from '@/modules/user/domain/entities/user.entity';
 
-import { Propiedad } from '@/modules/propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
+import { PropertyEntity } from '@/modules/propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
 
 @Injectable()
 export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
@@ -25,8 +25,8 @@ export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    @InjectRepository(Propiedad)
-    private readonly propertyRepository: Repository<Propiedad>,
+    @InjectRepository(PropertyEntity)
+    private readonly propertyRepository: Repository<PropertyEntity>,
   ) {}
 
   async addFavorite(userId: number, propertyId: number): Promise<Favorite> {

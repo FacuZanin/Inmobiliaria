@@ -1,32 +1,32 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\entities\propiedad-local.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
-import { Propiedad } from './propiedad.entity';
+import { PropertyEntity } from './propiedad.entity';
 
 @Entity('propiedad_locales')
 export class PropiedadLocal {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ nullable: true })
-  vidrieraMetros: number;
+  vidrieraMetros!: number;
 
   @Column({ default: false })
-  deposito: boolean;
+  deposito!: boolean;
 
   @Column({ nullable: true })
-  banos: number;
+  banos!: number;
 
   @Column({ default: false })
-  aptoGastronomico: boolean;
+  aptoGastronomico!: boolean;
 
   @Column({ default: false })
-  luzTrifasica: boolean;
+  luzTrifasica!: boolean;
 
-@OneToOne(() => Propiedad, (p) => p.local, {
+@OneToOne(() => PropertyEntity, (p) => p.local, {
   onDelete: 'CASCADE',
   eager: false,
 })
 @JoinColumn()
-propiedad: Propiedad;
+propiedad!: PropertyEntity;
 
 }

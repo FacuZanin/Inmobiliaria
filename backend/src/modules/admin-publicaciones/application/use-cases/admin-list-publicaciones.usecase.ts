@@ -3,7 +3,7 @@ import { Injectable, Inject } from '@nestjs/common';
 
 import { PublicacionRepository } from '@/modules/publicaciones/domain/repositories/publicacion.repository';
 
-import { FilterPublicacionesDto } from '../dto/filter-publicaciones.dto';
+import { FilterPublicacionesDto } from '@modules/admin-publicaciones/application/dto/filter-publicaciones.dto';
 
 @Injectable()
 export class AdminListPublicacionesUseCase {

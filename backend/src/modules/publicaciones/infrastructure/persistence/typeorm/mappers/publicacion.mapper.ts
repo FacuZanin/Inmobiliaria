@@ -1,9 +1,9 @@
 // backend\src\modules\publicaciones\infrastructure\persistence\typeorm\mappers\publicacion.mapper.ts
 import { PublicacionAggregate }
-  from '../../../../domain/entities/publicacion.aggregate';
+  from '@modules/publicaciones/domain/entities/publicacion.aggregate';
 
-import { PublicacionEntity }
-  from '../entities/publicacion.entity';
+import { PublicacionEntity } 
+  from '@modules/publicaciones/infrastructure/persistence/typeorm/entities/publicacion.entity';
 
 export class PublicacionMapper {
   static toDomain(

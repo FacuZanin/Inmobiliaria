@@ -1,20 +1,16 @@
+// backend\src\modules\publicaciones\application\use-cases\create-publicacion.usecase.ts
 import { Injectable } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { CreatePublicacionCommand } from '../commands/create-publicacion.command';
+import { CreatePublicacionCommand } from '@modules/publicaciones/application/commands/create-publicacion.command';
 
-import { DocumentosService } from '../services/documentos.service';
-
-import { ValidacionesService } from '../services/validaciones.service';
-
-import { ModerationService } from '../services/moderation.service';
-
-import { PublicacionApplicationService } from '../services/publicacion-application.service';
-
-import { PropertyApplicationService } from '@/modules/propiedades/application/services/property-application.service';
-
-import { UploadsApplicationService } from '@/modules/uploads/application/services/uploads-application.service';
+import { DocumentosService } from '@modules/publicaciones/application/services/documentos.service';
+import { ValidacionesService } from '@modules/publicaciones/application/services/validaciones.service';
+import { ModerationService } from '@modules/publicaciones/application/services/moderation.service';
+import { PublicacionApplicationService } from '@modules/publicaciones/application/services/publicacion-application.service';
+import { PropertyApplicationService } from '@modules/propiedades/application/services/property-application.service';
+import { UploadsApplicationService } from '@modules/uploads/application/services/uploads-application.service';
 
 @Injectable()
 export class CreatePublicacionUseCase {

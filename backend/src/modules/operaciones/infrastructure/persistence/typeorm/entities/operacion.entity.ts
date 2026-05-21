@@ -6,7 +6,7 @@ import {
   ManyToOne,
   CreateDateColumn,
 } from 'typeorm';
-import { Propiedad } from '../../../../../propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
+import { PropertyEntity } from '../../../../../propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
 import { User } from '../../../../../user/domain/entities/user.entity';
 import { Agencia } from '../../../../../agencias/domain/entities/agencia.entity';
 import { MedioOperacion} from '@shared/contracts/enums/medio-operacion.enum';
@@ -16,23 +16,23 @@ import { OperacionEstado } from '@shared/contracts/enums/operacion-estado.enum';
 @Entity('operaciones')
 export class Operacion {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: 'enum', enum: OperacionTipo })
-  tipo: OperacionTipo;
+  tipo!: OperacionTipo;
 
   @Column({
     type: 'enum',
     enum: OperacionEstado,
     default: OperacionEstado.PENDIENTE,
   })
-  estado: OperacionEstado;
+  estado!: OperacionEstado;
 
 @Column({ type: 'enum', enum: MedioOperacion, nullable: true })
-medio: MedioOperacion | null;
+medio!: MedioOperacion | null;
 
-  @ManyToOne(() => Propiedad, (p) => p.id, { eager: true })
-  propiedad: Propiedad;
+  @ManyToOne(() => PropertyEntity, (p) => p.id, { eager: true })
+  propiedad!: PropertyEntity;
 
   @ManyToOne(() => Agencia, (a) => a.id, { nullable: true, eager: true })
   agencia?: Agencia;
@@ -41,20 +41,20 @@ medio: MedioOperacion | null;
   propietarioDirecto?: User;
 
   @ManyToOne(() => User, (u) => u.id, { nullable: false, eager: true })
-  creadoPor: User;
+  creadoPor!: User;
 
   @ManyToOne(() => User, (u) => u.id, { nullable: true, eager: true })
   compradorInquilino?: User;
 
   @Column({ type: 'timestamp', nullable: true })
-  fechaReserva: Date | null;
+  fechaReserva!: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  fechaFinalizacion: Date | null;
+  fechaFinalizacion!: Date | null;
 
   @Column({ type: 'text', nullable: true })
-  observaciones: string | null;
+  observaciones!: string | null;
 
   @CreateDateColumn()
-  creadoEn: Date;
+  creadoEn!: Date;
 }

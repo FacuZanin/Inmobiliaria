@@ -1,5 +1,5 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\mappers\property-details.mapper.ts
-import { Propiedad } from '../entities/propiedad.entity';
+import { PropertyEntity } from '../entities/propiedad.entity';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 
 import {
@@ -12,15 +12,15 @@ import {
   CampoApto,
   PHDetails,
   PozoDetails,
-} from '../../../../domain/details/index';
+} from '@modules/propiedades/domain/details/index';
 
-import type { PropertyDetails } from '../../../../domain/entities/property.aggregate';
+import type { PropertyDetails } from '@modules/propiedades/domain/entities/property.aggregate';
 
 export class PropertyDetailsMapper {
   /**
    * ORM Entity -> Domain Details
    */
-  static fromEntity(entity: Propiedad): PropertyDetails | undefined {
+  static fromEntity(entity: PropertyEntity): PropertyDetails | undefined {
     switch (entity.tipo) {
       case PropiedadTipo.CASA:
         if (!entity.casa) return undefined;
@@ -113,7 +113,7 @@ export class PropertyDetailsMapper {
    */
   static toOrm(
     detalles: PropertyDetails | undefined,
-    propiedad: Propiedad,
+    propiedad: PropertyEntity,
   ): object | null {
     if (!detalles) return null;
 

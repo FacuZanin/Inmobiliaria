@@ -13,8 +13,8 @@ import {
   OneToMany,
 } from 'typeorm';
 
-import { Agencia } from '../../../../../agencias/domain/entities/agencia.entity';
-import { User } from '../../../../../user/domain/entities/user.entity';
+import { Agencia } from '@modules/agencias/domain/entities/agencia.entity';
+import { User } from '@modules/user/domain/entities/user.entity';
 import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
 
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
@@ -31,7 +31,7 @@ import { PropiedadPH } from './propiedad-ph.entity';
 import { PropiedadPozo } from './propiedad-pozo.entity';
 
 @Entity('propiedades')
-export class Propiedad {
+export class PropertyEntity {
   // ---------------------------------------------------
   // BASE
   // ---------------------------------------------------

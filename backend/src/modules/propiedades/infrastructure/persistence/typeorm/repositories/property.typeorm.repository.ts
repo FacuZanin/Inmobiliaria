@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { PropertyAggregate } from '../../../../domain/entities/property.aggregate';
 import { PropertyRepositoryPort } from '../../../../application/ports/property-repository.port';
 
-import { Propiedad } from '../entities/propiedad.entity';
+import { PropertyEntity } from '../entities/propiedad.entity';
 import { PropiedadCasa } from '../entities/propiedad-casa.entity';
 import { PropiedadDepartamento } from '../entities/propiedad-departamento.entity';
 import { PropiedadLote } from '../entities/propiedad-lote.entity';
@@ -23,8 +23,8 @@ import { PropertyDetailsMapper } from '../mappers/property-details.mapper';
 @Injectable()
 export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
   constructor(
-    @InjectRepository(Propiedad)
-    private readonly propiedadRepo: Repository<Propiedad>,
+    @InjectRepository(PropertyEntity)
+    private readonly propiedadRepo: Repository<PropertyEntity>,
 
     @InjectRepository(PropiedadCasa)
     private readonly casaRepo: Repository<PropiedadCasa>,
@@ -55,7 +55,7 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     try {
       // 1️⃣ map aggregate -> base ORM
       const baseOrm = this.propiedadRepo.create(
-        PropertyMapper.toOrm(property) as Propiedad,
+        PropertyMapper.toOrm(property) as PropertyEntity,
       );
 
       const savedBase = await this.propiedadRepo.save(baseOrm);

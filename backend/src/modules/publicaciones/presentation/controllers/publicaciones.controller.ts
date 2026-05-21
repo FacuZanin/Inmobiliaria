@@ -1,4 +1,4 @@
-// backend/src/modules/publicaciones/infrastructure/controllers/publicaciones.controller.ts
+// backend\src\modules\publicaciones\presentation\controllers\publicaciones.controller.ts
 
 import {
   UseGuards,
@@ -18,15 +18,15 @@ import {
 
 import { FilesInterceptor } from '@nestjs/platform-express';
 
-import { CreatePublicacionDto } from '../../application/dto/create-publicacion.dto';
+import { CreatePublicacionDto } from '@modules/publicaciones/application/dto/create-publicacion.dto';
 
-import { CreatePublicacionUseCase } from '../../application/use-cases/create-publicacion.usecase';
+import { CreatePublicacionUseCase } from '@modules/publicaciones/application/use-cases/create-publicacion.usecase';
 
-import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@modules/auth/infrastructure/guards/jwt-auth.guard';
 
 import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
 
-import { JwtPayload } from '@/modules/auth/application/contracts/jwt-payload.contracts';
+import { JwtPayload } from '@modules/auth/application/contracts/jwt-payload.contracts';
 
 
 

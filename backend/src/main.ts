@@ -8,7 +8,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
-import { seedAdmin } from './database/seeds/admin.seed';
+import { seedAdmin } from '@/database/seeds/admin.seed';
 import { LoggingInterceptor } from '@/shared/infrastructure/interceptors/logging.interceptor';
 import { AppLogger } from '@/shared/infrastructure/logger/logger.service';
 

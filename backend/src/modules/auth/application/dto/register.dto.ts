@@ -1,3 +1,4 @@
+// backend\src\modules\auth\application\dto\register.dto.ts
 import {
   IsEmail,
   IsNotEmpty,

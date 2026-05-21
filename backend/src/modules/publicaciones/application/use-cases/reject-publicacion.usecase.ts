@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 
 import { PublicacionRepository }
-  from '../../domain/repositories/publicacion.repository';
+  from '@modules/publicaciones/domain/repositories/publicacion.repository';
 
 @Injectable()
 export class RejectPublicacionUseCase {

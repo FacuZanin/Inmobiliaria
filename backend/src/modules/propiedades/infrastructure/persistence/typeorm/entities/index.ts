@@ -1,5 +1,5 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\entities\index.ts
-export { Propiedad } from './propiedad.entity';
+export { PropertyEntity } from './propiedad.entity';
 export { PropiedadCasa } from './propiedad-casa.entity';
 export { PropiedadDepartamento } from './propiedad-departamento.entity';
 export { PropiedadLote } from './propiedad-lote.entity';

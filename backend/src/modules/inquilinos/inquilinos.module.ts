@@ -13,7 +13,7 @@ import { InquilinosTypeOrmRepository } from './infrastructure/persistence/typeor
 import { Inquilino } from './domain/entities/inquilino.entity';
 import { SolicitudVisita } from './domain/entities/solicitud-visita.entity';
 import { Favorito } from './domain/entities/favorito.entity';
-import { Propiedad } from '../propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
+import { PropertyEntity } from '../propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
 
 import { INQUILINOS_REPOSITORY } from './application/tokens';
 
@@ -23,7 +23,7 @@ import { INQUILINOS_REPOSITORY } from './application/tokens';
       Inquilino,
       SolicitudVisita,
       Favorito,
-      Propiedad,
+      PropertyEntity,
     ]),
   ],
   controllers: [InquilinosController],

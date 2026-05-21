@@ -1,6 +1,6 @@
 // backend\src\modules\publicaciones\application\ports\publicacion-repository.port.ts
 import { PublicacionAggregate }
-from '../../domain/entities/publicacion.aggregate';
+from '@modules/publicaciones/domain/entities/publicacion.aggregate';
 
 export interface PublicacionRepositoryPort {
   save(

@@ -1,6 +1,7 @@
 // backend\src\modules\publicaciones\domain\repositories\publicacion.repository.ts
-import { PublicacionAggregate }
-  from '../entities/publicacion.aggregate';
+import { PublicacionAggregate } from '@modules/publicaciones/domain/entities/publicacion.aggregate';
+
+import { FilterPublicacionesDto } from '@modules/admin-publicaciones/application/dto/filter-publicaciones.dto';
 
 export abstract class PublicacionRepository {
   abstract save(
@@ -18,5 +19,7 @@ export abstract class PublicacionRepository {
 
   abstract delete(id: number): Promise<void>;
 
-  abstract findAll(filters?: any): Promise<any[]>;
+  abstract findAll(
+  filters?: FilterPublicacionesDto,
+): Promise<PublicacionAggregate[]>;
 }

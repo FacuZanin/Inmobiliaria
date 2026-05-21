@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { ROLES_KEY } from '../decorators/roles.decorator';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { ROLES_KEY } from '@/shared/security/decorators/roles.decorator';
+import { IS_PUBLIC_KEY } from '@/shared/security/decorators/public.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

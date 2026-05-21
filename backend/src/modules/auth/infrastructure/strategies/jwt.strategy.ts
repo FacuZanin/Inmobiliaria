@@ -8,13 +8,13 @@ import {
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { USER_REPOSITORY } from '../../../user/application/tokens';
+import { USER_REPOSITORY } from '@modules/user/application/tokens';
 
-import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
+import type { UserRepositoryPort } from '@modules/user/application/ports/user-repository.port';
 
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
-import { JwtPayload } from '../../application/contracts/jwt-payload.contracts';
+import { JwtPayload } from '@modules/auth/application/contracts/jwt-payload.contracts';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {

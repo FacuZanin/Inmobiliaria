@@ -13,20 +13,20 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiTags,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'; 
 
 import { Auth } from '@/shared/security/decorators/auth.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
-import { AdminListPublicacionesUseCase } from '../../application/use-cases/admin-list-publicaciones.usecase';
+import { AdminListPublicacionesUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-list-publicaciones.usecase';
 
 import { ApprovePublicacionUseCase } from '@/modules/publicaciones/application/use-cases/approve-publicacion.usecase';
 import { RejectPublicacionUseCase } from '@/modules/publicaciones/application/use-cases/reject-publicacion.usecase';
 import { ObservePublicacionUseCase } from '@/modules/publicaciones/application/use-cases/observe-publicacion.usecase';
 import { PausePublicacionUseCase } from '@/modules/publicaciones/application/use-cases/pause-publicacion.usecase';
 
-import { FilterPublicacionesDto } from '../../application/dto/filter-publicaciones.dto';
+import { FilterPublicacionesDto } from '@modules/admin-publicaciones/application/dto/filter-publicaciones.dto';
 
 @ApiTags('Admin - Publicaciones')
 @ApiBearerAuth('access-token')

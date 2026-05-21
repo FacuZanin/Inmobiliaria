@@ -1,6 +1,6 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\mappers\property.mapper.ts
 
-import { Propiedad } from '../entities/propiedad.entity';
+import { PropertyEntity } from '../entities/propiedad.entity';
 
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
@@ -18,7 +18,7 @@ export class PropertyMapper {
   // -------------------------------------------------
   // ORM → DOMAIN
   // -------------------------------------------------
-  static toDomain(entity: Propiedad): PropertyAggregate {
+  static toDomain(entity: PropertyEntity): PropertyAggregate {
     return PropertyAggregate.rehydrate({
       id: entity.id,
       titulo: entity.titulo,
@@ -58,7 +58,7 @@ export class PropertyMapper {
   // -------------------------------------------------
   // DOMAIN → ORM
   // -------------------------------------------------
-  static toOrm(property: PropertyAggregate): Partial<Propiedad> {
+  static toOrm(property: PropertyAggregate): Partial<PropertyEntity> {
     const superficie = property.superficie;
 
     return {

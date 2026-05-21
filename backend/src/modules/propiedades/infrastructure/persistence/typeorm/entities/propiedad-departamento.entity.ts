@@ -1,6 +1,6 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\entities\propiedad-departamento.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
-import { Propiedad } from './propiedad.entity';
+import { PropertyEntity } from './propiedad.entity';
 
 @Entity('propiedad_departamentos')
 export class PropiedadDepartamento {
@@ -25,10 +25,10 @@ export class PropiedadDepartamento {
   @Column({ default: false })
   cochera?: boolean;
 
-  @OneToOne(() => Propiedad, (p) => p.departamento, {
+  @OneToOne(() => PropertyEntity, (p) => p.departamento, {
     onDelete: 'CASCADE',
     eager: false,
   })
   @JoinColumn()
-  propiedad!: Propiedad;
+  propiedad!: PropertyEntity;
 }

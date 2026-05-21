@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
-  Propiedad,
+  PropertyEntity,
   PropiedadCasa,
   PropiedadDepartamento,
   PropiedadLote,
@@ -37,7 +37,7 @@ from './application/services/property-application.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Propiedad,
+      PropertyEntity,
       PropiedadCasa,
       PropiedadDepartamento,
       PropiedadLote,

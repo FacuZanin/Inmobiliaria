@@ -1,32 +1,32 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\entities\propiedad-oficina.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
-import { Propiedad } from './propiedad.entity';
+import { PropertyEntity } from './propiedad.entity';
 
 @Entity('propiedad_oficinas')
 export class PropiedadOficina {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ nullable: true })
-  puestos: number;
+  puestos!: number;
 
   @Column({ default: false })
-  salaReuniones: boolean;
+  salaReuniones!: boolean;
 
   @Column({ default: false })
-  kitchenette: boolean;
+  kitchenette!: boolean;
 
   @Column({ nullable: true })
-  banos: number;
+  banos!: number;
 
   @Column({ nullable: true })
-  expensas: number;
+  expensas!: number;
 
-@OneToOne(() => Propiedad, (p) => p.oficina, {
+@OneToOne(() => PropertyEntity, (p) => p.oficina, {
   onDelete: 'CASCADE',
   eager: false,
 })
 @JoinColumn()
-propiedad: Propiedad;
+propiedad!: PropertyEntity;
 
 }

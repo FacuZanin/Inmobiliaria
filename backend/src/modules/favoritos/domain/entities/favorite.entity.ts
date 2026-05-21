@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import { User } from '@/modules/user/domain/entities/user.entity';
-import { Propiedad } from '@/modules/propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
+import { PropertyEntity } from '@/modules/propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
 
 @Entity('favoritos')
 @Unique(['user', 'property'])
@@ -24,10 +24,10 @@ export class Favorite {
   user!: User;
 
   @Index()
-  @ManyToOne(() => Propiedad, {
+  @ManyToOne(() => PropertyEntity, {
     onDelete: 'CASCADE',
   })
-  property!: Propiedad;
+  property!: PropertyEntity;
 
   @CreateDateColumn()
   createdAt!: Date;

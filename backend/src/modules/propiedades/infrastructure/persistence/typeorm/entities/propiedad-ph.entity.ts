@@ -6,29 +6,44 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Propiedad } from './propiedad.entity';
+
+import { PropertyEntity } from './propiedad.entity';
 
 @Entity('propiedad_phs')
 export class PropiedadPH {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @Column({ nullable: true })
-  porcentajeLote: number;
-
-  @Column({ default: false })
-  entradaIndividual: boolean;
-
-  @Column({ default: false })
-  patio: boolean;
-
-  @Column({ nullable: true })
-  expensas: number;
-
-  @OneToOne(() => Propiedad, (p) => p.ph, {
-    onDelete: 'CASCADE',
-    eager: false,
+  @Column({
+    type: 'float',
+    nullable: true,
   })
+  porcentajeLote!: number | null;
+
+  @Column({
+    default: false,
+  })
+  entradaIndividual!: boolean;
+
+  @Column({
+    default: false,
+  })
+  patio!: boolean;
+
+  @Column({
+    type: 'float',
+    nullable: true,
+  })
+  expensas!: number | null;
+
+  @OneToOne(
+    () => PropertyEntity,
+    (p) => p.ph,
+    {
+      onDelete: 'CASCADE',
+      eager: false,
+    },
+  )
   @JoinColumn()
-  propiedad: Propiedad;
+  propiedad!: PropertyEntity;
 }

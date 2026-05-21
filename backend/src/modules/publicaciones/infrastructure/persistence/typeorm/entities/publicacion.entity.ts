@@ -1,13 +1,16 @@
 // backend\src\modules\publicaciones\infrastructure\persistence\typeorm\mappers\entities\publicacion.entity.ts
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { PublicacionStatus }
-  from '@shared/contracts/enums/publicacion-status.enum';
+import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
+
+import { PropertyEntity } from '@/modules/propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
 
 @Entity('publicaciones')
 export class PublicacionEntity {
@@ -16,6 +19,15 @@ export class PublicacionEntity {
 
   @Column()
   propertyId!: number;
+
+  @ManyToOne(() => PropertyEntity, {
+    eager: false,
+    nullable: false,
+  })
+  @JoinColumn({
+    name: 'propertyId',
+  })
+  propiedad!: PropertyEntity;
 
   @Column({
     type: 'enum',
@@ -57,6 +69,8 @@ export class PublicacionEntity {
   })
   publicadoEn!: Date | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    name: 'creadoEn',
+  })
   creadoEn!: Date;
 }

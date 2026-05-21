@@ -6,29 +6,29 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Propiedad } from './propiedad.entity';
+import { PropertyEntity } from './propiedad.entity';
 
 @Entity('propiedad_lotes')
 export class PropiedadLote {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ nullable: true })
-  superficieTotal: number;
+  superficieTotal!: number;
 
   @Column({ nullable: true })
-  zonificacion: string;
+  zonificacion!: string;
 
   @Column({ nullable: true })
-  frente: number;
+  frente!: number;
 
   @Column({ nullable: true })
-  fondo: number;
+  fondo!: number;
 
-  @OneToOne(() => Propiedad, (p) => p.lote, {
+  @OneToOne(() => PropertyEntity, (p) => p.lote, {
     onDelete: 'CASCADE',
     eager: false,
   })
   @JoinColumn()
-  propiedad: Propiedad;
+  propiedad!: PropertyEntity
 }

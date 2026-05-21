@@ -1,11 +1,11 @@
 // backend\src\modules\propiedades\infrastructure\persistence\typeorm\entities\propiedad-casa.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
-import { Propiedad } from './propiedad.entity';
+import { PropertyEntity } from './propiedad.entity';
 
 @Entity('propiedad_casas')
 export class PropiedadCasa {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ nullable: true })
   antiguedad?: number;
@@ -28,11 +28,11 @@ export class PropiedadCasa {
   @Column({ nullable: true })
   superficieConstruida?: number;
 
-  @OneToOne(() => Propiedad, (p) => p.casa, {
+  @OneToOne(() => PropertyEntity, (p) => p.casa, {
     onDelete: 'CASCADE',
     eager: false,
   })
   @JoinColumn()
-  propiedad!: Propiedad;
+  propiedad!: PropertyEntity;
 }
 
