@@ -39,6 +39,8 @@ import { RefreshTokenUseCase } from '../../application/use-cases/refresh-token.u
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 import { USER_REPOSITORY } from '../../../user/application/tokens';
 
+import { JwtPayload } from '../../application/contracts/jwt-payload.contracts';
+
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -168,14 +170,14 @@ export class AuthController {
   @Auth()
   @ApiBearerAuth('access-token')
   async logout(
-    @CurrentUser() user: any,
+    @CurrentUser() user: JwtPayload,
     @Res({ passthrough: true }) res: Response,
   ) {
     // 🔥 invalidar refresh tokens
-    await this.refreshTokenService.revokeAllUserTokens(user.id);
+    await this.refreshTokenService.revokeAllUserTokens(user.sub);
 
     // 🔥 invalidar TODOS los access tokens JWT
-    await this.userRepository.incrementTokenVersion(user.id);
+    await this.userRepository.incrementTokenVersion(user.sub);
 
     // 🍪 limpiar cookie refresh
     res.clearCookie('refresh_token', {
@@ -190,7 +192,7 @@ export class AuthController {
 
   @Get('perfil')
   @ApiBearerAuth('access-token')
-  getPerfil(@CurrentUser() user: any) {
+  getPerfil(@CurrentUser() user: JwtPayload) {
     return user;
   }
 }

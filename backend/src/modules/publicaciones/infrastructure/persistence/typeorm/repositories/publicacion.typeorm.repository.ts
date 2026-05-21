@@ -85,4 +85,32 @@ export class PublicacionTypeOrmRepository
   ): Promise<void> {
     await this.repository.delete(id);
   }
+
+  async findAll(filters?: any) {
+  const qb = this.repository
+    .createQueryBuilder('publicacion')
+    .leftJoinAndSelect('publicacion.propiedad', 'propiedad')
+    .leftJoinAndSelect('publicacion.user', 'user')
+    .orderBy('publicacion.createdAt', 'DESC');
+
+  if (filters?.status) {
+    qb.andWhere('publicacion.status = :status', {
+      status: filters.status,
+    });
+  }
+
+  if (filters?.search) {
+    qb.andWhere(
+      `(
+        propiedad.titulo ILIKE :search
+        OR user.email ILIKE :search
+      )`,
+      {
+        search: `%${filters.search}%`,
+      },
+    );
+  }
+
+  return qb.getMany();
+}
 }

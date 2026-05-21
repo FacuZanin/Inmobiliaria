@@ -1,3 +1,4 @@
+// backend\src\shared\security\decorators\user-type.decorator.ts
 import { SetMetadata } from '@nestjs/common';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
 

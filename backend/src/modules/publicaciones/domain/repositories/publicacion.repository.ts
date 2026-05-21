@@ -17,4 +17,6 @@ export abstract class PublicacionRepository {
   ): Promise<PublicacionAggregate | null>;
 
   abstract delete(id: number): Promise<void>;
+
+  abstract findAll(filters?: any): Promise<any[]>;
 }

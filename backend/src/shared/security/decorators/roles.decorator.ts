@@ -1,4 +1,4 @@
-// backend\src\common\decorators\roles.decorator.ts
+// backend\src\shared\security\decorators\roles.decorator.ts
 import { SetMetadata } from '@nestjs/common';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 

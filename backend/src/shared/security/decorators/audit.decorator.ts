@@ -1,4 +1,4 @@
-// backend\src\common\decorators\audit.decorator.ts
+// backend\src\shared\security\decorators\audit.decorator.ts
 import { SetMetadata } from '@nestjs/common';
 
 export const AUDIT_KEY = 'audit';

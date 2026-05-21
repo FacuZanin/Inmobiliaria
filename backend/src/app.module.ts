@@ -19,6 +19,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
 import { SecurityModule } from './shared/security/security.module';
 import { FavoritosModule } from './modules/favoritos/favoritos.module';
 import { PublicacionesModule } from './modules/publicaciones/publicaciones.module';
+import { AdminPublicacionesModule } from './modules/admin-publicaciones/admin-publicaciones.module';
 
 // GLOBALS
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
@@ -68,6 +69,7 @@ import { HealthModule } from './health/health.module';
     UploadsModule,
     FavoritosModule,
     PublicacionesModule,
+    AdminPublicacionesModule,
 
     // Security
     SecurityModule,

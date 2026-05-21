@@ -26,6 +26,10 @@ import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guar
 
 import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
 
+import { JwtPayload } from '@/modules/auth/application/contracts/jwt-payload.contracts';
+
+
+
 @ApiTags('Publicaciones')
 @ApiBearerAuth('access-token')
 @Controller('publicaciones')
@@ -61,7 +65,7 @@ export class PublicacionesController {
   async create(
     @Body() dto: CreatePublicacionDto,
     @UploadedFiles() files: Express.Multer.File[],
-    @CurrentUser() user: any,
+    @CurrentUser() user: JwtPayload,
   ) {
     return this.createPublicacionUseCase.execute({
       dto,

@@ -13,7 +13,8 @@ import { USER_REPOSITORY } from '../../../user/application/tokens';
 import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
 
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
-import { TokenPayload } from '../../domain/token-payload';
+
+import { JwtPayload } from '../../application/contracts/jwt-payload.contracts';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -28,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: TokenPayload) {
+  async validate(payload: JwtPayload) {
     const user = await this.users.findById(Number(payload.sub));
 
     // 🔒 usuario inexistente

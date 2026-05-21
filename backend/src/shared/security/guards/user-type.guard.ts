@@ -1,3 +1,4 @@
+// backend\src\shared\security\guards\user-type.guard.ts
 import {
   CanActivate,
   ExecutionContext,

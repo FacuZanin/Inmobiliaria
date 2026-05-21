@@ -1,5 +1,5 @@
 // backend\src\modules\auth\application\ports\token-service.port.ts
-import { JwtPayload } from '../types/jwt-payload.type';
+import { JwtPayload } from '../contracts/jwt-payload.type';
 
 export interface TokenServicePort {
   sign(payload: any): Promise<string>;
