@@ -3,15 +3,30 @@ import { Module } from '@nestjs/common';
 
 import { PublicacionesModule } from '@/modules/publicaciones/publicaciones.module';
 
-import { AdminPublicacionesController } from './infrastructure/controllers/admin-publicaciones.controller';
+import { AdminPublicacionesController } from '@modules/admin-publicaciones/infrastructure/controllers/admin-publicaciones.controller';
 
-import { AdminListPublicacionesUseCase } from './application/use-cases/admin-list-publicaciones.usecase';
+import { AdminListPublicacionesUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-list-publicaciones.usecase';
+import { AdminApprovePublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-approve-publicacion.usecase';
+import { AdminRejectPublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-reject-publicacion.usecase';
+import { AdminObservePublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-observe-publicacion.usecase';
+import { AdminPausePublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-pause-publicacion.usecase';
 
 @Module({
-  imports: [PublicacionesModule],
+  imports: [
+    PublicacionesModule,
+  ],
 
-  controllers: [AdminPublicacionesController],
+  controllers: [
+    AdminPublicacionesController,
+  ],
 
-  providers: [AdminListPublicacionesUseCase],
+  providers: [
+    AdminListPublicacionesUseCase,
+
+    AdminApprovePublicacionUseCase,
+    AdminRejectPublicacionUseCase,
+    AdminObservePublicacionUseCase,
+    AdminPausePublicacionUseCase,
+  ],
 })
 export class AdminPublicacionesModule {}

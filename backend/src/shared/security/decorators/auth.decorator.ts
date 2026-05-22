@@ -1,31 +1,25 @@
 // backend/src/shared/security/decorators/auth.decorator.ts
 
-import {
-  applyDecorators,
-  UseGuards,
-} from '@nestjs/common';
+import { applyDecorators, UseGuards } from '@nestjs/common';
 
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-import { Roles } from './roles.decorator';
+import { Permission } from '@shared/contracts/enums/permission.enum';
 
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
+import { Permissions } from './permissions.decorator';
 
-import { RolesGuard } from '../guards/roles.guard';
-import { UserTypeGuard } from '../guards/user-type.guard';
+import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
 
-export function Auth(...roles: UserRole[]) {
+import { AccessGuard } from '../guards/access.guard';
+export function Auth(...permissions: Permission[]) {
   const decorators = [
     ApiBearerAuth('access-token'),
 
-    UseGuards(
-      RolesGuard,
-      UserTypeGuard,
-    ),
+    UseGuards(JwtAuthGuard, AccessGuard),
   ];
 
-  if (roles.length > 0) {
-    decorators.push(Roles(...roles));
+  if (permissions.length > 0) {
+    decorators.push(Permissions(...permissions));
   }
 
   return applyDecorators(...decorators);

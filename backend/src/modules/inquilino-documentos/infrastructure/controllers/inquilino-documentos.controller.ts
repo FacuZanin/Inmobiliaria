@@ -18,15 +18,15 @@ import {
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
-
-import { User } from '../../../../modules/user/domain/entities/user.entity';
+import { Permission } from '@shared/contracts/enums/permission.enum';
 
 import { CreateInquilinoDocumentoDto } from '../../application/dto/create-inquilino-documento.dto';
 
 import { SubirDocumentoInquilinoUseCase } from '../../application/use-cases/subir-documento.usecase';
 import { CambiarEstadoInquilinoDocumentoUseCase } from '../../application/use-cases/cambiar-estado.usecase';
 import { ListarMisDocumentosUseCase } from '../../application/use-cases/listar-mis-documentos.usecase';
+
+import {User} from '@modules/user/domain/entities/user.entity'
 
 @ApiTags('Inquilino Documentos')
 @Controller('inquilino-documentos')
@@ -39,7 +39,7 @@ export class InquilinoDocumentosController {
 
   @Post()
   @UseInterceptors(FileInterceptor('archivo'))
-  @Auth(UserRole.USER)
+  @Auth(Permission.DOCUMENT_UPLOAD)
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Subir documento de inquilino',

@@ -1,4 +1,9 @@
 // shared\src\enums\audit-entity.enum.ts
+
 export enum AuditEntity {
-  USER = 'User',
+  USER = 'USER',
+  PROPERTY = 'PROPERTY',
+  PUBLICACION = 'PUBLICACION',
+  FAVORITE = 'FAVORITE',
+  AUTH = 'AUTH',
 }

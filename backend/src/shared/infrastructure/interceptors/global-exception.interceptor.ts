@@ -1,4 +1,4 @@
-// backend\src\common\interceptors\global-exception.interceptor.ts
+// backend\src\shared\infrastructure\interceptors\global-exception.interceptor.ts
 /*import {
   CallHandler,
   ExecutionContext,

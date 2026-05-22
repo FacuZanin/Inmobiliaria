@@ -191,6 +191,7 @@ export class AuthController {
   }
 
   @Get('perfil')
+  @Auth()
   @ApiBearerAuth('access-token')
   getPerfil(@CurrentUser() user: JwtPayload) {
     return user;

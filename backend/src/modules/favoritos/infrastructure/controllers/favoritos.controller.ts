@@ -6,8 +6,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  UseGuards,
-  Req,
 } from '@nestjs/common';
 
 import {
@@ -20,7 +18,8 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
+import { Auth } from '@/shared/security/decorators/auth.decorator';
+import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
 
 import { AddFavoriteUseCase } from '../../application/use-cases/add-favorite.usecase';
 import { RemoveFavoriteUseCase } from '../../application/use-cases/remove-favorite.usecase';
@@ -28,8 +27,8 @@ import { GetMyFavoritesUseCase } from '../../application/use-cases/get-my-favori
 import { IsFavoriteUseCase } from '../../application/use-cases/is-favorite.usecase';
 
 @ApiTags('Favoritos')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
+@Auth()
 @Controller('favoritos')
 export class FavoritosController {
   constructor(
@@ -56,11 +55,14 @@ export class FavoritosController {
     description: 'Propiedad no encontrada',
   })
   async addFavorite(
-    @Req() req: any,
+    @CurrentUser('id') userId: number,
     @Param('propertyId', ParseIntPipe)
     propertyId: number,
   ) {
-    return this.addFavoriteUseCase.execute(req.user.id, propertyId);
+    return this.addFavoriteUseCase.execute(
+      userId,
+      propertyId,
+    );
   }
 
   @Delete(':propertyId')
@@ -71,11 +73,14 @@ export class FavoritosController {
     description: 'Favorito eliminado correctamente',
   })
   async removeFavorite(
-    @Req() req: any,
+    @CurrentUser('id') userId: number,
     @Param('propertyId', ParseIntPipe)
     propertyId: number,
   ) {
-    return this.removeFavoriteUseCase.execute(req.user.id, propertyId);
+    return this.removeFavoriteUseCase.execute(
+      userId,
+      propertyId,
+    );
   }
 
   @Get('mis-favoritos')
@@ -85,8 +90,12 @@ export class FavoritosController {
   @ApiOkResponse({
     description: 'Listado de favoritos',
   })
-  async getMyFavorites(@Req() req: any) {
-    return this.getMyFavoritesUseCase.execute(req.user.id);
+  async getMyFavorites(
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.getMyFavoritesUseCase.execute(
+      userId,
+    );
   }
 
   @Get('is-favorite/:propertyId')
@@ -97,14 +106,15 @@ export class FavoritosController {
     description: 'Estado favorito',
   })
   async isFavorite(
-    @Req() req: any,
+    @CurrentUser('id') userId: number,
     @Param('propertyId', ParseIntPipe)
     propertyId: number,
   ) {
-    const isFavorite = await this.isFavoriteUseCase.execute(
-      req.user.id,
-      propertyId,
-    );
+    const isFavorite =
+      await this.isFavoriteUseCase.execute(
+        userId,
+        propertyId,
+      );
 
     return {
       isFavorite,

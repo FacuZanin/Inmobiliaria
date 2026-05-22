@@ -11,15 +11,10 @@ import { ListarDocumentosUseCase } from '../../application/use-cases/listar-docu
 import { CambiarEstadoDocumentoUseCase } from '../../application/use-cases/cambiar-estado-documento.usecase';
 import { VerHistorialDocumentoUseCase } from '../../application/use-cases/ver-historial-documento.usecase';
 
-import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum'
+import { DocumentoTipo } from '@shared/contracts/enums/documento-tipo.enum';
+import { Permission } from '@shared/contracts/enums/permission.enum';
 
-import { Roles } from '../../../../shared/security/decorators/roles.decorator';
-
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
-import { UserType } from '@shared/contracts/enums/user-type.enum';
-
-
-@Auth(UserRole.SUPERADMIN)
+@Auth(Permission.DOCUMENT_REVIEW)
 @Controller('admin/documentos')
 export class AdminDocumentosController {
   constructor(

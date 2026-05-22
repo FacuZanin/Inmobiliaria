@@ -9,19 +9,19 @@ import {
 @Entity('audit_logs')
 export class AuditLog {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  action: string;
+  action!: string;
 
   @Column()
-  entity: string;
+  entity!: string;
 
   @Column({ nullable: true })
-  entityId: number;
+  entityId!: number;
 
   @Column({ nullable: true })
-  userId: number;
+  userId!: number;
 
   @Column({ type: 'json', nullable: true })
   oldValue: any;
@@ -30,5 +30,5 @@ export class AuditLog {
   newValue: any;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

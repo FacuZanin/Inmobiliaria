@@ -13,43 +13,46 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiTags,
-} from '@nestjs/swagger'; 
+} from '@nestjs/swagger';
 
 import { Auth } from '@/shared/security/decorators/auth.decorator';
 
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
-
-import { AdminListPublicacionesUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-list-publicaciones.usecase';
-
-import { ApprovePublicacionUseCase } from '@/modules/publicaciones/application/use-cases/approve-publicacion.usecase';
-import { RejectPublicacionUseCase } from '@/modules/publicaciones/application/use-cases/reject-publicacion.usecase';
-import { ObservePublicacionUseCase } from '@/modules/publicaciones/application/use-cases/observe-publicacion.usecase';
-import { PausePublicacionUseCase } from '@/modules/publicaciones/application/use-cases/pause-publicacion.usecase';
+import { Permission } from '@shared/contracts/enums/permission.enum';
 
 import { FilterPublicacionesDto } from '@modules/admin-publicaciones/application/dto/filter-publicaciones.dto';
 
+import { AdminListPublicacionesUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-list-publicaciones.usecase';
+
+import { AdminApprovePublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-approve-publicacion.usecase';
+import { AdminRejectPublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-reject-publicacion.usecase';
+import { AdminObservePublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-observe-publicacion.usecase';
+import { AdminPausePublicacionUseCase } from '@modules/admin-publicaciones/application/use-cases/admin-pause-publicacion.usecase';
+
 @ApiTags('Admin - Publicaciones')
 @ApiBearerAuth('access-token')
-@Auth(UserRole.SUPERADMIN)
 @Controller('admin/publicaciones')
 export class AdminPublicacionesController {
   constructor(
     private readonly listUC: AdminListPublicacionesUseCase,
-    private readonly approveUC: ApprovePublicacionUseCase,
-    private readonly rejectUC: RejectPublicacionUseCase,
-    private readonly observeUC: ObservePublicacionUseCase,
-    private readonly pauseUC: PausePublicacionUseCase,
+    private readonly approveUC: AdminApprovePublicacionUseCase,
+    private readonly rejectUC: AdminRejectPublicacionUseCase,
+    private readonly observeUC: AdminObservePublicacionUseCase,
+    private readonly pauseUC: AdminPausePublicacionUseCase,
   ) {}
 
   @Get()
+  @Auth(Permission.PUBLICACION_READ_ALL)
   @ApiOperation({
     summary: 'Listado administrativo de publicaciones',
   })
-  list(@Query() filters: FilterPublicacionesDto) {
+  list(
+    @Query() filters: FilterPublicacionesDto,
+  ) {
     return this.listUC.execute(filters);
   }
 
   @Patch(':id/aprobar')
+  @Auth(Permission.PUBLICACION_APPROVE)
   aprobar(
     @Param('id', ParseIntPipe) id: number,
   ) {
@@ -57,6 +60,7 @@ export class AdminPublicacionesController {
   }
 
   @Patch(':id/rechazar')
+  @Auth(Permission.PUBLICACION_REJECT)
   rechazar(
     @Param('id', ParseIntPipe) id: number,
   ) {
@@ -64,14 +68,19 @@ export class AdminPublicacionesController {
   }
 
   @Patch(':id/observar')
+  @Auth(Permission.PUBLICACION_OBSERVE)
   observar(
     @Param('id', ParseIntPipe) id: number,
     @Body('motivo') motivo: string,
   ) {
-    return this.observeUC.execute(id, motivo);
+    return this.observeUC.execute(
+      id,
+      motivo,
+    );
   }
 
   @Patch(':id/pausar')
+  @Auth(Permission.PUBLICACION_PAUSE)
   pausar(
     @Param('id', ParseIntPipe) id: number,
   ) {

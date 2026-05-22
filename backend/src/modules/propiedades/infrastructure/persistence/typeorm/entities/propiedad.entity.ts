@@ -134,11 +134,21 @@ export class PropertyEntity {
   })
   agencia!: Agencia | null;
 
+  @Column({
+    nullable: true,
+  })
+  agenciaId!: number | null;
+
   @ManyToOne(() => User, (user) => user.id, {
     nullable: true,
     onDelete: 'SET NULL',
   })
   creadoPor!: User | null;
+
+  @Column({
+    nullable: true,
+  })
+  creadoPorId!: number | null;
 
   // ---------------------------------------------------
   // DETALLES

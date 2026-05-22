@@ -20,11 +20,13 @@ import {
 } from '@nestjs/swagger';
 
 import { Auth } from '../../../../shared/security/decorators/auth.decorator';
-// Enums
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
+
+import { Permission } from '@shared/contracts/enums/permission.enum';
+
 // DTOs
 import { FilterAgenciasDto } from '../../application/dto/filter-agencias.dto';
 import { SuspenderAgenciaDto } from '../../application/dto/suspender-agencia.dto';
+
 // Use Cases
 import { ListarSolicitudesUseCase } from '../../application/use-cases/listar-solicitudes.usecase';
 import { AprobarSolicitudAgenciaUseCase } from '../../application/use-cases/aprobar-solicitud-agencia.usecase';
@@ -38,7 +40,9 @@ import { AdminDashboardUseCase } from '../../application/use-cases/admin-dashboa
 
 @ApiTags('Admin - Perfiles Profesionales')
 @ApiBearerAuth('access-token')
-@Auth(UserRole.SUPERADMIN)
+
+@Auth(Permission.USER_MANAGE)
+
 @Controller('admin/agencias')
 export class AdminAgenciasController {
   constructor(

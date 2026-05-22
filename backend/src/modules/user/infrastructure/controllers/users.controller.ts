@@ -25,7 +25,7 @@ import { Auth } from '../../../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
 import { Audit } from '../../../../shared/security/decorators/audit.decorator';
 
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
+import { Permission } from '@shared/contracts/enums/permission.enum';
 import { AuditAction } from '@shared/contracts/enums/audit-action.enum';
 import { AuditEntity } from '@shared/contracts/enums/audit-entity.enum';
 
@@ -86,7 +86,7 @@ export class UsersController {
     description: 'Solo SUPERADMIN',
   })
   @Get()
-  @Auth(UserRole.SUPERADMIN)
+  @Auth(Permission.USER_READ)
   findAll(@Query() filters: UserFiltersDto) {
     return this.listUsersUC.execute(filters);
   }
@@ -99,7 +99,7 @@ export class UsersController {
     type: UserResponseDto,
   })
   @Post()
-  @Auth(UserRole.SUPERADMIN)
+  @Auth(Permission.USER_CREATE)
   @Audit({ action: AuditAction.CREATE_USER, entity: AuditEntity.USER })
   create(@Body() dto: CreateUserDto) {
     return this.createUserUC.execute(dto);
@@ -129,7 +129,7 @@ export class UsersController {
     type: UserResponseDto,
   })
   @Patch(':id')
-  @Auth(UserRole.SUPERADMIN)
+  @Auth(Permission.USER_UPDATE)
   @Audit({ action: AuditAction.UPDATE_USER, entity: AuditEntity.USER })
   updateByAdmin(
     @Param('id', ParseIntPipe) id: number,
@@ -142,7 +142,7 @@ export class UsersController {
     summary: 'Restaurar usuario eliminado',
   })
   @Patch(':id/restore')
-  @Auth(UserRole.SUPERADMIN)
+  @Auth(Permission.USER_RESTORE)
   @Audit({ action: AuditAction.RESTORE_USER, entity: AuditEntity.USER })
   restore(@Param('id') id: string) {
     return this.restoreUserUC.execute(+id);
@@ -152,7 +152,7 @@ export class UsersController {
     summary: 'Convertirse en agencia',
   })
   @Patch('become-agency')
-  @Auth()
+  @Auth(Permission.PROFILE_UPDATE)
   becomeAgency(@CurrentUser() user: User) {
     return this.becomeAgencyUC.execute(user.id);
   }

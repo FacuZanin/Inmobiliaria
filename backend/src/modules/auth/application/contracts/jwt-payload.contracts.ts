@@ -12,4 +12,5 @@ export type JwtPayload = {
   plan: SubscriptionPlan;
   iat?: number;
   exp?: number;
+  agencia?: { id: number; } | null;
 };

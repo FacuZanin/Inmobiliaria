@@ -12,6 +12,7 @@ import {
 import { Agencia } from '../../../agencias/domain/entities/agencia.entity';
 import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
 import { RefreshToken } from '@/modules/auth/infrastructure/entities/refresh-token.entity';
+import { Permission } from '@shared/contracts/enums/permission.enum';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
@@ -100,4 +101,6 @@ export class User {
 
   @OneToMany(() => Favorite, (favorite) => favorite.user)
   favorites!: Favorite[];
+
+  permissions?: Permission[];
 }

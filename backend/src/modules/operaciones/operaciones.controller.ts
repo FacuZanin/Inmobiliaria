@@ -1,4 +1,5 @@
-// backend\src\modules\operaciones\operaciones.controller.ts
+// backend/src/modules/operaciones/operaciones.controller.ts
+
 import {
   Controller,
   Get,
@@ -13,94 +14,197 @@ import {
 
 import { Auth } from '../../shared/security/decorators/auth.decorator';
 import { CurrentUser } from '../../shared/security/decorators/current-user.decorator';
-import { Roles } from '../../shared/security/decorators/roles.decorator';
-import { UserTypes } from '../../shared/security/decorators/user-type.decorator';
 
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
+import { Permission }
+from '@shared/contracts/enums/permission.enum';
 
-import { User } from '../user/domain/entities/user.entity';
-import { OPERATION_CREATORS } from '../user/domain/capabilities/property-publishers';
+import { User }
+from '../user/domain/entities/user.entity';
 
-import { CreateOperacionDto } from './application/dto/create-operacion.dto';
-import { UpdateOperacionDto } from './application/dto/update-operacion.dto';
-import { FilterOperacionesDto } from './application/dto/filter-operaciones.dto';
+import {
+  CreateOperacionDto,
+} from './application/dto/create-operacion.dto';
+
+import {
+  UpdateOperacionDto,
+} from './application/dto/update-operacion.dto';
+
+import {
+  FilterOperacionesDto,
+} from './application/dto/filter-operaciones.dto';
 
 // USE CASES
-import { CreateOperacionUseCase } from './application/use-cases/create-operacion.usecase';
-import { ListOperacionesUseCase } from './application/use-cases/list-operaciones.usecase';
-import { FindOperacionByIdUseCase } from './application/use-cases/find-operacion-by-id.usecase';
-import { UpdateOperacionUseCase } from './application/use-cases/update-operacion.usecase';
-import { ReservarOperacionUseCase } from './application/use-cases/reservar-operacion.usecase';
-import { ProcesarOperacionUseCase } from './application/use-cases/procesar-operacion.usecase';
-import { FinalizarOperacionUseCase } from './application/use-cases/finalizar-operacion.usecase';
-import { CancelarOperacionUseCase } from './application/use-cases/cancel-operacion.usecase';
+import { CreateOperacionUseCase }
+from './application/use-cases/create-operacion.usecase';
+
+import { ListOperacionesUseCase }
+from './application/use-cases/list-operaciones.usecase';
+
+import { FindOperacionByIdUseCase }
+from './application/use-cases/find-operacion-by-id.usecase';
+
+import { UpdateOperacionUseCase }
+from './application/use-cases/update-operacion.usecase';
+
+import { ReservarOperacionUseCase }
+from './application/use-cases/reservar-operacion.usecase';
+
+import { ProcesarOperacionUseCase }
+from './application/use-cases/procesar-operacion.usecase';
+
+import { FinalizarOperacionUseCase }
+from './application/use-cases/finalizar-operacion.usecase';
+
+import { CancelarOperacionUseCase }
+from './application/use-cases/cancel-operacion.usecase';
 
 @Controller('operaciones')
+
 @Auth()
-@UserTypes(...OPERATION_CREATORS)       // tipo de usuario
+
 export class OperacionesController {
   constructor(
     private readonly createOperacion: CreateOperacionUseCase,
+
     private readonly listOperaciones: ListOperacionesUseCase,
+
     private readonly findOperacionById: FindOperacionByIdUseCase,
+
     private readonly updateOperacion: UpdateOperacionUseCase,
+
     private readonly reservarOperacion: ReservarOperacionUseCase,
+
     private readonly procesarOperacion: ProcesarOperacionUseCase,
+
     private readonly finalizarOperacion: FinalizarOperacionUseCase,
+
     private readonly cancelarOperacion: CancelarOperacionUseCase,
   ) {}
 
   // CREATE
   @Post()
-  create(@Body() dto: CreateOperacionDto, @CurrentUser() user: User) {
-    return this.createOperacion.execute(dto, user);
+
+  @Auth(Permission.OPERATION_CREATE)
+
+  create(
+    @Body() dto: CreateOperacionDto,
+
+    @CurrentUser() user: User,
+  ) {
+    return this.createOperacion.execute(
+      dto,
+      user,
+    );
   }
 
   // READ
   @Get()
-  findAll(@Query() filters: FilterOperacionesDto) {
-    return this.listOperaciones.execute(filters);
+
+  @Auth()
+
+  findAll(
+    @Query() filters: FilterOperacionesDto,
+  ) {
+    return this.listOperaciones.execute(
+      filters,
+    );
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.findOperacionById.execute(id);
+
+  @Auth()
+
+  findOne(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.findOperacionById.execute(
+      id,
+    );
   }
 
   // UPDATE
   @Patch(':id')
+
+  @Auth(Permission.OPERATION_UPDATE)
+
   update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateOperacionDto,
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @Body()
+    dto: UpdateOperacionDto,
   ) {
-    return this.updateOperacion.execute(id, dto);
+    return this.updateOperacion.execute(
+      id,
+      dto,
+    );
   }
 
   // DOMAIN ACTIONS
   @Patch(':id/reservar')
-  reservar(@Param('id', ParseIntPipe) id: number) {
-    return this.reservarOperacion.execute(id);
+
+  @Auth(Permission.OPERATION_RESERVE)
+
+  reservar(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.reservarOperacion.execute(
+      id,
+    );
   }
 
   @Patch(':id/procesar')
-  procesar(@Param('id', ParseIntPipe) id: number) {
-    return this.procesarOperacion.execute(id);
+
+  @Auth(Permission.OPERATION_PROCESS)
+
+  procesar(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.procesarOperacion.execute(
+      id,
+    );
   }
 
   @Patch(':id/finalizar')
-  finalizar(@Param('id', ParseIntPipe) id: number) {
-    return this.finalizarOperacion.execute(id);
+
+  @Auth(Permission.OPERATION_FINISH)
+
+  finalizar(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.finalizarOperacion.execute(
+      id,
+    );
   }
 
   @Patch(':id/cancelar')
-  cancelar(@Param('id', ParseIntPipe) id: number) {
-    return this.cancelarOperacion.execute(id);
+
+  @Auth(Permission.OPERATION_CANCEL)
+
+  cancelar(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.cancelarOperacion.execute(
+      id,
+    );
   }
 
   // DELETE
   @Delete(':id')
-  @Roles(UserRole.SUPERADMIN)
-  remove(@Param('id', ParseIntPipe) id: number) {
-    throw new Error('Delete no implementado aún');
+
+  @Auth(Permission.OPERATION_DELETE)
+
+  remove(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    throw new Error(
+      'Delete no implementado aún',
+    );
   }
 }

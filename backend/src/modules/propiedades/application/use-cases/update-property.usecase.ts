@@ -17,10 +17,11 @@ import { SuperficieVO } from '../../domain/value-objects/superficie.vo';
 
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
 import { User } from '../../../user/domain/entities/user.entity';
 import { getUserTypeCapabilities } from '@/modules/user/domain/capabilities/property-publishers';
+
+import { AuthorizationService } from '@/shared/security/services/authorization.service';
 
 import { PROPERTY_REPOSITORY } from '../tokens';
 
@@ -40,6 +41,8 @@ export class UpdatePropertyUseCase {
   constructor(
     @Inject(PROPERTY_REPOSITORY)
     private readonly repo: PropertyRepositoryPort,
+
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
   async execute(
@@ -53,17 +56,10 @@ export class UpdatePropertyUseCase {
     }
     const userCapabilities = getUserTypeCapabilities(user.tipo);
     const resolvedAgencyId = userCapabilities.requiresAgencyOnApproval
-      ? user.agencia?.id ?? null
+      ? (user.agencia?.id ?? null)
       : null;
-    const isSuperAdmin = user.role === UserRole.SUPERADMIN;
 
-    const isOwner =
-      property.creadoPorId === user.id ||
-      property.agenciaId === user.agencia?.id;
-
-    if (!isSuperAdmin && !isOwner) {
-      throw new ForbiddenException('No puedes editar esta propiedad');
-    }
+    this.authorizationService.assertCanEditProperty(user, property);
 
     // 1️⃣ Update generales
     property.updateGeneral({

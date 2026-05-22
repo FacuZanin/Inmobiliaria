@@ -1,4 +1,5 @@
-// backend\src\modules\uploads\infrastructure\controllers\uploads.controller.ts
+// backend/src/modules/uploads/infrastructure/controllers/uploads.controller.ts
+
 import {
   Controller,
   Post,
@@ -7,16 +8,24 @@ import {
   BadRequestException,
   Inject,
 } from '@nestjs/common';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { Auth } from '@/shared/security/decorators/auth.decorator';
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
 
-import type { FileStoragePort } from '@modules/uploads/application/ports/file-storage.port';
-import { FILE_STORAGE } from '@modules/uploads/application/tokens';
+import { Permission }
+from '@shared/contracts/enums/permission.enum';
+
+import type { FileStoragePort }
+from '@modules/uploads/application/ports/file-storage.port';
+
+import { FILE_STORAGE }
+from '@modules/uploads/application/tokens';
 
 @Controller('uploads')
-@Auth(UserRole.SUPERADMIN, UserRole.MODERATOR)
+
+@Auth(Permission.UPLOAD_CREATE)
+
 export class UploadsController {
   constructor(
     @Inject(FILE_STORAGE)
@@ -25,17 +34,27 @@ export class UploadsController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(
+    @UploadedFile()
+    file: Express.Multer.File,
+  ) {
     if (!file) {
-      throw new BadRequestException('No se proporcionó archivo');
+      throw new BadRequestException(
+        'No se proporcionó archivo',
+      );
     }
 
-    const filepath = await this.storage.save(file);
+    const filepath =
+      await this.storage.save(file);
 
     return {
-      message: 'Archivo subido correctamente',
+      message:
+        'Archivo subido correctamente',
+
       filepath,
-      filename: file.originalname,
+
+      filename:
+        file.originalname,
     };
   }
 }

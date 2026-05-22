@@ -3,7 +3,6 @@ import { Module, forwardRef, Global } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_GUARD } from '@nestjs/core';
 
 import { AuthController } from '@modules/auth/infrastructure/controllers/auth.controller';
 
@@ -24,7 +23,7 @@ import { RefreshToken } from '@modules/auth/infrastructure/entities/refresh-toke
 // Guards / Strategy
 import { JwtStrategy } from '@modules/auth/infrastructure/strategies/jwt.strategy';
 import { JwtAuthGuard } from '@modules/auth/infrastructure/guards/jwt-auth.guard';
-import { RolesGuard } from '@/shared/security/guards/roles.guard';
+
 import { UserTypeGuard } from '@/shared/security/guards/user-type.guard';
 
 // Ports
@@ -62,21 +61,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
     LogoutUseCase,
 
     JwtStrategy,
-
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-
-    {
-      provide: APP_GUARD,
-      useClass: UserTypeGuard,
-    },
 
     {
       provide: TOKEN_SERVICE,

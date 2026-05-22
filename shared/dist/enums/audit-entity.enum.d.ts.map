@@ -1,1 +1,1 @@
-{"version":3,"file":"audit-entity.enum.d.ts","sourceRoot":"","sources":["../../src/enums/audit-entity.enum.ts"],"names":[],"mappings":"AACA,oBAAY,WAAW;IACrB,IAAI,SAAS;CACd"}
+{"version":3,"file":"audit-entity.enum.d.ts","sourceRoot":"","sources":["../../src/enums/audit-entity.enum.ts"],"names":[],"mappings":"AAEA,oBAAY,WAAW;IACrB,IAAI,SAAS;IACb,QAAQ,aAAa;IACrB,WAAW,gBAAgB;IAC3B,QAAQ,aAAa;IACrB,IAAI,SAAS;CACd"}

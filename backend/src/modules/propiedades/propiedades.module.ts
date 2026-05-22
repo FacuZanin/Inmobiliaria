@@ -31,9 +31,13 @@ import { ViewPropertyUseCase } from './application/use-cases/view-property.useca
 import { PropietarioDocumentosModule } from '../propietario-documentos/propietario-documentos.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
-import { PropertyApplicationService }
-from './application/services/property-application.service';
+import { PropertyApplicationService } from './application/services/property-application.service';
 
+import { PropertyPublisherPolicy } from '@/shared/security/policies/property-publisher.policy';
+import { AuthorizationService } from '@/shared/security/services/authorization.service';
+import { PropertyOwnershipPolicy } from '@/shared/security/policies/property-ownership.policy';
+import { PublicacionOwnershipPolicy } from '@/shared/security/policies/publicacion-ownership.policy';
+import { UserOwnershipPolicy } from '@/shared/security/policies/user-ownership.policy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -62,13 +66,20 @@ from './application/services/property-application.service';
       useClass: DocsCheckerImpl,
     },
 
-    // 🧠 USE CASES
+    // USE CASES
     CreatePropertyUseCase,
     UpdatePropertyUseCase,
     DeletePropertyUseCase,
     ListPropertiesUseCase,
     ViewPropertyUseCase,
+    // SERVICES
     PropertyApplicationService,
+    AuthorizationService,
+    // POLICIES
+    PropertyOwnershipPolicy,
+    PublicacionOwnershipPolicy,
+    UserOwnershipPolicy,
+    PropertyPublisherPolicy,
   ],
   exports: [
     PROPERTY_REPOSITORY,

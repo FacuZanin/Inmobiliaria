@@ -52,6 +52,8 @@ export class LoginUseCase {
       sub: user.id,
       email: user.email,
       role: user.role,
+      tipo: user.tipo,
+      plan: user.plan,
       tokenVersion: user.tokenVersion,
     };
 

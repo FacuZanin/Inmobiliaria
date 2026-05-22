@@ -4,7 +4,7 @@ import { DocumentoEstado } from '@shared/contracts/enums/documento-estado.enum';
 
 export class CambiarEstadoDto {
   @IsEnum(DocumentoEstado)
-  estado: DocumentoEstado;
+  estado!: DocumentoEstado;
 
   @IsOptional()
   @IsString()

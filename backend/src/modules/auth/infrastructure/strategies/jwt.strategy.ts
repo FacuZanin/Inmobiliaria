@@ -1,9 +1,5 @@
 // backend\src\modules\auth\infrastructure\strategies\jwt.strategy.ts
-import {
-  Injectable,
-  UnauthorizedException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -34,23 +30,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     // 🔒 usuario inexistente
     if (!user) {
-      throw new UnauthorizedException(
-        'Usuario no encontrado',
-      );
+      throw new UnauthorizedException('Usuario no encontrado');
     }
 
     // 🔒 usuario bloqueado/inactivo
     if (user.status !== UserStatus.ACTIVE) {
-      throw new UnauthorizedException(
-        'Usuario inactivo o bloqueado',
-      );
+      throw new UnauthorizedException('Usuario inactivo o bloqueado');
     }
 
     // 🔒 JWT invalidado por logout
     if (payload.tokenVersion !== user.tokenVersion) {
-      throw new UnauthorizedException(
-        'Token expirado o invalidado',
-      );
+      throw new UnauthorizedException('Token expirado o invalidado');
     }
 
     return {
@@ -61,6 +51,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       tipo: user.tipo,
       status: user.status,
       tokenVersion: user.tokenVersion,
+      agencia: user.agencia,
     };
   }
 }

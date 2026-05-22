@@ -1,7 +1,6 @@
 // backend\src\modules\publicaciones\presentation\controllers\publicaciones.controller.ts
 
 import {
-  UseGuards,
   Body,
   Controller,
   Post,
@@ -22,13 +21,10 @@ import { CreatePublicacionDto } from '@modules/publicaciones/application/dto/cre
 
 import { CreatePublicacionUseCase } from '@modules/publicaciones/application/use-cases/create-publicacion.usecase';
 
-import { JwtAuthGuard } from '@modules/auth/infrastructure/guards/jwt-auth.guard';
-
 import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
+import { Auth } from '@/shared/security/decorators/auth.decorator';
 
 import { JwtPayload } from '@modules/auth/application/contracts/jwt-payload.contracts';
-
-
 
 @ApiTags('Publicaciones')
 @ApiBearerAuth('access-token')
@@ -38,7 +34,7 @@ export class PublicacionesController {
     private readonly createPublicacionUseCase: CreatePublicacionUseCase,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
+  @Auth()
   @Post()
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FilesInterceptor('files', 20))
@@ -70,7 +66,7 @@ export class PublicacionesController {
     return this.createPublicacionUseCase.execute({
       dto,
       files,
-      userId: Number(user.sub),
+      userId: user.sub,
     });
   }
 }

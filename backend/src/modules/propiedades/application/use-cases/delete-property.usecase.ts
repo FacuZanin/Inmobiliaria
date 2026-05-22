@@ -10,13 +10,15 @@ import type { PropertyRepositoryPort } from '../ports/property-repository.port';
 import { PROPERTY_REPOSITORY } from '../tokens';
 import { User } from '../../../user/domain/entities/user.entity';
 
-import { UserRole } from '@shared/contracts/enums/user-role.enum';
+import { AuthorizationService } from '@/shared/security/services/authorization.service';
 
 @Injectable()
 export class DeletePropertyUseCase {
   constructor(
     @Inject(PROPERTY_REPOSITORY)
     private readonly repo: PropertyRepositoryPort,
+
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
   async execute(id: number, user: User): Promise<void> {
@@ -26,15 +28,7 @@ export class DeletePropertyUseCase {
       throw new NotFoundException('Propiedad no encontrada');
     }
 
-    const isSuperAdmin = user.role === UserRole.SUPERADMIN;
-
-    const isOwner =
-      property.creadoPorId === user.id ||
-      property.agenciaId === user.agencia?.id;
-
-    if (!isSuperAdmin && !isOwner) {
-      throw new ForbiddenException('No puedes eliminar esta propiedad');
-    }
+    this.authorizationService.assertCanDeleteProperty(user, property);
 
     await this.repo.softDelete(id);
   }
