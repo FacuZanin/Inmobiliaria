@@ -25,6 +25,7 @@ import { RefreshToken } from '@modules/auth/infrastructure/entities/refresh-toke
 import { JwtStrategy } from '@modules/auth/infrastructure/strategies/jwt.strategy';
 import { JwtAuthGuard } from '@modules/auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '@/shared/security/guards/roles.guard';
+import { UserTypeGuard } from '@/shared/security/guards/user-type.guard';
 
 // Ports
 import {
@@ -70,6 +71,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+
+    {
+      provide: APP_GUARD,
+      useClass: UserTypeGuard,
     },
 
     {

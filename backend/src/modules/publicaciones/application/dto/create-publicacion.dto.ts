@@ -8,11 +8,17 @@ import {
   IsArray,
   ValidateNested,
   IsBooleanString,
-  IsNumberString,
+  IsNumber,
   IsEnum,
 } from 'class-validator';
 
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
+
+import {
+  capitalizeTransform,
+  uppercaseTransform,
+  lowercaseTransform,
+} from '@/shared/utils/transformers/string.transformers';
 
 export enum TipoOperacionDto {
   VENTA = 'VENTA',
@@ -32,14 +38,17 @@ export enum TipoPropiedadDto {
 
 export class PropietarioDto {
   @ApiProperty()
+  @Transform(capitalizeTransform)
   @IsString()
   nombre!: string;
 
   @ApiProperty()
+  @Transform(({ value }) => value?.trim())
   @IsString()
   telefono!: string;
 
   @ApiProperty()
+  @Transform(lowercaseTransform)
   @IsString()
   email!: string;
 }
@@ -50,37 +59,44 @@ export class CreatePublicacionDto {
   // ---------------------------------------------------
 
   @ApiProperty()
+  @Transform(capitalizeTransform)
   @IsString()
   titulo!: string;
 
   @ApiProperty()
+  @Transform(({ value }) => value?.trim())
   @IsString()
   descripcion!: string;
 
   @ApiProperty()
-  @IsNumberString()
-  precio!: string;
+  @Type(() => Number)
+  @IsNumber()
+  precio!: number;
 
   // ---------------------------------------------------
   // UBICACION
   // ---------------------------------------------------
 
   @ApiProperty()
+  @Transform(capitalizeTransform)
   @IsString()
   direccion!: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @Transform(({ value }) => value?.trim())
   @IsString()
   latitud?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @Transform(({ value }) => value?.trim())
   @IsString()
   longitud?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @Transform(capitalizeTransform)
   @IsString()
   localidad?: string;
 
@@ -91,12 +107,14 @@ export class CreatePublicacionDto {
   @ApiProperty({
     enum: TipoOperacionDto,
   })
+  @Transform(uppercaseTransform)
   @IsEnum(TipoOperacionDto)
   tipoOperacion!: TipoOperacionDto;
 
   @ApiProperty({
     enum: TipoPropiedadDto,
   })
+  @Transform(uppercaseTransform)
   @IsEnum(TipoPropiedadDto)
   tipoPropiedad!: TipoPropiedadDto;
 
@@ -106,28 +124,33 @@ export class CreatePublicacionDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumberString()
-  ambientes?: string;
+  @Type(() => Number)
+  @IsNumber()
+  ambientes?: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumberString()
-  banos?: string;
+  @Type(() => Number)
+  @IsNumber()
+  banos?: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumberString()
-  dormitorios?: string;
+  @Type(() => Number)
+  @IsNumber()
+  dormitorios?: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumberString()
-  superficieTotal?: string;
+  @Type(() => Number)
+  @IsNumber()
+  superficieTotal?: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumberString()
-  superficieCubierta?: string;
+  @Type(() => Number)
+  @IsNumber()
+  superficieCubierta?: number;
 
   // ---------------------------------------------------
   // AMENITIES
@@ -138,6 +161,13 @@ export class CreatePublicacionDto {
     required: false,
   })
   @IsOptional()
+  @Transform(({ value }) =>
+    Array.isArray(value)
+      ? value.map((item) =>
+          capitalizeTransform({ value: item } as any),
+        )
+      : value,
+  )
   @IsArray()
   amenities?: string[];
 
