@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Index,
 } from 'typeorm';
 
 @Entity('audit_logs')
@@ -11,24 +12,46 @@ export class AuditLog {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Index()
+  @Column({
+    type: 'varchar',
+  })
   action!: string;
 
-  @Column()
+  @Index()
+  @Column({
+    type: 'varchar',
+  })
   entity!: string;
 
-  @Column({ nullable: true })
-  entityId!: number;
+  @Index()
+  @Column({
+    type: 'integer',
+    nullable: true,
+  })
+  entityId!: number | null;
 
-  @Column({ nullable: true })
-  userId!: number;
+  @Index()
+  @Column({
+    type: 'integer',
+    nullable: true,
+  })
+  userId!: number | null;
 
-  @Column({ type: 'json', nullable: true })
-  oldValue: any;
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+  })
+  oldValue!: Record<string, any> | null;
 
-  @Column({ type: 'json', nullable: true })
-  newValue: any;
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+  })
+  newValue!: Record<string, any> | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
   createdAt!: Date;
 }

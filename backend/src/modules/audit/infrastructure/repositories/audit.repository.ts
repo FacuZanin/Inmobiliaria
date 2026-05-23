@@ -4,16 +4,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { AuditLog } from '../../domain/entities/audit-log.entity';
-import { AuditRepositoryPort } from '../../application/ports/audit-repository.port';
 
 @Injectable()
-export class AuditRepository implements AuditRepositoryPort {
+export class AuditRepository {
   constructor(
     @InjectRepository(AuditLog)
     private readonly repo: Repository<AuditLog>,
   ) {}
 
-  async create(data: Partial<AuditLog>): Promise<void> {
-    await this.repo.save(this.repo.create(data));
+  async create(data: Partial<AuditLog>) {
+    const audit = this.repo.create(data);
+
+    return this.repo.save(audit);
+  }
+
+  async findAll() {
+    return this.repo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 100,
+    });
   }
 }

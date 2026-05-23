@@ -1,17 +1,24 @@
 // backend\src\modules\audit\application\audit.service.ts
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { AuditLog } from '../domain/entities/audit-log.entity';
+
+import { AuditRepository } from '../infrastructure/repositories/audit.repository';
+import { CreateAuditDto } from '@modules/audit/domain/dto/create-audit.dto';
 
 @Injectable()
 export class AuditService {
   constructor(
-    @InjectRepository(AuditLog)
-    private readonly repo: Repository<AuditLog>,
+    private readonly auditRepository: AuditRepository,
   ) {}
 
-  async log(data: Partial<AuditLog>) {
-    await this.repo.save(this.repo.create(data));
+  async log(dto: CreateAuditDto) {
+    return this.auditRepository.create(dto);
+  }
+
+  async create(dto: CreateAuditDto) {
+    return this.log(dto);
+  }
+
+  async findAll() {
+    return this.auditRepository.findAll();
   }
 }
