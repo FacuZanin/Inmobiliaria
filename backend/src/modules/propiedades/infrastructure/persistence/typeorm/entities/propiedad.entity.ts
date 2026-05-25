@@ -20,6 +20,7 @@ import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
+import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
 
 import { PropiedadCasa } from './propiedad-casa.entity';
 import { PropiedadDepartamento } from './propiedad-departamento.entity';
@@ -228,6 +229,13 @@ export class PropertyEntity {
     default: PropertyStatus.BORRADOR,
   })
   status!: PropertyStatus;
+
+  @Column({
+    type: 'enum',
+    enum: PublicacionStatus,
+    default: PublicacionStatus.EN_REVISION,
+  })
+  moderationStatus!: PublicacionStatus;
 
   @CreateDateColumn({
     type: 'timestamp',

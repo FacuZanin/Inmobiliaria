@@ -1,4 +1,6 @@
-// backend\src\modules\propiedades\application\use-cases\create-property.usecase.ts
+// backend/src/modules/propiedades/application/use-cases/create-property.usecase.ts
+
+// backend/src/modules/propiedades/application/use-cases/create-property.usecase.ts
 
 import {
   Inject,
@@ -23,9 +25,14 @@ import { User } from '@/modules/user/domain/entities/user.entity';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
 
+import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
+
+import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
+
 import { PropertyLimitsService } from '@/modules/subscriptions/application/services/property-limits.service';
 
 import { PropertyPublisherPolicy } from '@/shared/security/policies/property-publisher.policy';
+
 import { PROPERTY_REPOSITORY, DOCS_CHECKER } from '../tokens';
 
 import {
@@ -57,13 +64,22 @@ export class CreatePropertyUseCase {
     dto: CreatePropertyDTO,
     currentUser: User,
   ): Promise<PropertyAggregate> {
-    const requiresAgency = this.publisherPolicy.requiresAgency(currentUser);
+    // =========================================================
+    // CONFIGURACIÓN DE PUBLICACIÓN
+    // =========================================================
+
+    const requiresAgency =
+      this.publisherPolicy.requiresAgency(currentUser);
 
     const ownerId = dto.propietarioId ?? currentUser.id;
 
     const resolvedAgencyId = requiresAgency
       ? (currentUser.agencia?.id ?? null)
       : null;
+
+    // =========================================================
+    // VALIDACIONES DE PUBLICACIÓN
+    // =========================================================
 
     if (!this.publisherPolicy.canPublish(currentUser)) {
       throw new ForbiddenException(
@@ -77,12 +93,19 @@ export class CreatePropertyUseCase {
       );
     }
 
-    const totalProperties = await this.repo.countByUser(currentUser.id);
+    // =========================================================
+    // LIMITES DEL PLAN
+    // =========================================================
 
-    const canCreate = this.propertyLimitsService.canCreateProperty(
-      currentUser.plan,
-      totalProperties,
+    const totalProperties = await this.repo.countByUser(
+      currentUser.id,
     );
+
+    const canCreate =
+      this.propertyLimitsService.canCreateProperty(
+        currentUser.plan,
+        totalProperties,
+      );
 
     if (!canCreate) {
       throw new ForbiddenException(
@@ -90,24 +113,43 @@ export class CreatePropertyUseCase {
       );
     }
 
-    const docs = await this.docsChecker.hasApprovedDocs(ownerId);
-    if (!docs.dni || !docs.escritura) {
-      throw new ForbiddenException(
-        'El propietario no tiene la documentación aprobada',
+    // =========================================================
+    // VALIDACIONES BÁSICAS
+    // =========================================================
+
+    if (!dto.direccion) {
+      throw new BadRequestException(
+        'La dirección es obligatoria',
       );
     }
 
-    if (!dto.direccion) {
-      throw new BadRequestException('La dirección es obligatoria');
+    if (!dto.operacion) {
+      throw new BadRequestException(
+        'El tipo de operación es obligatorio',
+      );
     }
 
-    if (!dto.operacion) {
-      throw new BadRequestException('El tipo de operación es obligatorio');
-    }
+    // =========================================================
+    // VERIFICACIÓN DOCUMENTAL
+    // Marketplace moderno:
+    // NO bloqueamos publicación
+    // Solo marcamos estado de moderación
+    // =========================================================
+
+    const docs = await this.docsChecker.hasApprovedDocs(
+      ownerId,
+    );
+
+    const isVerified = docs.dni && docs.escritura;
+
+    // =========================================================
+    // VALUE OBJECTS
+    // =========================================================
 
     const direccion = new AddressVO(dto.direccion);
 
     let precio: PriceVO | null = null;
+
     if (dto.precioVenta != null) {
       precio = new PriceVO(dto.precioVenta);
     } else if (dto.precioAlquiler != null) {
@@ -115,38 +157,82 @@ export class CreatePropertyUseCase {
     }
 
     const superficie =
-      dto.metrosCubiertos !== undefined || dto.metrosTotales !== undefined
+      dto.metrosCubiertos !== undefined ||
+      dto.metrosTotales !== undefined
         ? new SuperficieVO(
             dto.metrosCubiertos ?? null,
             dto.metrosTotales ?? null,
           )
         : null;
 
-    const detalles = this.buildDetails(dto.tipo as PropiedadTipo, dto.detalles);
+    // =========================================================
+    // DETALLES
+    // =========================================================
+
+    const detalles = this.buildDetails(
+      dto.tipo as PropiedadTipo,
+      dto.detalles,
+    );
+
+    // =========================================================
+    // CREACIÓN DE PROPERTY / LISTING
+    // =========================================================
 
     const property = PropertyAggregate.create({
       titulo: dto.titulo,
+
       descripcion: dto.descripcion ?? null,
+
       tipo: dto.tipo as PropiedadTipo,
+
       operacion: dto.operacion as OperacionTipo,
 
       direccion,
+
       localidad: dto.localidad ?? '',
+
       precio,
+
       superficie,
 
       detalles,
+
       imagenes: dto.imagenes ?? [],
 
       creadoPorId: currentUser.id,
+
       agenciaId: resolvedAgencyId,
+
+      // =====================================================
+      // STATUS COMERCIAL
+      // =====================================================
+
+      status: PropertyStatus.PUBLICADA,
+
+      // =====================================================
+      // STATUS DE MODERACIÓN / VALIDACIÓN
+      // =====================================================
+
+      moderationStatus: isVerified
+        ? PublicacionStatus.PUBLICADA_VERIFICADA
+        : PublicacionStatus.PUBLICADA_NO_VERIFICADA,
     });
+
+    // =========================================================
+    // GUARDAR
+    // =========================================================
 
     return this.repo.save(property);
   }
 
-  // 🔧 Helper privado (Application layer)
-  private buildDetails(tipo: PropiedadTipo, detalles?: Record<string, any>) {
+  // ===========================================================
+  // DETAILS FACTORY
+  // ===========================================================
+
+  private buildDetails(
+    tipo: PropiedadTipo,
+    detalles?: Record<string, any>,
+  ) {
     if (!detalles) return undefined;
 
     switch (tipo) {

@@ -19,8 +19,6 @@ import { OperacionesModule } from './modules/operaciones/operaciones.module';
 import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { FavoritosModule } from './modules/favoritos/favoritos.module';
-import { PublicacionesModule } from './modules/publicaciones/publicaciones.module';
-import { AdminPublicacionesModule } from './modules/admin-publicaciones/admin-publicaciones.module';
 import { AuditModule } from './modules/audit/audit.module';
 
 // GLOBALS
@@ -67,8 +65,6 @@ import { HealthModule } from './health/health.module';
     InquilinosModule,
     UploadsModule,
     FavoritosModule,
-    PublicacionesModule,
-    AdminPublicacionesModule,
     AuditModule,
   ],
   controllers: [AppController],

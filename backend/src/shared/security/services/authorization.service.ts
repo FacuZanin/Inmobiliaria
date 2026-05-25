@@ -10,9 +10,6 @@ import { User } from '@/modules/user/domain/entities/user.entity';
 import { PropertyAggregate }
 from '@/modules/propiedades/domain/entities/property.aggregate';
 
-import { PublicacionEntity }
-from '@/modules/publicaciones/infrastructure/persistence/typeorm/entities/publicacion.entity';
-
 import { PropertyOwnershipPolicy }
 from '../policies/property-ownership.policy';
 
@@ -33,9 +30,6 @@ export class AuthorizationService {
   constructor(
     private readonly propertyOwnership:
       PropertyOwnershipPolicy,
-
-    private readonly publicacionOwnership:
-      PublicacionOwnershipPolicy,
 
     private readonly userOwnership:
       UserOwnershipPolicy,
@@ -129,42 +123,6 @@ export class AuthorizationService {
     ) {
       throw new ForbiddenException(
         'No puedes acceder a esta propiedad',
-      );
-    }
-  }
-
-  // =====================================================
-  // PUBLICACION
-  // =====================================================
-
-  assertCanEditPublicacion(
-    user: User,
-    publicacion: PublicacionEntity,
-  ): void {
-    if (
-      !this.publicacionOwnership.canEdit(
-        user,
-        publicacion,
-      )
-    ) {
-      throw new ForbiddenException(
-        'No puedes editar esta publicación',
-      );
-    }
-  }
-
-  assertCanPausePublicacion(
-    user: User,
-    publicacion: PublicacionEntity,
-  ): void {
-    if (
-      !this.publicacionOwnership.canPause(
-        user,
-        publicacion,
-      )
-    ) {
-      throw new ForbiddenException(
-        'No puedes pausar esta publicación',
       );
     }
   }

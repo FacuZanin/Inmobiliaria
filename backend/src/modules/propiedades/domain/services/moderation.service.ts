@@ -1,4 +1,4 @@
-// backend\src\modules\publicaciones\application\services\moderation.service.ts
+// backend\src\modules\propiedades\domain\services\moderation.service.ts
 import { Injectable }
   from '@nestjs/common';
 

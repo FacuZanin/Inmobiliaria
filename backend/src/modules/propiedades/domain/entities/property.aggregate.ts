@@ -1,8 +1,10 @@
-// backend\src\modules\propiedades\domain\entities\property.aggregate.ts
+// backend/src/modules/propiedades/domain/entities/property.aggregate.ts
 
 import type { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
+
+import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
 
 import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
@@ -21,9 +23,6 @@ import {
   PozoDetails,
 } from '../details';
 
-/**
- * Detalles válidos por tipo de propiedad
- */
 export type PropertyDetails =
   | CasaDetails
   | DepartamentoDetails
@@ -35,8 +34,11 @@ export type PropertyDetails =
   | PozoDetails;
 
 /**
- * Props internas del Aggregate
+ * ============================================================
+ * PROPS INTERNAS DEL AGGREGATE
+ * ============================================================
  */
+
 type PropertyAggregateProps = {
   id?: number | null;
 
@@ -48,7 +50,17 @@ type PropertyAggregateProps = {
 
   operacion: OperacionTipo;
 
+  // ==========================================================
+  // STATUS COMERCIAL
+  // ==========================================================
+
   status?: PropertyStatus;
+
+  // ==========================================================
+  // STATUS DE MODERACIÓN / VALIDACIÓN
+  // ==========================================================
+
+  moderationStatus?: PublicacionStatus;
 
   precio?: PriceVO | null;
 
@@ -78,12 +90,15 @@ type PropertyAggregateProps = {
 };
 
 /**
- * Aggregate Root: Property
+ * ============================================================
+ * AGGREGATE ROOT: PROPERTY / LISTING
+ * ============================================================
  */
+
 export class PropertyAggregate {
-  // ---------------------------------------------------
+  // ==========================================================
   // STATE
-  // ---------------------------------------------------
+  // ==========================================================
 
   private _id: number | null;
 
@@ -95,7 +110,17 @@ export class PropertyAggregate {
 
   private _operacion: OperacionTipo;
 
+  // ==========================================================
+  // STATUS COMERCIAL
+  // ==========================================================
+
   private _status: PropertyStatus;
+
+  // ==========================================================
+  // STATUS MODERACIÓN
+  // ==========================================================
+
+  private _moderationStatus: PublicacionStatus;
 
   private _precio: PriceVO | null;
 
@@ -123,9 +148,9 @@ export class PropertyAggregate {
 
   private _detalles?: PropertyDetails;
 
-  // ---------------------------------------------------
+  // ==========================================================
   // CONSTRUCTOR
-  // ---------------------------------------------------
+  // ==========================================================
 
   private constructor(props: PropertyAggregateProps) {
     this._id = props.id ?? null;
@@ -138,8 +163,18 @@ export class PropertyAggregate {
 
     this._operacion = props.operacion;
 
-    this._status =
-      props.status ?? PropertyStatus.PUBLICADA;
+    // ========================================================
+    // STATUS COMERCIAL
+    // ========================================================
+
+    this._status = props.status ?? PropertyStatus.PUBLICADA;
+
+    // ========================================================
+    // STATUS MODERACIÓN
+    // ========================================================
+
+    this._moderationStatus =
+      props.moderationStatus ?? PublicacionStatus.EN_REVISION;
 
     this._precio = props.precio ?? null;
 
@@ -149,8 +184,7 @@ export class PropertyAggregate {
 
     this._imagenes = props.imagenes ?? [];
 
-    this._creadoPorId =
-      props.creadoPorId ?? null;
+    this._creadoPorId = props.creadoPorId ?? null;
 
     this._activo = props.activo ?? true;
 
@@ -158,29 +192,23 @@ export class PropertyAggregate {
 
     this._ambientes = props.ambientes ?? null;
 
-    this._dormitorios =
-      props.dormitorios ?? null;
+    this._dormitorios = props.dormitorios ?? null;
 
     this._banos = props.banos ?? null;
 
-    this._superficie =
-      props.superficie ?? null;
+    this._superficie = props.superficie ?? null;
 
-    this._agenciaId =
-      props.agenciaId ?? null;
+    this._agenciaId = props.agenciaId ?? null;
 
     this._detalles = props.detalles;
   }
 
-  // ---------------------------------------------------
+  // ==========================================================
   // FACTORIES
-  // ---------------------------------------------------
+  // ==========================================================
 
   static create(
-    props: Omit<
-      PropertyAggregateProps,
-      'id' | 'activo' | 'creadoEn'
-    >,
+    props: Omit<PropertyAggregateProps, 'id' | 'activo' | 'creadoEn'>,
   ): PropertyAggregate {
     return new PropertyAggregate({
       ...props,
@@ -190,15 +218,13 @@ export class PropertyAggregate {
     });
   }
 
-  static rehydrate(
-    props: PropertyAggregateProps,
-  ): PropertyAggregate {
+  static rehydrate(props: PropertyAggregateProps): PropertyAggregate {
     return new PropertyAggregate(props);
   }
 
-  // ---------------------------------------------------
+  // ==========================================================
   // GETTERS
-  // ---------------------------------------------------
+  // ==========================================================
 
   get id(): number | null {
     return this._id;
@@ -220,8 +246,20 @@ export class PropertyAggregate {
     return this._operacion;
   }
 
+  // ==========================================================
+  // STATUS COMERCIAL
+  // ==========================================================
+
   get status(): PropertyStatus {
     return this._status;
+  }
+
+  // ==========================================================
+  // STATUS MODERACIÓN
+  // ==========================================================
+
+  get moderationStatus(): PublicacionStatus {
+    return this._moderationStatus;
   }
 
   get precio(): number | null {
@@ -276,9 +314,33 @@ export class PropertyAggregate {
     return this._detalles;
   }
 
-  // ---------------------------------------------------
+  // ==========================================================
+  // MODERATION METHODS
+  // ==========================================================
+  
+  pause() {
+    this._status = PropertyStatus.PAUSADA;
+  }
+
+  approve() {
+    this._moderationStatus = PublicacionStatus.PUBLICADA_VERIFICADA;
+  }
+
+  observe(reason?: string) {
+    this._moderationStatus = PublicacionStatus.OBSERVADA;
+  }
+
+  reject(reason?: string) {
+    this._moderationStatus = PublicacionStatus.RECHAZADA;
+  }
+
+  markAsUnderReview() {
+    this._moderationStatus = PublicacionStatus.EN_REVISION;
+  }
+
+  // ==========================================================
   // DOMAIN BEHAVIORS
-  // ---------------------------------------------------
+  // ==========================================================
 
   updateGeneral(
     data: Partial<{
@@ -289,6 +351,8 @@ export class PropertyAggregate {
       operacion: OperacionTipo;
 
       status: PropertyStatus;
+
+      moderationStatus: PublicacionStatus;
 
       precio: PriceVO | null;
 
@@ -323,6 +387,10 @@ export class PropertyAggregate {
 
     if (data.status !== undefined) {
       this._status = data.status;
+    }
+
+    if (data.moderationStatus !== undefined) {
+      this._moderationStatus = data.moderationStatus;
     }
 
     if (data.precio !== undefined) {

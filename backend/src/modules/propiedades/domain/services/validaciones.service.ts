@@ -1,4 +1,4 @@
-// backend\src\modules\publicaciones\application\services\validaciones.service.ts
+// backend\src\modules\propiedades\domain\services\validaciones.service.ts
 import {
   Injectable,
   BadRequestException,

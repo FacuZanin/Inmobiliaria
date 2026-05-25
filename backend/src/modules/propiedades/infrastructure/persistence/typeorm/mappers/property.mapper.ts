@@ -35,6 +35,7 @@ export class PropertyMapper {
 
       creadoPorId: entity.creadoPor?.id ?? null,
       status: entity.status,
+      moderationStatus: entity.moderationStatus,
       creadoEn: entity.creadoEn,
 
       ambientes: entity.ambientes ?? null,
@@ -85,6 +86,7 @@ export class PropertyMapper {
       metrosTotales: superficie?.metrosTotales ?? undefined,
 
       status: property.status as PropertyStatus,
+      moderationStatus: property.moderationStatus,
       creadoEn: property.creadoEn,
     };
   }

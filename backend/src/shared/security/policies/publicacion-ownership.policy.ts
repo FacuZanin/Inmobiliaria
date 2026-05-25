@@ -1,17 +1,21 @@
 // backend/src/shared/security/policies/publicacion-ownership.policy.ts
+
 import { Injectable } from '@nestjs/common';
 
-import { User } from '@/modules/user/domain/entities/user.entity';
+import { User }
+from '@/modules/user/domain/entities/user.entity';
 
-import { PublicacionEntity } from '@/modules/publicaciones/infrastructure/persistence/typeorm/entities/publicacion.entity';
+import { PropertyAggregate }
+from '@/modules/propiedades/domain/entities/property.aggregate';
 
-import { Permission } from '@shared/contracts/enums/permission.enum';
+import { Permission }
+from '@shared/contracts/enums/permission.enum';
 
 @Injectable()
 export class PublicacionOwnershipPolicy {
   canManage(
     user: User,
-    publicacion: PublicacionEntity,
+    property: PropertyAggregate,
   ): boolean {
     if (
       user.permissions?.includes(
@@ -21,17 +25,13 @@ export class PublicacionOwnershipPolicy {
       return true;
     }
 
-    if (
-      publicacion.propiedad?.creadoPor?.id ===
-      user.id
-    ) {
+    if (property.creadoPorId === user.id) {
       return true;
     }
 
     if (
-      publicacion.propiedad?.agencia?.id &&
-      publicacion.propiedad.agencia.id ===
-        user.agencia?.id
+      property.agenciaId &&
+      property.agenciaId === user.agencia?.id
     ) {
       return true;
     }
@@ -41,31 +41,31 @@ export class PublicacionOwnershipPolicy {
 
   canPause(
     user: User,
-    publicacion: PublicacionEntity,
+    property: PropertyAggregate,
   ) {
     return this.canManage(
       user,
-      publicacion,
+      property,
     );
   }
 
   canDelete(
     user: User,
-    publicacion: PublicacionEntity,
+    property: PropertyAggregate,
   ) {
     return this.canManage(
       user,
-      publicacion,
+      property,
     );
   }
 
   canEdit(
     user: User,
-    publicacion: PublicacionEntity,
+    property: PropertyAggregate,
   ) {
     return this.canManage(
       user,
-      publicacion,
+      property,
     );
   }
 }

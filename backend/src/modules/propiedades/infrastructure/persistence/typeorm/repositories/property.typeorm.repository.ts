@@ -20,6 +20,8 @@ import { PropiedadPozo } from '../entities/propiedad-pozo.entity';
 import { PropertyMapper } from '../mappers/property.mapper';
 import { PropertyDetailsMapper } from '../mappers/property-details.mapper';
 
+import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
+
 @Injectable()
 export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
   constructor(
@@ -112,6 +114,81 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     return entity ? PropertyMapper.toDomain(entity) : null;
   }
 
+  async findPendingModeration(opts?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<{
+    items: PropertyAggregate[];
+    total: number;
+  }> {
+    const [entities, total] = await this.propiedadRepo.findAndCount({
+      where: {
+        moderationStatus: PublicacionStatus.EN_REVISION,
+      },
+      relations: [
+        'casa',
+        'departamento',
+        'lote',
+        'local',
+        'oficina',
+        'campo',
+        'ph',
+        'pozo',
+        'creadoPor',
+        'agencia',
+      ],
+      order: {
+        creadoEn: 'DESC',
+      },
+      take: opts?.limit ?? 20,
+      skip: opts?.offset ?? 0,
+    });
+
+    return {
+      items: entities.map(PropertyMapper.toDomain),
+      total,
+    };
+  }
+
+  async findByModerationStatus(
+    moderationStatus: PublicacionStatus,
+    opts?: {
+      limit?: number;
+      offset?: number;
+    },
+  ): Promise<{
+    items: PropertyAggregate[];
+    total: number;
+  }> {
+    const [entities, total] = await this.propiedadRepo.findAndCount({
+      where: {
+        moderationStatus,
+      },
+      relations: [
+        'casa',
+        'departamento',
+        'lote',
+        'local',
+        'oficina',
+        'campo',
+        'ph',
+        'pozo',
+        'creadoPor',
+        'agencia',
+      ],
+      order: {
+        creadoEn: 'DESC',
+      },
+      take: opts?.limit ?? 20,
+      skip: opts?.offset ?? 0,
+    });
+
+    return {
+      items: entities.map(PropertyMapper.toDomain),
+      total,
+    };
+  }
+
   async findAll(
     filters: any = {},
     opts?: {
@@ -119,9 +196,9 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
       offset?: number;
     },
   ) {
-    const qb = this.propiedadRepo.createQueryBuilder('p').loadRelationCountAndMap(
-    'p.favoriteCount',
-    'p.favorites',);
+    const qb = this.propiedadRepo
+      .createQueryBuilder('p')
+      .loadRelationCountAndMap('p.favoriteCount', 'p.favorites');
 
     qb.leftJoinAndSelect('p.agencia', 'agencia');
 
@@ -224,14 +301,14 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
   }
 
   async countByUser(userId: number): Promise<number> {
-  return this.propiedadRepo.count({
-    where: {
-      creadoPor: {
-        id: userId,
+    return this.propiedadRepo.count({
+      where: {
+        creadoPor: {
+          id: userId,
+        },
       },
-    },
-  });
-}
+    });
+  }
 
   private getDetailRepo(tipo: string): Repository<any> {
     switch (tipo) {
