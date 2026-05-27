@@ -33,9 +33,10 @@ export class PropertyMapper {
 
       imagenes: entity.imagenes ?? [],
 
-      creadoPorId: entity.creadoPor?.id ?? null,
+      creadoPorId: entity.creadoPor?.id ?? (entity as any).creadoPorId ?? null,
       status: entity.status,
       moderationStatus: entity.moderationStatus,
+      moderationReason: entity.moderationReason,
       creadoEn: entity.creadoEn,
 
       ambientes: entity.ambientes ?? null,
@@ -50,7 +51,7 @@ export class PropertyMapper {
             )
           : null,
 
-      agenciaId: entity.agencia?.id ?? null,
+      agenciaId: entity.agencia?.id ?? (entity as any).agenciaId ?? null,
 
       detalles: PropertyDetailsMapper.fromEntity(entity),
     });
@@ -87,6 +88,9 @@ export class PropertyMapper {
 
       status: property.status as PropertyStatus,
       moderationStatus: property.moderationStatus,
+      moderationReason: property.moderationReason,
+      creadoPorId: property.creadoPorId ?? undefined,
+      agenciaId: property.agenciaId ?? undefined,
       creadoEn: property.creadoEn,
     };
   }

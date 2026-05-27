@@ -13,12 +13,12 @@ import {
   ForbiddenException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 
 import { User } from '../../../user/domain/entities/user.entity';
 
-import { CurrentUser } from '../../../../shared/security/decorators/current-user.decorator';
-import { Roles } from '../../../../shared/security/decorators/roles.decorator';
+import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
+import { Roles } from '@/shared/security/decorators/roles.decorator';
 import { Public } from '@/shared/security/decorators/public.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
@@ -26,18 +26,18 @@ import { UserType } from '@shared/contracts/enums/user-type.enum';
 
 import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
 
-import { CreatePropertyUseCase } from '../../application/use-cases/create-property.usecase';
-import { UpdatePropertyUseCase } from '../../application/use-cases/update-property.usecase';
-import { DeletePropertyUseCase } from '../../application/use-cases/delete-property.usecase';
-import { ListPropertiesUseCase } from '../../application/use-cases/list-properties.usecase';
-import { ViewPropertyUseCase } from '../../application/use-cases/view-property.usecase';
+import { CreatePropertyUseCase } from '@modules/propiedades/application/use-cases/create-property.usecase';
+import { UpdatePropertyUseCase } from '@modules/propiedades/application/use-cases/update-property.usecase';
+import { DeletePropertyUseCase } from '@modules/propiedades/application/use-cases/delete-property.usecase';
+import { ListPropertiesUseCase } from '@modules/propiedades/application/use-cases/list-properties.usecase';
+import { ViewPropertyUseCase } from '@modules/propiedades/application/use-cases/view-property.usecase';
 
-import { CreatePropertyDTO } from '../../application/dto/create-property.dto';
-import { UpdatePropertyDTO } from '../../application/dto/update-property.dto';
-import { FilterPropiedadesDto } from '../../application/dto/filter-propiedades.dto';
-import { PropertyResponseDto } from '../../application/dto/property-response.dto';
+import { CreatePropertyDTO } from '@modules/propiedades/application/dto/create-property.dto';
+import { UpdatePropertyDTO } from '@modules/propiedades/application/dto/update-property.dto';
+import { FilterPropiedadesDto } from '@modules/propiedades/application/dto/filter-propiedades.dto';
+import { PropertyResponseDto } from '@modules/propiedades/application/dto/property-response.dto';
 
-import { PropertyResponseMapper } from '../../application/mappers/property-response.mapper';
+import { PropertyResponseMapper } from '@modules/propiedades/application/mappers/property-response.mapper';
 
 import { JwtAuthGuard } from '@/modules/auth/infrastructure/guards/jwt-auth.guard';
 
@@ -62,7 +62,7 @@ export class PropiedadesController {
     description:
       'La agencia se resuelve automaticamente desde el usuario autenticado cuando el perfil la requiere.',
   })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     type: PropertyResponseDto,
   })
   async create(@Body() dto: CreatePropertyDTO, @CurrentUser() user: User) {

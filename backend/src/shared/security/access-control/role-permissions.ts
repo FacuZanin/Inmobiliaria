@@ -9,6 +9,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     Permission.PROPERTY_UPDATE,
     Permission.PROPERTY_DELETE,
 
+    Permission.PUBLICACION_READ_ALL,
     Permission.PUBLICACION_APPROVE,
     Permission.PUBLICACION_REJECT,
     Permission.PUBLICACION_OBSERVE,

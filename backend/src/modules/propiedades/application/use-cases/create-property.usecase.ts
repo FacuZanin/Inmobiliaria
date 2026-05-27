@@ -10,8 +10,6 @@ import {
 } from '@nestjs/common';
 
 import type { PropertyRepositoryPort } from '../ports/property-repository.port';
-import type { DocsCheckerPort } from '../ports/docs-checker.port';
-
 import type { CreatePropertyDTO } from '../dto/create-property.dto';
 
 import { PropertyAggregate } from '../../domain/entities/property.aggregate';
@@ -33,7 +31,7 @@ import { PropertyLimitsService } from '@/modules/subscriptions/application/servi
 
 import { PropertyPublisherPolicy } from '@/shared/security/policies/property-publisher.policy';
 
-import { PROPERTY_REPOSITORY, DOCS_CHECKER } from '../tokens';
+import { PROPERTY_REPOSITORY } from '../tokens';
 
 import {
   CasaDetails,
@@ -52,9 +50,6 @@ export class CreatePropertyUseCase {
     @Inject(PROPERTY_REPOSITORY)
     private readonly repo: PropertyRepositoryPort,
 
-    @Inject(DOCS_CHECKER)
-    private readonly docsChecker: DocsCheckerPort,
-
     private readonly propertyLimitsService: PropertyLimitsService,
 
     private readonly publisherPolicy: PropertyPublisherPolicy,
@@ -70,8 +65,6 @@ export class CreatePropertyUseCase {
 
     const requiresAgency =
       this.publisherPolicy.requiresAgency(currentUser);
-
-    const ownerId = dto.propietarioId ?? currentUser.id;
 
     const resolvedAgencyId = requiresAgency
       ? (currentUser.agencia?.id ?? null)
@@ -128,20 +121,6 @@ export class CreatePropertyUseCase {
         'El tipo de operación es obligatorio',
       );
     }
-
-    // =========================================================
-    // VERIFICACIÓN DOCUMENTAL
-    // Marketplace moderno:
-    // NO bloqueamos publicación
-    // Solo marcamos estado de moderación
-    // =========================================================
-
-    const docs = await this.docsChecker.hasApprovedDocs(
-      ownerId,
-    );
-
-    const isVerified = docs.dni && docs.escritura;
-
     // =========================================================
     // VALUE OBJECTS
     // =========================================================
@@ -213,9 +192,7 @@ export class CreatePropertyUseCase {
       // STATUS DE MODERACIÓN / VALIDACIÓN
       // =====================================================
 
-      moderationStatus: isVerified
-        ? PublicacionStatus.PUBLICADA_VERIFICADA
-        : PublicacionStatus.PUBLICADA_NO_VERIFICADA,
+      moderationStatus: PublicacionStatus.EN_REVISION,
     });
 
     // =========================================================

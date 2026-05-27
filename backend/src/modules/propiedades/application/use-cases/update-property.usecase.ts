@@ -65,7 +65,6 @@ export class UpdatePropertyUseCase {
     property.updateGeneral({
       titulo: dto.titulo,
       descripcion: dto.descripcion ?? null,
-      status: dto.status,
       operacion: dto.operacion as OperacionTipo,
       direccion: dto.direccion ? new AddressVO(dto.direccion) : undefined,
       localidad: dto.localidad,

@@ -37,6 +37,10 @@ export class PropertyResponseMapper {
 
       creadoPorId: p.creadoPorId,
 
+      status: p.status,
+
+      moderationStatus: p.moderationStatus,
+
       activo: p.activo,
 
       creadoEn: p.creadoEn,

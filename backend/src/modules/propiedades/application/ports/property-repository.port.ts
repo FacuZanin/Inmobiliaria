@@ -19,7 +19,7 @@ export interface PropertyRepositoryPort {
     total: number;
   }>;
 
-  update(id: number, partial: any): Promise<PropertyAggregate | null>;
+  update(id: number, property: PropertyAggregate): Promise<PropertyAggregate | null>;
 
   softDelete(id: number): Promise<void>;
 

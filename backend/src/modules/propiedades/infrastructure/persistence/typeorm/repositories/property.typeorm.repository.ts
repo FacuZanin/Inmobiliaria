@@ -21,6 +21,7 @@ import { PropertyMapper } from '../mappers/property.mapper';
 import { PropertyDetailsMapper } from '../mappers/property-details.mapper';
 
 import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
+import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
 @Injectable()
 export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
@@ -122,9 +123,10 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     total: number;
   }> {
     const [entities, total] = await this.propiedadRepo.findAndCount({
-      where: {
-        moderationStatus: PublicacionStatus.EN_REVISION,
-      },
+      where: [
+        { moderationStatus: PublicacionStatus.EN_REVISION },
+        { moderationStatus: PublicacionStatus.OBSERVADA },
+      ],
       relations: [
         'casa',
         'departamento',
@@ -203,6 +205,15 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     qb.leftJoinAndSelect('p.agencia', 'agencia');
 
     qb.where('p.deletedAt IS NULL');
+    qb.andWhere('p.status = :publicStatus', {
+      publicStatus: PropertyStatus.PUBLICADA,
+    });
+    qb.andWhere('p.moderationStatus != :rejectedStatus', {
+      rejectedStatus: PublicacionStatus.RECHAZADA,
+    });
+    qb.andWhere('p.moderationStatus != :eliminatedStatus', {
+      eliminatedStatus: PublicacionStatus.ELIMINADA,
+    });
 
     if (filters.tipo) {
       qb.andWhere('p.tipo = :tipo', {
@@ -291,9 +302,61 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     };
   }
 
-  async update(id: number, partial: any): Promise<PropertyAggregate | null> {
-    await this.propiedadRepo.update(id, partial);
-    return this.findById(id);
+  async update(id: number, property: PropertyAggregate): Promise<PropertyAggregate | null> {
+    try {
+      const baseOrm = this.propiedadRepo.create(
+        PropertyMapper.toOrm(property) as PropertyEntity,
+      );
+
+      await this.propiedadRepo.save(baseOrm);
+
+      const reloaded = await this.propiedadRepo.findOne({
+        where: { id },
+        relations: [
+          'casa',
+          'departamento',
+          'lote',
+          'local',
+          'oficina',
+          'campo',
+          'ph',
+          'pozo',
+          'creadoPor',
+          'agencia',
+        ],
+      });
+
+      if (!reloaded) {
+        return null;
+      }
+
+      const detailEntity = PropertyDetailsMapper.toOrm(property, reloaded);
+      if (detailEntity) {
+        const repo = this.getDetailRepo(property.tipo);
+        await repo.save(detailEntity);
+      }
+
+      const finalReload = await this.propiedadRepo.findOne({
+        where: { id },
+        relations: [
+          'casa',
+          'departamento',
+          'lote',
+          'local',
+          'oficina',
+          'campo',
+          'ph',
+          'pozo',
+          'creadoPor',
+          'agencia',
+        ],
+      });
+
+      return finalReload ? PropertyMapper.toDomain(finalReload) : null;
+    } catch (err) {
+      console.error('[PropertyTypeOrmRepository.update]', err);
+      throw new BadRequestException('Error al actualizar propiedad');
+    }
   }
 
   async softDelete(id: number): Promise<void> {

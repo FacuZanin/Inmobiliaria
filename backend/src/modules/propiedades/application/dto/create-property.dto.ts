@@ -18,7 +18,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
-import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
 export class CreatePropertyDTO {
   // ------------------------------------------------
@@ -167,16 +166,6 @@ export class CreatePropertyDTO {
   // RELACIONES
   // ------------------------------------------------
 
-  @ApiPropertyOptional({
-    example: 1,
-    description:
-      'ID del propietario real de la propiedad. Si no se envia, se usa el usuario autenticado.',
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  propietarioId?: number;
-
   // ------------------------------------------------
   // DETALLES POLIMÓRFICOS
   // ------------------------------------------------
@@ -192,11 +181,4 @@ export class CreatePropertyDTO {
   @IsOptional()
   @IsObject()
   detalles?: Record<string, any>;
-
-  @ApiPropertyOptional({
-    enum: PropertyStatus,
-  })
-  @IsOptional()
-  @IsEnum(PropertyStatus)
-  status?: PropertyStatus;
 }

@@ -62,6 +62,8 @@ type PropertyAggregateProps = {
 
   moderationStatus?: PublicacionStatus;
 
+  moderationReason?: string | null;
+
   precio?: PriceVO | null;
 
   direccion: AddressVO;
@@ -122,6 +124,8 @@ export class PropertyAggregate {
 
   private _moderationStatus: PublicacionStatus;
 
+  private _moderationReason: string | null;
+
   private _precio: PriceVO | null;
 
   private _direccion: AddressVO;
@@ -175,6 +179,8 @@ export class PropertyAggregate {
 
     this._moderationStatus =
       props.moderationStatus ?? PublicacionStatus.EN_REVISION;
+
+    this._moderationReason = props.moderationReason ?? null;
 
     this._precio = props.precio ?? null;
 
@@ -262,6 +268,10 @@ export class PropertyAggregate {
     return this._moderationStatus;
   }
 
+  get moderationReason(): string | null {
+    return this._moderationReason;
+  }
+
   get precio(): number | null {
     return this._precio?.value ?? null;
   }
@@ -317,21 +327,27 @@ export class PropertyAggregate {
   // ==========================================================
   // MODERATION METHODS
   // ==========================================================
-  
+
   pause() {
     this._status = PropertyStatus.PAUSADA;
   }
 
   approve() {
     this._moderationStatus = PublicacionStatus.PUBLICADA_VERIFICADA;
+
+    this._moderationReason = null;
   }
 
   observe(reason?: string) {
     this._moderationStatus = PublicacionStatus.OBSERVADA;
+
+    this._moderationReason = reason ?? null;
   }
 
   reject(reason?: string) {
     this._moderationStatus = PublicacionStatus.RECHAZADA;
+
+    this._moderationReason = reason ?? null;
   }
 
   markAsUnderReview() {

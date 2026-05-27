@@ -6,6 +6,8 @@ import {
 
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { PropiedadTipo } from '@shared/contracts/enums/propiedad-tipo.enum';
+import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
+import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
 
 export class PropertyResponseDto {
   @ApiProperty()
@@ -34,7 +36,7 @@ export class PropertyResponseDto {
   direccion?: string | null;
 
   @ApiPropertyOptional()
-  localidad?: string | null
+  localidad?: string | null;
 
   @ApiPropertyOptional()
   ambientes?: number | null;
@@ -60,7 +62,17 @@ export class PropertyResponseDto {
   agenciaId?: number | null;
 
   @ApiProperty()
-  creadoPorId!: number | null
+  creadoPorId!: number | null;
+
+  @ApiProperty({
+    enum: PropertyStatus,
+  })
+  status!: PropertyStatus;
+
+  @ApiProperty({
+    enum: PublicacionStatus,
+  })
+  moderationStatus!: PublicacionStatus;
 
   @ApiProperty()
   activo!: boolean;

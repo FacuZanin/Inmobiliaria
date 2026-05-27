@@ -237,6 +237,12 @@ export class PropertyEntity {
   })
   moderationStatus!: PublicacionStatus;
 
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  moderationReason!: string | null;
+
   @CreateDateColumn({
     type: 'timestamp',
   })
