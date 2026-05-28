@@ -243,11 +243,6 @@ export class PropertyEntity {
   })
   moderationReason!: string | null;
 
-  @CreateDateColumn({
-    type: 'timestamp',
-  })
-  creadoEn!: Date;
-
   @DeleteDateColumn({
     type: 'timestamp',
     nullable: true,

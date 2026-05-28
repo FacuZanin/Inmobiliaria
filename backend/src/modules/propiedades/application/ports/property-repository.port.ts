@@ -3,6 +3,8 @@ import type { PropertyAggregate } from '../../domain/entities/property.aggregate
 
 import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
 
+import { AdminPropertiesQueryDto } from '../dto/admin-properties-query.dto';
+
 export interface PropertyRepositoryPort {
   save(property: PropertyAggregate): Promise<PropertyAggregate>;
 
@@ -10,16 +12,16 @@ export interface PropertyRepositoryPort {
 
   findAll(
     filters?: any,
-    opts?: {
-      limit?: number;
-      offset?: number;
-    },
+    query?: AdminPropertiesQueryDto
   ): Promise<{
     items: PropertyAggregate[];
     total: number;
   }>;
 
-  update(id: number, property: PropertyAggregate): Promise<PropertyAggregate | null>;
+  update(
+    id: number,
+    property: PropertyAggregate,
+  ): Promise<PropertyAggregate | null>;
 
   softDelete(id: number): Promise<void>;
 
@@ -29,17 +31,16 @@ export interface PropertyRepositoryPort {
   // MODERATION
   // =================================================
 
-  findPendingModeration(opts?: { limit?: number; offset?: number }): Promise<{
+  findPendingModeration(
+    query?: AdminPropertiesQueryDto
+  ): Promise<{
     items: PropertyAggregate[];
     total: number;
   }>;
 
   findByModerationStatus(
     moderationStatus: PublicacionStatus,
-    opts?: {
-      limit?: number;
-      offset?: number;
-    },
+    query?: AdminPropertiesQueryDto
   ): Promise<{
     items: PropertyAggregate[];
     total: number;

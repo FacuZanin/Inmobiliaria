@@ -43,8 +43,6 @@ export class PropertyResponseMapper {
 
       activo: p.activo,
 
-      creadoEn: p.creadoEn,
-
       detalles: p.detalles ?? {},
     };
   }

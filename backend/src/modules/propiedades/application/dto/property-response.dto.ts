@@ -77,9 +77,6 @@ export class PropertyResponseDto {
   @ApiProperty()
   activo!: boolean;
 
-  @ApiProperty()
-  creadoEn?: Date;
-
   @ApiPropertyOptional({
     type: Object,
   })

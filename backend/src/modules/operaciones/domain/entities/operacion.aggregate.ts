@@ -19,7 +19,6 @@ type OperacionProps = {
   fechaFinalizacion?: Date | null;
   observaciones?: string | null;
 
-  creadoEn?: Date;
 };
 
 export class OperacionAggregate {
@@ -38,7 +37,6 @@ export class OperacionAggregate {
   private _fechaFinalizacion: Date | null;
   private _observaciones: string | null;
 
-  private _creadoEn?: Date;
 
   private constructor(props: OperacionProps) {
     this._id = props.id ?? null;
@@ -56,15 +54,13 @@ export class OperacionAggregate {
     this._fechaFinalizacion = props.fechaFinalizacion ?? null;
     this._observaciones = props.observaciones ?? null;
 
-    this._creadoEn = props.creadoEn;
   }
 
   // FACTORIES
-  static create(props: Omit<OperacionProps, 'id' | 'estado' | 'creadoEn'>) {
+  static create(props: Omit<OperacionProps, 'id' | 'estado'>) {
     return new OperacionAggregate({
       ...props,
       estado: OperacionEstado.PENDIENTE,
-      creadoEn: new Date(),
     });
   }
 
@@ -160,10 +156,6 @@ get fechaFinalizacion(): Date | null {
 
 get observaciones(): string | null {
   return this._observaciones;
-}
-
-get creadoEn(): Date | undefined {
-  return this._creadoEn;
 }
 
 

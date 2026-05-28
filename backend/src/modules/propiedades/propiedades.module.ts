@@ -28,11 +28,12 @@ import { UpdatePropertyUseCase } from './application/use-cases/update-property.u
 import { DeletePropertyUseCase } from './application/use-cases/delete-property.usecase';
 import { ListPropertiesUseCase } from './application/use-cases/list-properties.usecase';
 import { ViewPropertyUseCase } from './application/use-cases/view-property.usecase';
-import { ListPendingModerationUseCase } from './application/use-cases/list-pending-moderation.usecase';
 import { ApprovePropertyUseCase } from './application/use-cases/moderation/approve-property.usecase';
 import { RejectPropertyUseCase } from './application/use-cases/moderation/reject-property.usecase';
 import { ObservePropertyUseCase } from './application/use-cases/moderation/observe-property.usecase';
 import { PausePropertyUseCase } from './application/use-cases/moderation/pause-property.usecase';
+import { ListPropertiesByModerationStatusUseCase } from './application/use-cases/moderation/list-properties-by-moderation-status.usecase';
+import { ListPendingModerationUseCase } from '@modules/propiedades/application/use-cases/moderation/list-pending-moderation.usecase';
 
 import { PropietarioDocumentosModule } from '../propietario-documentos/propietario-documentos.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
@@ -83,6 +84,7 @@ import { UserOwnershipPolicy } from '@/shared/security/policies/user-ownership.p
     RejectPropertyUseCase,
     ObservePropertyUseCase,
     PausePropertyUseCase,
+    ListPropertiesByModerationStatusUseCase,
     // SERVICES
     PropertyApplicationService,
     AuthorizationService,

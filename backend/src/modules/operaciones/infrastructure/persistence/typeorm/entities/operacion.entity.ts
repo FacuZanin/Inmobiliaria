@@ -55,6 +55,4 @@ medio!: MedioOperacion | null;
   @Column({ type: 'text', nullable: true })
   observaciones!: string | null;
 
-  @CreateDateColumn()
-  creadoEn!: Date;
 }

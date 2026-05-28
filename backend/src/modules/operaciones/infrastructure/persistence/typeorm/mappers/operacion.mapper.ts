@@ -20,8 +20,6 @@ export class OperacionMapper {
       fechaReserva: entity.fechaReserva ?? null,
       fechaFinalizacion: entity.fechaFinalizacion ?? null,
       observaciones: entity.observaciones ?? null,
-
-      creadoEn: entity.creadoEn,
     });
   }
 

@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Operacion } from '../entities/operacion.entity';
-import { OperacionRepositoryPort } from '../../../../application/ports/operacion-repository.port';
-import { OperacionAggregate } from '../../../../domain/entities/operacion.aggregate';
+import { OperacionRepositoryPort } from '@modules/operaciones/application/ports/operacion-repository.port';
+import { OperacionAggregate } from '@modules/operaciones/domain/entities/operacion.aggregate';
 import { OperacionMapper } from '../mappers/operacion.mapper';
 
 @Injectable()
@@ -68,13 +68,13 @@ async findAll(filters?: any): Promise<OperacionAggregate[]> {
   }
 
   if (filters?.fechaDesde) {
-    qb.andWhere('o.creadoEn >= :fechaDesde', {
+    qb.andWhere('o.creadoAt >= :fechaDesde', {
       fechaDesde: new Date(filters.fechaDesde),
     });
   }
 
   if (filters?.fechaHasta) {
-    qb.andWhere('o.creadoEn <= :fechaHasta', {
+    qb.andWhere('o.creadoAt <= :fechaHasta', {
       fechaHasta: new Date(filters.fechaHasta),
     });
   }

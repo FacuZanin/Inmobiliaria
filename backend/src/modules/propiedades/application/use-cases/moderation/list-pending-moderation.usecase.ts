@@ -1,8 +1,11 @@
-// backend/src/modules/propiedades/application/use-cases/list-pending-moderation.usecase.ts
+// backend\src\modules\propiedades\application\use-cases\moderation\list-pending-moderation.usecase.ts
 import { Inject, Injectable } from '@nestjs/common';
 
-import { PROPERTY_REPOSITORY } from '../tokens';
-import type { PropertyRepositoryPort } from '../ports/property-repository.port';
+import { PROPERTY_REPOSITORY } from '../../tokens';
+
+import type { PropertyRepositoryPort } from '@modules/propiedades/application/ports/property-repository.port';
+
+import { AdminPropertiesQueryDto } from '@modules/propiedades/application/dto/admin-properties-query.dto';
 
 @Injectable()
 export class ListPendingModerationUseCase {
@@ -11,19 +14,7 @@ export class ListPendingModerationUseCase {
     private readonly repo: PropertyRepositoryPort,
   ) {}
 
-  async execute(limit = 20, offset = 0) {
-    const result = await this.repo.findPendingModeration({ limit, offset });
-
-    return {
-      items: result.items,
-      pagination: {
-        total: result.total,
-        limit,
-        offset,
-        totalPages: Math.ceil(result.total / limit),
-        hasNext: offset + limit < result.total,
-        hasPrev: offset > 0,
-      },
-    };
+  async execute(query: AdminPropertiesQueryDto) {
+    return this.repo.findPendingModeration(query);
   }
 }

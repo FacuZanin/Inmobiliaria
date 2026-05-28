@@ -1,11 +1,11 @@
-// backend\src\modules\propiedades\infrastructure\persistence\typeorm\repositories\property.typeorm.repository.ts
+// backend/src/modules/propiedades/infrastructure/persistence/typeorm/repositories/property.typeorm.repository.ts
 
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { PropertyAggregate } from '../../../../domain/entities/property.aggregate';
-import { PropertyRepositoryPort } from '../../../../application/ports/property-repository.port';
+import { PropertyAggregate } from '@modules/propiedades/domain/entities/property.aggregate';
+import { PropertyRepositoryPort } from '@modules/propiedades/application/ports/property-repository.port';
 
 import { PropertyEntity } from '../entities/propiedad.entity';
 import { PropiedadCasa } from '../entities/propiedad-casa.entity';
@@ -22,6 +22,11 @@ import { PropertyDetailsMapper } from '../mappers/property-details.mapper';
 
 import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
 import { PropertyStatus } from '@shared/contracts/enums/property-status.enum';
+
+import { PROPERTY_FULL_RELATIONS } from '../constants/property-relations.constants';
+
+import { PublicPropertiesQueryDto } from '@modules/propiedades/application/dto/public-properties-query.dto';
+import { AdminPropertiesQueryDto } from '@modules/propiedades/application/dto/admin-properties-query.dto';
 
 @Injectable()
 export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
@@ -56,14 +61,12 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
 
   async save(property: PropertyAggregate): Promise<PropertyAggregate> {
     try {
-      // 1️⃣ map aggregate -> base ORM
       const baseOrm = this.propiedadRepo.create(
         PropertyMapper.toOrm(property) as PropertyEntity,
       );
 
       const savedBase = await this.propiedadRepo.save(baseOrm);
 
-      // 2️⃣ map & persist detalles (si existen)
       const detailEntity = PropertyDetailsMapper.toOrm(property, savedBase);
 
       if (detailEntity) {
@@ -71,21 +74,9 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
         await repo.save(detailEntity);
       }
 
-      // 3️⃣ reload con relaciones
       const reloaded = await this.propiedadRepo.findOne({
         where: { id: savedBase.id },
-        relations: [
-          'casa',
-          'departamento',
-          'lote',
-          'local',
-          'oficina',
-          'campo',
-          'ph',
-          'pozo',
-          'creadoPor',
-          'agencia',
-        ],
+        relations: PROPERTY_FULL_RELATIONS,
       });
 
       return PropertyMapper.toDomain(reloaded!);
@@ -98,201 +89,95 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
   async findById(id: number): Promise<PropertyAggregate | null> {
     const entity = await this.propiedadRepo.findOne({
       where: { id },
-      relations: [
-        'casa',
-        'departamento',
-        'lote',
-        'local',
-        'oficina',
-        'campo',
-        'ph',
-        'pozo',
-        'creadoPor',
-        'agencia',
-      ],
+      relations: PROPERTY_FULL_RELATIONS,
     });
 
     return entity ? PropertyMapper.toDomain(entity) : null;
   }
 
-  async findPendingModeration(opts?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<{
-    items: PropertyAggregate[];
-    total: number;
-  }> {
-    const [entities, total] = await this.propiedadRepo.findAndCount({
-      where: [
-        { moderationStatus: PublicacionStatus.EN_REVISION },
-        { moderationStatus: PublicacionStatus.OBSERVADA },
-      ],
-      relations: [
-        'casa',
-        'departamento',
-        'lote',
-        'local',
-        'oficina',
-        'campo',
-        'ph',
-        'pozo',
-        'creadoPor',
-        'agencia',
-      ],
-      order: {
-        creadoEn: 'DESC',
-      },
-      take: opts?.limit ?? 20,
-      skip: opts?.offset ?? 0,
-    });
-
-    return {
-      items: entities.map(PropertyMapper.toDomain),
-      total,
-    };
-  }
-
-  async findByModerationStatus(
-    moderationStatus: PublicacionStatus,
-    opts?: {
-      limit?: number;
-      offset?: number;
-    },
+  async findPendingModeration(
+    query: AdminPropertiesQueryDto,
   ): Promise<{
     items: PropertyAggregate[];
     total: number;
   }> {
-    const [entities, total] = await this.propiedadRepo.findAndCount({
-      where: {
-        moderationStatus,
-      },
-      relations: [
-        'casa',
-        'departamento',
-        'lote',
-        'local',
-        'oficina',
-        'campo',
-        'ph',
-        'pozo',
-        'creadoPor',
-        'agencia',
-      ],
-      order: {
-        creadoEn: 'DESC',
-      },
-      take: opts?.limit ?? 20,
-      skip: opts?.offset ?? 0,
-    });
+    const {
+      limit = 20,
+      page = 1,
+      sortBy = 'createdAt',
+      order = 'DESC',
+      search,
+      agencyId,
+      verified,
+      dateFrom,
+      dateTo,
+    } = query;
 
-    return {
-      items: entities.map(PropertyMapper.toDomain),
-      total,
-    };
-  }
-
-  async findAll(
-    filters: any = {},
-    opts?: {
-      limit?: number;
-      offset?: number;
-    },
-  ) {
-    const qb = this.propiedadRepo
-      .createQueryBuilder('p')
-      .loadRelationCountAndMap('p.favoriteCount', 'p.favorites');
+    const qb = this.propiedadRepo.createQueryBuilder('p');
 
     qb.leftJoinAndSelect('p.agencia', 'agencia');
+    qb.leftJoinAndSelect('p.creadoPor', 'creadoPor');
 
     qb.where('p.deletedAt IS NULL');
-    qb.andWhere('p.status = :publicStatus', {
-      publicStatus: PropertyStatus.PUBLICADA,
-    });
-    qb.andWhere('p.moderationStatus != :rejectedStatus', {
-      rejectedStatus: PublicacionStatus.RECHAZADA,
-    });
-    qb.andWhere('p.moderationStatus != :eliminatedStatus', {
-      eliminatedStatus: PublicacionStatus.ELIMINADA,
-    });
 
-    if (filters.tipo) {
-      qb.andWhere('p.tipo = :tipo', {
-        tipo: filters.tipo,
-      });
-    }
-
-    if (filters.operacion) {
-      qb.andWhere('p.operacion = :operacion', {
-        operacion: filters.operacion,
-      });
-    }
-
-    if (filters.localidad) {
-      qb.andWhere('LOWER(p.localidad) LIKE LOWER(:localidad)', {
-        localidad: `%${filters.localidad}%`,
-      });
-    }
-
-    if (filters.precioMin !== undefined) {
-      qb.andWhere('p.precio >= :precioMin', {
-        precioMin: filters.precioMin,
-      });
-    }
-
-    if (filters.precioMax !== undefined) {
-      qb.andWhere('p.precio <= :precioMax', {
-        precioMax: filters.precioMax,
-      });
-    }
-
-    if (filters.ambientes !== undefined) {
-      qb.andWhere('p.ambientes = :ambientes', {
-        ambientes: filters.ambientes,
-      });
-    }
-
-    if (filters.dormitorios !== undefined) {
-      qb.andWhere('p.dormitorios = :dormitorios', {
-        dormitorios: filters.dormitorios,
-      });
-    }
-
-    if (filters.banos !== undefined) {
-      qb.andWhere('p.banos = :banos', {
-        banos: filters.banos,
-      });
-    }
-
-    if (filters.agenciaId !== undefined) {
-      qb.andWhere('p.agenciaId = :agenciaId', {
-        agenciaId: filters.agenciaId,
-      });
-    }
-
-    if (filters.search) {
-      qb.andWhere(
-        `
+    qb.andWhere(
+      `
       (
-        LOWER(p.titulo) LIKE LOWER(:search)
-        OR LOWER(p.descripcion) LIKE LOWER(:search)
-        OR LOWER(p.localidad) LIKE LOWER(:search)
+        p.moderationStatus = :revision
+        OR p.moderationStatus = :observada
       )
       `,
+      {
+        revision: PublicacionStatus.EN_REVISION,
+        observada: PublicacionStatus.OBSERVADA,
+      },
+    );
+
+    if (search) {
+      qb.andWhere(
+        `
+        (
+          LOWER(p.titulo) LIKE LOWER(:search)
+          OR LOWER(p.descripcion) LIKE LOWER(:search)
+          OR LOWER(p.localidad) LIKE LOWER(:search)
+        )
+        `,
         {
-          search: `%${filters.search}%`,
+          search: `%${search}%`,
         },
       );
     }
-    if (filters.status) {
-      qb.andWhere('p.status = :status', {
-        status: filters.status,
+
+    if (agencyId) {
+      qb.andWhere('p.agenciaId = :agencyId', {
+        agencyId,
       });
     }
 
-    qb.orderBy('p.creadoEn', filters.sort === 'ASC' ? 'ASC' : 'DESC');
+    if (verified !== undefined) {
+      qb.andWhere('p.moderationStatus = :verifiedStatus', {
+        verifiedStatus: verified
+          ? PublicacionStatus.PUBLICADA_VERIFICADA
+          : PublicacionStatus.PUBLICADA_NO_VERIFICADA,
+      });
+    }
 
-    qb.take(opts?.limit ?? 20);
-    qb.skip(opts?.offset ?? 0);
+    if (dateFrom) {
+      qb.andWhere('p.createdAt >= :dateFrom', {
+        dateFrom,
+      });
+    }
+
+    if (dateTo) {
+      qb.andWhere('p.createdAt <= :dateTo', {
+        dateTo,
+      });
+    }
+
+    qb.orderBy(`p.${sortBy}`, order);
+
+    qb.take(limit);
+    qb.skip((page - 1) * limit);
 
     const [entities, total] = await qb.getManyAndCount();
 
@@ -302,7 +187,218 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     };
   }
 
-  async update(id: number, property: PropertyAggregate): Promise<PropertyAggregate | null> {
+  async findByModerationStatus(
+    moderationStatus: PublicacionStatus,
+    query: AdminPropertiesQueryDto,
+  ): Promise<{
+    items: PropertyAggregate[];
+    total: number;
+  }> {
+    const {
+      limit = 20,
+      page = 1,
+      sortBy = 'createdAt',
+      order = 'DESC',
+      search,
+      agencyId,
+      verified,
+      dateFrom,
+      dateTo,
+    } = query;
+
+    const qb = this.propiedadRepo.createQueryBuilder('p');
+
+    qb.leftJoinAndSelect('p.agencia', 'agencia');
+    qb.leftJoinAndSelect('p.creadoPor', 'creadoPor');
+
+    qb.where('p.deletedAt IS NULL');
+
+    qb.andWhere('p.moderationStatus = :moderationStatus', {
+      moderationStatus,
+    });
+
+    if (search) {
+      qb.andWhere(
+        `
+        (
+          LOWER(p.titulo) LIKE LOWER(:search)
+          OR LOWER(p.descripcion) LIKE LOWER(:search)
+          OR LOWER(p.localidad) LIKE LOWER(:search)
+        )
+        `,
+        {
+          search: `%${search}%`,
+        },
+      );
+    }
+
+    if (agencyId) {
+      qb.andWhere('p.agenciaId = :agencyId', {
+        agencyId,
+      });
+    }
+
+    if (verified !== undefined) {
+      qb.andWhere('p.moderationStatus = :verifiedStatus', {
+        verifiedStatus: verified
+          ? PublicacionStatus.PUBLICADA_VERIFICADA
+          : PublicacionStatus.PUBLICADA_NO_VERIFICADA,
+      });
+    }
+
+    if (dateFrom) {
+      qb.andWhere('p.createdAt >= :dateFrom', {
+        dateFrom,
+      });
+    }
+
+    if (dateTo) {
+      qb.andWhere('p.createdAt <= :dateTo', {
+        dateTo,
+      });
+    }
+
+    qb.orderBy(`p.${sortBy}`, order);
+
+    qb.take(limit);
+    qb.skip((page - 1) * limit);
+
+    const [entities, total] = await qb.getManyAndCount();
+
+    return {
+      items: entities.map(PropertyMapper.toDomain),
+      total,
+    };
+  }
+
+  async findAll(
+    query: PublicPropertiesQueryDto,
+  ): Promise<{
+    items: PropertyAggregate[];
+    total: number;
+  }> {
+    const {
+      tipo,
+      operacion,
+      localidad,
+      precioMin,
+      precioMax,
+      ambientes,
+      dormitorios,
+      banos,
+      search,
+      agencyId,
+      limit = 20,
+       page = 1,
+      order = 'DESC',
+    } = query;
+
+    const qb = this.propiedadRepo
+      .createQueryBuilder('p')
+      .loadRelationCountAndMap('p.favoriteCount', 'p.favorites');
+
+    qb.leftJoinAndSelect('p.agencia', 'agencia');
+
+    qb.where('p.deletedAt IS NULL');
+
+    qb.andWhere('p.status = :publicStatus', {
+      publicStatus: PropertyStatus.PUBLICADA,
+    });
+
+    qb.andWhere('p.moderationStatus != :rejectedStatus', {
+      rejectedStatus: PublicacionStatus.RECHAZADA,
+    });
+
+    qb.andWhere('p.moderationStatus != :eliminatedStatus', {
+      eliminatedStatus: PublicacionStatus.ELIMINADA,
+    });
+
+    if (tipo) {
+      qb.andWhere('p.tipo = :tipo', {
+        tipo,
+      });
+    }
+
+    if (operacion) {
+      qb.andWhere('p.operacion = :operacion', {
+        operacion,
+      });
+    }
+
+    if (localidad) {
+      qb.andWhere('LOWER(p.localidad) LIKE LOWER(:localidad)', {
+        localidad: `%${localidad}%`,
+      });
+    }
+
+    if (precioMin !== undefined) {
+      qb.andWhere('p.precio >= :precioMin', {
+        precioMin,
+      });
+    }
+
+    if (precioMax !== undefined) {
+      qb.andWhere('p.precio <= :precioMax', {
+        precioMax,
+      });
+    }
+
+    if (ambientes !== undefined) {
+      qb.andWhere('p.ambientes = :ambientes', {
+        ambientes,
+      });
+    }
+
+    if (dormitorios !== undefined) {
+      qb.andWhere('p.dormitorios = :dormitorios', {
+        dormitorios,
+      });
+    }
+
+    if (banos !== undefined) {
+      qb.andWhere('p.banos = :banos', {
+        banos,
+      });
+    }
+
+    if (agencyId !== undefined) {
+      qb.andWhere('p.agenciaId = :agencyId', {
+        agencyId,
+      });
+    }
+
+    if (search) {
+      qb.andWhere(
+        `
+        (
+          LOWER(p.titulo) LIKE LOWER(:search)
+          OR LOWER(p.descripcion) LIKE LOWER(:search)
+          OR LOWER(p.localidad) LIKE LOWER(:search)
+        )
+        `,
+        {
+          search: `%${search}%`,
+        },
+      );
+    }
+
+    qb.orderBy('p.createdAt', order);
+
+    qb.take(limit);
+    qb.skip((page - 1) * limit);
+
+    const [entities, total] = await qb.getManyAndCount();
+
+    return {
+      items: entities.map(PropertyMapper.toDomain),
+      total,
+    };
+  }
+
+  async update(
+    id: number,
+    property: PropertyAggregate,
+  ): Promise<PropertyAggregate | null> {
     try {
       const baseOrm = this.propiedadRepo.create(
         PropertyMapper.toOrm(property) as PropertyEntity,
@@ -312,18 +408,7 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
 
       const reloaded = await this.propiedadRepo.findOne({
         where: { id },
-        relations: [
-          'casa',
-          'departamento',
-          'lote',
-          'local',
-          'oficina',
-          'campo',
-          'ph',
-          'pozo',
-          'creadoPor',
-          'agencia',
-        ],
+        relations: PROPERTY_FULL_RELATIONS,
       });
 
       if (!reloaded) {
@@ -331,6 +416,7 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
       }
 
       const detailEntity = PropertyDetailsMapper.toOrm(property, reloaded);
+
       if (detailEntity) {
         const repo = this.getDetailRepo(property.tipo);
         await repo.save(detailEntity);
@@ -338,18 +424,7 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
 
       const finalReload = await this.propiedadRepo.findOne({
         where: { id },
-        relations: [
-          'casa',
-          'departamento',
-          'lote',
-          'local',
-          'oficina',
-          'campo',
-          'ph',
-          'pozo',
-          'creadoPor',
-          'agencia',
-        ],
+        relations: PROPERTY_FULL_RELATIONS,
       });
 
       return finalReload ? PropertyMapper.toDomain(finalReload) : null;
@@ -377,20 +452,28 @@ export class PropertyTypeOrmRepository implements PropertyRepositoryPort {
     switch (tipo) {
       case 'CASA':
         return this.casaRepo;
+
       case 'DEPARTAMENTO':
         return this.deptoRepo;
+
       case 'LOTE':
         return this.loteRepo;
+
       case 'LOCAL':
         return this.localRepo;
+
       case 'OFICINA':
         return this.oficinaRepo;
+
       case 'CAMPO':
         return this.campoRepo;
+
       case 'PH':
         return this.phRepo;
+
       case 'POZO':
         return this.pozoRepo;
+
       default:
         throw new Error(`Tipo de propiedad no soportado: ${tipo}`);
     }

@@ -76,8 +76,6 @@ type PropertyAggregateProps = {
 
   activo?: boolean;
 
-  creadoEn?: Date;
-
   ambientes?: number | null;
 
   dormitorios?: number | null;
@@ -138,8 +136,6 @@ export class PropertyAggregate {
 
   private _activo: boolean;
 
-  private _creadoEn?: Date;
-
   private _ambientes: number | null;
 
   private _dormitorios: number | null;
@@ -194,8 +190,6 @@ export class PropertyAggregate {
 
     this._activo = props.activo ?? true;
 
-    this._creadoEn = props.creadoEn;
-
     this._ambientes = props.ambientes ?? null;
 
     this._dormitorios = props.dormitorios ?? null;
@@ -214,13 +208,12 @@ export class PropertyAggregate {
   // ==========================================================
 
   static create(
-    props: Omit<PropertyAggregateProps, 'id' | 'activo' | 'creadoEn'>,
+    props: Omit<PropertyAggregateProps, 'id' | 'activo'>,
   ): PropertyAggregate {
     return new PropertyAggregate({
       ...props,
       id: null,
       activo: true,
-      creadoEn: new Date(),
     });
   }
 
@@ -294,10 +287,6 @@ export class PropertyAggregate {
 
   get activo(): boolean {
     return this._activo;
-  }
-
-  get creadoEn(): Date | undefined {
-    return this._creadoEn;
   }
 
   get ambientes(): number | null {

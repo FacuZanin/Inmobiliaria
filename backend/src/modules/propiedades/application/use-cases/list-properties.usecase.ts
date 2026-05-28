@@ -1,9 +1,15 @@
 // backend\src\modules\propiedades\application\use-cases\list-properties.usecase.ts
 
+// backend/src/modules/propiedades/application/use-cases/list-properties.usecase.ts
+
 import { Inject, Injectable } from '@nestjs/common';
-import type { PropertyRepositoryPort } from '../ports/property-repository.port';
-import { PropertyAggregate } from '../../domain/entities/property.aggregate';
+
 import { PROPERTY_REPOSITORY } from '../tokens';
+
+import type { PropertyRepositoryPort } from '../ports/property-repository.port';
+
+import { PublicPropertiesQueryDto } from '../dto/public-properties-query.dto';
+import { PaginatedResponseDto } from '@/shared/application/dto/paginated-response.dto';
 
 @Injectable()
 export class ListPropertiesUseCase {
@@ -12,22 +18,14 @@ export class ListPropertiesUseCase {
     private readonly repo: PropertyRepositoryPort,
   ) {}
 
-  async execute(filters: any = {}, limit = 20, offset = 0) {
-    const result = await this.repo.findAll(filters, {
-      limit,
-      offset,
-    });
+  async execute(query: PublicPropertiesQueryDto) {
+    const result = await this.repo.findAll(query);
 
-    return {
-      items: result.items,
-      pagination: {
-        total: result.total,
-        limit,
-        offset,
-        totalPages: Math.ceil(result.total / limit),
-        hasNext: offset + limit < result.total,
-        hasPrev: offset > 0,
-      },
-    };
+    return new PaginatedResponseDto(
+      result.items,
+      result.total,
+      query.page,
+      query.limit,
+    );
   }
 }

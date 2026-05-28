@@ -37,7 +37,6 @@ export class PropertyMapper {
       status: entity.status,
       moderationStatus: entity.moderationStatus,
       moderationReason: entity.moderationReason,
-      creadoEn: entity.creadoEn,
 
       ambientes: entity.ambientes ?? null,
       dormitorios: entity.dormitorios ?? null,
@@ -91,7 +90,6 @@ export class PropertyMapper {
       moderationReason: property.moderationReason,
       creadoPorId: property.creadoPorId ?? undefined,
       agenciaId: property.agenciaId ?? undefined,
-      creadoEn: property.creadoEn,
     };
   }
 }

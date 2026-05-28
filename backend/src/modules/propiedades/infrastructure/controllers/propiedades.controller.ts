@@ -34,7 +34,7 @@ import { ViewPropertyUseCase } from '@modules/propiedades/application/use-cases/
 
 import { CreatePropertyDTO } from '@modules/propiedades/application/dto/create-property.dto';
 import { UpdatePropertyDTO } from '@modules/propiedades/application/dto/update-property.dto';
-import { FilterPropiedadesDto } from '@modules/propiedades/application/dto/filter-propiedades.dto';
+import { PublicPropertiesQueryDto } from '@modules/propiedades/application/dto/public-properties-query.dto';
 import { PropertyResponseDto } from '@modules/propiedades/application/dto/property-response.dto';
 
 import { PropertyResponseMapper } from '@modules/propiedades/application/mappers/property-response.mapper';
@@ -116,17 +116,18 @@ export class PropiedadesController {
   @ApiOperation({
     summary: 'Listar propiedades',
   })
-  async findAll(@Query() query: FilterPropiedadesDto) {
-    const { items, pagination } = await this.listProperties.execute(
-      query,
-      query.limit,
-      query.offset,
-    );
+  @Get()
+  @Public()
+  @ApiOperation({
+    summary: 'Listar propiedades',
+  })
+  async findAll(@Query() query: PublicPropertiesQueryDto) {
+    const result = await this.listProperties.execute(query);
 
     return {
       success: true,
-      pagination,
-      items: items.map(PropertyResponseMapper.toResponse),
+      ...result,
+      data: result.data.map(PropertyResponseMapper.toResponse),
     };
   }
 

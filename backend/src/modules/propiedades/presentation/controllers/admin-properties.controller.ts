@@ -20,8 +20,11 @@ import { ApprovePropertyUseCase } from '@/modules/propiedades/application/use-ca
 import { RejectPropertyUseCase } from '@/modules/propiedades/application/use-cases/moderation/reject-property.usecase';
 import { ObservePropertyUseCase } from '@/modules/propiedades/application/use-cases/moderation/observe-property.usecase';
 import { PausePropertyUseCase } from '@/modules/propiedades/application/use-cases/moderation/pause-property.usecase';
-import { ListPendingModerationUseCase } from '@/modules/propiedades/application/use-cases/list-pending-moderation.usecase';
+import { ListPendingModerationUseCase } from '@modules/propiedades/application/use-cases/moderation/list-pending-moderation.usecase';
+import { ListPropertiesByModerationStatusUseCase } from '@/modules/propiedades/application/use-cases/moderation/list-properties-by-moderation-status.usecase';
+
 import { ObservarPublicacionDto } from '@/modules/propiedades/application/dto/observar-publicacion.dto';
+import { AdminPropertiesQueryDto } from '@/modules/propiedades/application/dto/admin-properties-query.dto';
 
 @ApiTags('Admin - Propiedades')
 @ApiBearerAuth('access-token')
@@ -33,6 +36,8 @@ export class AdminPropertiesController {
     private readonly observeUC: ObservePropertyUseCase,
     private readonly pauseUC: PausePropertyUseCase,
     private readonly listPendingUC: ListPendingModerationUseCase,
+    private readonly listByStatusUC: ListPropertiesByModerationStatusUseCase,
+    private readonly listByModerationStatusUC: ListPropertiesByModerationStatusUseCase,
   ) {}
 
   @Get('pendientes')
@@ -40,11 +45,8 @@ export class AdminPropertiesController {
   @ApiOperation({
     summary: 'Listar publicaciones pendientes de moderación',
   })
-  pendientes(@Query('limit') limit?: string, @Query('offset') offset?: string) {
-    return this.listPendingUC.execute(
-      limit ? Number(limit) : 20,
-      offset ? Number(offset) : 0,
-    );
+  pendientes(@Query() query: AdminPropertiesQueryDto) {
+    return this.listPendingUC.execute(query);
   }
 
   @Patch(':id/aprobar')
@@ -82,15 +84,7 @@ export class AdminPropertiesController {
   @ApiOperation({
     summary: 'Listar publicaciones por estado de moderación',
   })
-  findAll(
-    @Query('status') status?: PublicacionStatus,
-    @Query('limit') limit?: string,
-    @Query('offset') offset?: string,
-  ) {
-    return this.listByStatusUC.execute({
-      status,
-      limit: limit ? Number(limit) : 20,
-      offset: offset ? Number(offset) : 0,
-    });
+  findAll(@Query() query: AdminPropertiesQueryDto) {
+    return this.listByModerationStatusUC.execute(query);
   }
 }
