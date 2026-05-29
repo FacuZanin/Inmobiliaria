@@ -1,7 +1,5 @@
 // backend/src/modules/propiedades/application/use-cases/create-property.usecase.ts
 
-// backend/src/modules/propiedades/application/use-cases/create-property.usecase.ts
-
 import {
   Inject,
   Injectable,
@@ -10,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import type { PropertyRepositoryPort } from '../ports/property-repository.port';
+import type { DomainEventPublisherPort } from '@/shared/application/ports/domain-event-publisher.port';
 import type { CreatePropertyDTO } from '../dto/create-property.dto';
 
 import { PropertyAggregate } from '../../domain/entities/property.aggregate';
@@ -31,7 +30,11 @@ import { PropertyLimitsService } from '@/modules/subscriptions/application/servi
 
 import { PropertyPublisherPolicy } from '@/shared/security/policies/property-publisher.policy';
 
-import { PROPERTY_REPOSITORY } from '../tokens';
+import {
+  DOMAIN_EVENT_PUBLISHER,
+  PROPERTY_REPOSITORY,
+} from '../tokens';
+import { PropertyPublishedEvent } from '../../domain/events/property-published.event';
 
 import {
   CasaDetails,
@@ -53,6 +56,9 @@ export class CreatePropertyUseCase {
     private readonly propertyLimitsService: PropertyLimitsService,
 
     private readonly publisherPolicy: PropertyPublisherPolicy,
+
+    @Inject(DOMAIN_EVENT_PUBLISHER)
+    private readonly eventPublisher: DomainEventPublisherPort,
   ) {}
 
   async execute(
@@ -199,7 +205,24 @@ export class CreatePropertyUseCase {
     // GUARDAR
     // =========================================================
 
-    return this.repo.save(property);
+    const savedProperty = await this.repo.save(property);
+
+    if (savedProperty.id !== null) {
+      await this.eventPublisher.publish(
+        new PropertyPublishedEvent({
+          propertyId: savedProperty.id,
+          title: savedProperty.titulo,
+          type: savedProperty.tipo,
+          operation: savedProperty.operacion,
+          commercialStatus: savedProperty.status,
+          moderationStatus: savedProperty.moderationStatus,
+          ownerId: savedProperty.creadoPorId,
+          agencyId: savedProperty.agenciaId,
+        }),
+      );
+    }
+
+    return savedProperty;
   }
 
   // ===========================================================

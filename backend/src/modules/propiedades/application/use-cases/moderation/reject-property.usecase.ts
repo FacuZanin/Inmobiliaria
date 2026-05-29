@@ -31,7 +31,7 @@ export class RejectPropertyUseCase {
       );
     }
 
-    property.reject();
+    property.reject(reason);
 
     return this.propertyRepository.save(
       property,

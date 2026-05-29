@@ -1,8 +1,9 @@
 // backend\src\app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { BullModule } from '@nestjs/bullmq';
 
 import { AuditInterceptor } from '@/shared/infrastructure/interceptors/audit.interceptor';
 
@@ -48,6 +49,18 @@ import { HealthModule } from './health/health.module';
         limit: 10,
       },
     ]),
+
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        connection: {
+          host: config.get<string>('REDIS_HOST', '127.0.0.1'),
+          port: Number(config.get('REDIS_PORT', 6379)),
+          password: config.get<string>('REDIS_PASSWORD') || undefined,
+          db: Number(config.get('REDIS_DB', 0)),
+        },
+      }),
+    }),
 
     // DB
     TypeOrmModule.forRoot(ormconfig),

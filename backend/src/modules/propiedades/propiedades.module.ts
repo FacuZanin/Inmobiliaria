@@ -1,5 +1,6 @@
 // backend\src\modules\propiedades\propiedades.module.ts
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
@@ -21,7 +22,11 @@ import { PropertyTypeOrmRepository } from './infrastructure/persistence/typeorm/
 
 import { DocsCheckerImpl } from './infrastructure/docs/docs-checker.impl';
 
-import { PROPERTY_REPOSITORY, DOCS_CHECKER } from './application/tokens';
+import {
+  DOMAIN_EVENT_PUBLISHER,
+  PROPERTY_REPOSITORY,
+  DOCS_CHECKER,
+} from './application/tokens';
 
 import { CreatePropertyUseCase } from './application/use-cases/create-property.usecase';
 import { UpdatePropertyUseCase } from './application/use-cases/update-property.usecase';
@@ -45,6 +50,10 @@ import { AuthorizationService } from '@/shared/security/services/authorization.s
 import { PropertyOwnershipPolicy } from '@/shared/security/policies/property-ownership.policy';
 import { PublicacionOwnershipPolicy } from '@/shared/security/policies/publicacion-ownership.policy';
 import { UserOwnershipPolicy } from '@/shared/security/policies/user-ownership.policy';
+import { QueueDomainEventPublisher } from '@/shared/infrastructure/events/queue-domain-event-publisher';
+import { DOMAIN_EVENTS_QUEUE } from '@/shared/infrastructure/queues/queues.constants';
+import { DomainEventsProcessor } from './application/event-handlers/domain-events.processor';
+import { PropertyPublishedHandler } from './application/event-handlers/property-published.handler';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -58,6 +67,9 @@ import { UserOwnershipPolicy } from '@/shared/security/policies/user-ownership.p
       PropiedadPH,
       PropiedadPozo,
     ]),
+    BullModule.registerQueue({
+      name: DOMAIN_EVENTS_QUEUE,
+    }),
     PropietarioDocumentosModule,
     SubscriptionsModule,
   ],
@@ -72,6 +84,10 @@ import { UserOwnershipPolicy } from '@/shared/security/policies/user-ownership.p
       provide: DOCS_CHECKER,
       useClass: DocsCheckerImpl,
     },
+    {
+      provide: DOMAIN_EVENT_PUBLISHER,
+      useClass: QueueDomainEventPublisher,
+    },
 
     // USE CASES
     CreatePropertyUseCase,
@@ -85,6 +101,9 @@ import { UserOwnershipPolicy } from '@/shared/security/policies/user-ownership.p
     ObservePropertyUseCase,
     PausePropertyUseCase,
     ListPropertiesByModerationStatusUseCase,
+    // EVENT HANDLERS
+    PropertyPublishedHandler,
+    DomainEventsProcessor,
     // SERVICES
     PropertyApplicationService,
     AuthorizationService,

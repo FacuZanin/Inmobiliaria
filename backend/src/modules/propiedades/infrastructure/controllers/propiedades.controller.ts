@@ -20,9 +20,12 @@ import { User } from '../../../user/domain/entities/user.entity';
 import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
 import { Roles } from '@/shared/security/decorators/roles.decorator';
 import { Public } from '@/shared/security/decorators/public.decorator';
+import { Audit } from '@/shared/security/decorators/audit.decorator';
 
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
+import { AuditAction } from '@shared/contracts/enums/audit-action.enum';
+import { AuditEntity } from '@shared/contracts/enums/audit-entity.enum';
 
 import { PROPERTY_PUBLISHERS } from '@/modules/user/domain/capabilities/property-publishers';
 
@@ -55,6 +58,10 @@ export class PropiedadesController {
   ) {}
 
   @Post()
+  @Audit({
+    action: AuditAction.CREATE_PROPERTY,
+    entity: AuditEntity.PROPERTY,
+  })
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
@@ -82,6 +89,10 @@ export class PropiedadesController {
   }
 
   @Patch(':id')
+  @Audit({
+    action: AuditAction.UPDATE_PROPERTY,
+    entity: AuditEntity.PROPERTY,
+  })
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
@@ -97,6 +108,10 @@ export class PropiedadesController {
   }
 
   @Delete(':id')
+  @Audit({
+    action: AuditAction.DELETE_PROPERTY,
+    entity: AuditEntity.PROPERTY,
+  })
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   async delete(
@@ -111,11 +126,6 @@ export class PropiedadesController {
     };
   }
 
-  @Get()
-  @Public()
-  @ApiOperation({
-    summary: 'Listar propiedades',
-  })
   @Get()
   @Public()
   @ApiOperation({

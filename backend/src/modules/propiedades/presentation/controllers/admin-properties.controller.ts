@@ -12,9 +12,12 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '@/shared/security/decorators/auth.decorator';
+import { Audit } from '@/shared/security/decorators/audit.decorator';
 
 import { Permission } from '@shared/contracts/enums/permission.enum';
 import { PublicacionStatus } from '@shared/contracts/enums/publicacion-status.enum';
+import { AuditAction } from '@shared/contracts/enums/audit-action.enum';
+import { AuditEntity } from '@shared/contracts/enums/audit-entity.enum';
 
 import { ApprovePropertyUseCase } from '@/modules/propiedades/application/use-cases/moderation/approve-property.usecase';
 import { RejectPropertyUseCase } from '@/modules/propiedades/application/use-cases/moderation/reject-property.usecase';
@@ -36,7 +39,6 @@ export class AdminPropertiesController {
     private readonly observeUC: ObservePropertyUseCase,
     private readonly pauseUC: PausePropertyUseCase,
     private readonly listPendingUC: ListPendingModerationUseCase,
-    private readonly listByStatusUC: ListPropertiesByModerationStatusUseCase,
     private readonly listByModerationStatusUC: ListPropertiesByModerationStatusUseCase,
   ) {}
 
@@ -51,12 +53,20 @@ export class AdminPropertiesController {
 
   @Patch(':id/aprobar')
   @Auth(Permission.PUBLICACION_APPROVE)
+  @Audit({
+    action: AuditAction.APPROVE_PUBLICACION,
+    entity: AuditEntity.PROPERTY,
+  })
   aprobar(@Param('id', ParseIntPipe) id: number) {
     return this.approveUC.execute(id);
   }
 
   @Patch(':id/rechazar')
   @Auth(Permission.PUBLICACION_REJECT)
+  @Audit({
+    action: AuditAction.REJECT_PUBLICACION,
+    entity: AuditEntity.PROPERTY,
+  })
   rechazar(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ObservarPublicacionDto,
@@ -66,6 +76,10 @@ export class AdminPropertiesController {
 
   @Patch(':id/observar')
   @Auth(Permission.PUBLICACION_OBSERVE)
+  @Audit({
+    action: AuditAction.UPDATE_PUBLICACION,
+    entity: AuditEntity.PROPERTY,
+  })
   observar(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: ObservarPublicacionDto,
@@ -75,6 +89,10 @@ export class AdminPropertiesController {
 
   @Patch(':id/pausar')
   @Auth(Permission.PUBLICACION_PAUSE)
+  @Audit({
+    action: AuditAction.PAUSE_PUBLICACION,
+    entity: AuditEntity.PROPERTY,
+  })
   pausar(@Param('id', ParseIntPipe) id: number) {
     return this.pauseUC.execute(id);
   }
