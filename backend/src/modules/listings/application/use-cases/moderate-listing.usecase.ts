@@ -1,5 +1,3 @@
-// backend/src/modules/listings/application/use-cases/moderate-listing.usecase.ts
-
 import {
   Inject,
   Injectable,
@@ -8,49 +6,42 @@ import {
 
 import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
 
-import type { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
+import { ModerationStatus } from '../../domain/enums/moderation-status.enum';
 
-import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';
+import { ListingRepositoryPort } from '../../domain/repositories/listing.repository.port';
 
 @Injectable()
 export class ModerateListingUseCase {
   constructor(
     @Inject(LISTING_REPOSITORY)
-    private readonly listingRepository: ListingRepositoryPort,
+    private readonly repository: ListingRepositoryPort,
   ) {}
 
-  async approve(listingId: number) {
+  async execute(params: {
+    listingId: number;
+    approved: boolean;
+    reason?: string;
+  }) {
     const listing =
-      await this.listingRepository.findById(listingId);
+      await this.repository.findById(
+        params.listingId,
+      );
 
     if (!listing) {
-      throw new NotFoundException('Listing not found');
+      throw new NotFoundException(
+        'Listing not found',
+      );
     }
 
-    listing.approveModeration();
-
-    return this.listingRepository.update(
-      listing.id,
-      listing,
-    );
-  }
-
-  async reject(
-    listingId: number,
-    reason: string,
-  ) {
-    const listing =
-      await this.listingRepository.findById(listingId);
-
-    if (!listing) {
-      throw new NotFoundException('Listing not found');
+    if (params.approved) {
+      listing.approveModeration();
+    } else {
+      listing.rejectModeration(
+        params.reason ??
+          'Rejected by moderation',
+      );
     }
 
-    listing.rejectModeration(reason);
-
-    return this.listingRepository.update(
-      listing.id,
-      listing,
-    );
+    return this.repository.save(listing);
   }
 }

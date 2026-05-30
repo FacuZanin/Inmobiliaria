@@ -3,4 +3,3 @@ export declare enum UserStatus {
     PENDING = "PENDING",
     REJECTED = "REJECTED"
 }
-//# sourceMappingURL=user-status.enum.d.ts.map

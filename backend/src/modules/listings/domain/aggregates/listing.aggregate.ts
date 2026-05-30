@@ -12,6 +12,10 @@ import { MediaProcessingStatus } from '@modules/listings/domain/enums/media-proc
 
 import type { ListingMediaEntity } from '@modules/listings/domain/entities/listing-media.entity';
 
+import { PricingVO } from '../value-objects/pricing.vo';
+import { LocationVO } from '../value-objects/location.vo';
+import { FeaturesVO } from '../value-objects/features.vo';
+
 type ListingAggregateProps = {
   id?: number | null;
 
@@ -108,20 +112,9 @@ export class ListingAggregate {
     expenses?: number | null;
   };
 
-  private _location: {
-    address?: string | null;
-    city?: string | null;
-    latitude?: number | null;
-    longitude?: number | null;
-  };
+  private _location: LocationVO;
 
-  private _features: {
-    rooms?: number | null;
-    bedrooms?: number | null;
-    bathrooms?: number | null;
-    coveredArea?: number | null;
-    totalArea?: number | null;
-  };
+  private _features: FeaturesVO;
 
   private _details: Record<string, any>;
 
@@ -165,11 +158,11 @@ export class ListingAggregate {
 
     this._slug = props.slug ?? null;
 
-    this._pricing = props.pricing ?? {};
+    this._pricing = props.pricing ?? new PricingVO({});
 
-    this._location = props.location ?? {};
+    this._location = props.location ?? new LocationVO({});
 
-    this._features = props.features ?? {};
+    this._features = props.features ?? new FeaturesVO({});
 
     this._details = props.details ?? {};
 
@@ -334,6 +327,16 @@ export class ListingAggregate {
 
   publish() {
     // =====================================================
+    // MODERATION VALIDATION
+    // =====================================================
+
+    if (this._moderationStatus !== ModerationStatus.APPROVED) {
+      throw new BadRequestException(
+        'Listing must be approved before publishing',
+      );
+    }
+
+    // =====================================================
     // MEDIA VALIDATION
     // =====================================================
 
@@ -351,7 +354,7 @@ export class ListingAggregate {
     // PRICING VALIDATION
     // =====================================================
 
-    if (!this._pricing.salePrice && !this._pricing.rentalPrice) {
+    if (!this._pricing.hasValidPrice()) {
       throw new BadRequestException(
         'Listing requires pricing before publishing',
       );
@@ -361,7 +364,7 @@ export class ListingAggregate {
     // LOCATION VALIDATION
     // =====================================================
 
-    if (!this._location.address) {
+    if (!this._location.hasValidAddress()) {
       throw new BadRequestException(
         'Listing requires location before publishing',
       );
@@ -421,10 +424,10 @@ export class ListingAggregate {
     rentalPrice?: number | null;
     expenses?: number | null;
   }) {
-    this._pricing = {
-      ...this._pricing,
+    this._pricing = new PricingVO({
+      ...this._pricing.toPrimitives(),
       ...pricing,
-    };
+    });
   }
 
   updateLocation(location: {
@@ -433,10 +436,10 @@ export class ListingAggregate {
     latitude?: number | null;
     longitude?: number | null;
   }) {
-    this._location = {
-      ...this._location,
+    this._location = new LocationVO({
+      ...this._location.toPrimitives(),
       ...location,
-    };
+    });
   }
 
   updateFeatures(features: {
@@ -446,10 +449,10 @@ export class ListingAggregate {
     coveredArea?: number | null;
     totalArea?: number | null;
   }) {
-    this._features = {
-      ...this._features,
+    this._features = new FeaturesVO({
+      ...this._features.toPrimitives(),
       ...features,
-    };
+    });
   }
 
   updateDetails(details: Record<string, any>) {
@@ -467,8 +470,6 @@ export class ListingAggregate {
       if (item.isPrimary) {
         this.clearPrimaryMedia();
       }
-
-      item.assignListing(this._id!);
 
       this._media.push(item);
     }

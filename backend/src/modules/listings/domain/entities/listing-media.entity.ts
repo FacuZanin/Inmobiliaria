@@ -23,7 +23,7 @@ type ListingMediaProps = {
 
   sizeInBytes?: number | null;
 
-  order?: number;
+  sortOrder?: number;
 
   isPrimary?: boolean;
 
@@ -32,6 +32,12 @@ type ListingMediaProps = {
   metadata?: MediaMetadataVO | null;
 
   createdAt?: Date;
+
+  thumbnailUrl?: string | null;
+
+  filename?: string | null;
+
+  processingError?: string | null;
 };
 
 export class ListingMediaEntity {
@@ -49,7 +55,7 @@ export class ListingMediaEntity {
 
   private _sizeInBytes: number | null;
 
-  private _order: number;
+  private _sortOrder: number;
 
   private _isPrimary: boolean;
 
@@ -58,6 +64,12 @@ export class ListingMediaEntity {
   private _metadata: MediaMetadataVO | null;
 
   private _createdAt?: Date;
+
+  private _thumbnailUrl: string | null;
+
+  private _filename: string | null;
+
+  private _processingError: string | null;
 
   private constructor(props: ListingMediaProps) {
     this.validate(props);
@@ -74,22 +86,24 @@ export class ListingMediaEntity {
 
     this._mimeType = props.mimeType;
 
-    this._sizeInBytes =
-      props.sizeInBytes ?? null;
+    this._sizeInBytes = props.sizeInBytes ?? null;
 
-    this._order = props.order ?? 0;
+    this._sortOrder = props.sortOrder ?? 0;
 
-    this._isPrimary =
-      props.isPrimary ?? false;
+    this._isPrimary = props.isPrimary ?? false;
 
     this._processingStatus =
-      props.processingStatus ??
-      MediaProcessingStatus.PENDING;
+      props.processingStatus ?? MediaProcessingStatus.PENDING;
 
-    this._metadata =
-      props.metadata ?? null;
+    this._metadata = props.metadata ?? null;
 
     this._createdAt = props.createdAt;
+
+    this._thumbnailUrl = props.thumbnailUrl ?? null;
+
+    this._filename = props.filename ?? null;
+
+    this._processingError = props.processingError ?? null;
   }
 
   // =====================================================
@@ -99,22 +113,16 @@ export class ListingMediaEntity {
   static create(
     props: Omit<
       ListingMediaProps,
-      | 'id'
-      | 'listingId'
-      | 'processingStatus'
-      | 'createdAt'
+      'id' | 'listingId' | 'processingStatus' | 'createdAt'
     >,
   ) {
     return new ListingMediaEntity({
       ...props,
-      processingStatus:
-        MediaProcessingStatus.PENDING,
+      processingStatus: MediaProcessingStatus.PENDING,
     });
   }
 
-  static rehydrate(
-    props: ListingMediaProps,
-  ) {
+  static rehydrate(props: ListingMediaProps) {
     return new ListingMediaEntity(props);
   }
 
@@ -150,8 +158,8 @@ export class ListingMediaEntity {
     return this._sizeInBytes;
   }
 
-  get order() {
-    return this._order;
+  get sortOrder() {
+    return this._sortOrder;
   }
 
   get isPrimary() {
@@ -170,6 +178,18 @@ export class ListingMediaEntity {
     return this._createdAt;
   }
 
+  get thumbnailUrl() {
+    return this._thumbnailUrl;
+  }
+
+  get filename() {
+    return this._filename;
+  }
+
+  get processingError() {
+    return this._processingError;
+  }
+
   // =====================================================
   // DOMAIN RULES
   // =====================================================
@@ -183,33 +203,29 @@ export class ListingMediaEntity {
   }
 
   markAsProcessing() {
-    this._processingStatus =
-      MediaProcessingStatus.PROCESSING;
+    this._processingStatus = MediaProcessingStatus.PROCESSING;
   }
 
   markAsReady() {
-    this._processingStatus =
-      MediaProcessingStatus.READY;
+    this._processingStatus = MediaProcessingStatus.READY;
   }
 
-  markAsFailed() {
-    this._processingStatus =
-      MediaProcessingStatus.FAILED;
+  markAsFailed(error?: string) {
+    this._processingStatus = MediaProcessingStatus.FAILED;
+
+    this._processingError = error ?? null;
   }
 
   reject() {
-    this._processingStatus =
-      MediaProcessingStatus.REJECTED;
+    this._processingStatus = MediaProcessingStatus.REJECTED;
   }
 
-  updateOrder(order: number) {
-    if (order < 0) {
-      throw new BadRequestException(
-        'Invalid media order',
-      );
+  updateSortOrder(SortOrder: number) {
+    if (SortOrder < 0) {
+      throw new BadRequestException('Invalid media order');
     }
 
-    this._order = order;
+    this._sortOrder = SortOrder;
   }
 
   setListingId(listingId: number) {
@@ -222,34 +238,21 @@ export class ListingMediaEntity {
   // VALIDATIONS
   // =====================================================
 
-  private validate(
-    props: ListingMediaProps,
-  ) {
+  private validate(props: ListingMediaProps) {
     if (!props.url?.trim()) {
-      throw new BadRequestException(
-        'Media URL is required',
-      );
+      throw new BadRequestException('Media URL is required');
     }
 
     if (!props.storageKey?.trim()) {
-      throw new BadRequestException(
-        'Media storageKey is required',
-      );
+      throw new BadRequestException('Media storageKey is required');
     }
 
     if (!props.mimeType?.trim()) {
-      throw new BadRequestException(
-        'Media mimeType is required',
-      );
+      throw new BadRequestException('Media mimeType is required');
     }
 
-    if (
-      props.sizeInBytes != null &&
-      props.sizeInBytes < 0
-    ) {
-      throw new BadRequestException(
-        'Invalid media size',
-      );
+    if (props.sizeInBytes != null && props.sizeInBytes < 0) {
+      throw new BadRequestException('Invalid media size');
     }
   }
 }

@@ -6,7 +6,9 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 
-import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
+import {
+  LISTING_REPOSITORY,
+} from '@modules/listings/application/tokens';
 
 import type { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
 
@@ -14,59 +16,121 @@ import { CreateListingDto } from '@modules/listings/application/dto/create-listi
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
-import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
+import { PricingVO } from '@modules/listings/domain/value-objects/pricing.vo';
+
+import { LocationVO } from '@modules/listings/domain/value-objects/location.vo';
+
+import { FeaturesVO } from '@modules/listings/domain/value-objects/features.vo';
+
+import { ListingSlugGeneratorService } from '@modules/listings/domain/services/listing-slug-generator.service';
 
 @Injectable()
 export class CreateListingUseCase {
   constructor(
     @Inject(LISTING_REPOSITORY)
     private readonly listingRepository: ListingRepositoryPort,
+
+    private readonly slugGenerator: ListingSlugGeneratorService,
   ) {}
 
   async execute(
     dto: CreateListingDto,
     ownerId: number,
   ): Promise<ListingAggregate> {
-    if (!dto.title) {
-      throw new BadRequestException('Title is required');
+    // =====================================================
+    // VALIDATIONS
+    // =====================================================
+
+    if (!dto.title?.trim()) {
+      throw new BadRequestException(
+        'Title is required',
+      );
     }
+
+    // =====================================================
+    // GENERATE SEO SLUG
+    // =====================================================
+
+    const slug =
+      await this.slugGenerator.generate({
+        title: dto.title,
+
+        city: dto.city,
+
+        propertyType: dto.propertyType,
+
+        operationType: dto.operationType,
+      });
+
+    // =====================================================
+    // CREATE AGGREGATE
+    // =====================================================
 
     const listing = ListingAggregate.create({
       title: dto.title,
-      description: dto.description,
+
+      description: dto.description ?? null,
+
+      slug,
+
       propertyType: dto.propertyType,
+
       operationType: dto.operationType,
 
       ownerId,
 
-      status: ListingStatus.DRAFT,
+      pricing: new PricingVO({
+        salePrice:
+          dto.salePrice ?? null,
 
-      pricing: {
-        salePrice: dto.salePrice ?? null,
-        rentalPrice: dto.rentalPrice ?? null,
-        expenses: dto.expenses ?? null,
-      },
+        rentalPrice:
+          dto.rentalPrice ?? null,
 
-      location: {
-        address: dto.address,
-        city: dto.city,
-        latitude: dto.latitude,
-        longitude: dto.longitude,
-      },
+        expenses:
+          dto.expenses ?? null,
+      }),
 
-      features: {
-        bedrooms: dto.bedrooms,
-        bathrooms: dto.bathrooms,
-        rooms: dto.rooms,
-        coveredArea: dto.coveredArea,
-        totalArea: dto.totalArea,
-      },
+      location: new LocationVO({
+        address:
+          dto.address ?? null,
+
+        city: dto.city ?? null,
+
+        latitude:
+          dto.latitude ?? null,
+
+        longitude:
+          dto.longitude ?? null,
+      }),
+
+      features: new FeaturesVO({
+        bedrooms:
+          dto.bedrooms ?? null,
+
+        bathrooms:
+          dto.bathrooms ?? null,
+
+        rooms:
+          dto.rooms ?? null,
+
+        coveredArea:
+          dto.coveredArea ?? null,
+
+        totalArea:
+          dto.totalArea ?? null,
+      }),
 
       details: dto.details ?? {},
 
       media: [],
     });
 
-    return this.listingRepository.save(listing);
+    // =====================================================
+    // SAVE
+    // =====================================================
+
+    return this.listingRepository.save(
+      listing,
+    );
   }
 }

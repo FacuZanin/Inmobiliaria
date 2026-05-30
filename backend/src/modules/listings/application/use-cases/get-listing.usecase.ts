@@ -6,23 +6,27 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
+import {
+  LISTING_REPOSITORY,
+} from '@modules/listings/application/tokens';
 
-import type { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
+import { ListingRepositoryPort } from '../../domain/repositories/listing.repository.port';
 
 @Injectable()
 export class GetListingUseCase {
   constructor(
     @Inject(LISTING_REPOSITORY)
-    private readonly listingRepository: ListingRepositoryPort,
+    private readonly repository: ListingRepositoryPort,
   ) {}
 
-  async execute(listingId: number) {
+  async execute(id: number) {
     const listing =
-      await this.listingRepository.findById(listingId);
+      await this.repository.findById(id);
 
     if (!listing) {
-      throw new NotFoundException('Listing not found');
+      throw new NotFoundException(
+        'Listing not found',
+      );
     }
 
     return listing;

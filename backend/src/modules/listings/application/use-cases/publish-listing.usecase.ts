@@ -8,28 +8,27 @@ import {
 
 import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
 
-import type { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
+import { ListingRepositoryPort } from '../../domain/repositories/listing.repository.port';
 
 @Injectable()
 export class PublishListingUseCase {
   constructor(
     @Inject(LISTING_REPOSITORY)
-    private readonly listingRepository: ListingRepositoryPort,
+    private readonly repository: ListingRepositoryPort,
   ) {}
 
-  async execute(listingId: number) {
+  async execute(id: number) {
     const listing =
-      await this.listingRepository.findById(listingId);
+      await this.repository.findById(id);
 
     if (!listing) {
-      throw new NotFoundException('Listing not found');
+      throw new NotFoundException(
+        'Listing not found',
+      );
     }
 
     listing.publish();
 
-    return this.listingRepository.update(
-      listing.id,
-      listing,
-    );
+    return this.repository.save(listing);
   }
 }
