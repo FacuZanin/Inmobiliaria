@@ -1,4 +1,5 @@
-// backend\src\modules\favoritos\domain\entities\favorite.entity.ts
+// backend/src/modules/favoritos/domain/entities/favorite.entity.ts
+
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,10 +10,11 @@ import {
 } from 'typeorm';
 
 import { User } from '@/modules/user/domain/entities/user.entity';
-import { PropertyEntity } from '@/modules/propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
 
-@Entity('favoritos')
-@Unique(['user', 'property'])
+import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/entities/listing.orm-entity';
+
+@Entity('favorites')
+@Unique(['user', 'listing'])
 export class Favorite {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -24,10 +26,10 @@ export class Favorite {
   user!: User;
 
   @Index()
-  @ManyToOne(() => PropertyEntity, {
+  @ManyToOne(() => ListingOrmEntity, {
     onDelete: 'CASCADE',
   })
-  property!: PropertyEntity;
+  listing!: ListingOrmEntity;
 
   @CreateDateColumn()
   createdAt!: Date;
