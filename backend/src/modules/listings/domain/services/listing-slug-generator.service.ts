@@ -12,7 +12,6 @@ import {
 import type { ListingRepositoryPort } from '../repositories/listing.repository.port';
 
 import { OperationType } from '../enums/operation-type.enum';
-
 import { PropertyType } from '../enums/property-type.enum';
 
 @Injectable()
@@ -31,9 +30,6 @@ export class ListingSlugGeneratorService {
 
     operationType: OperationType;
   }): Promise<string> {
-    // =====================================================
-    // BUILD SEO BASE
-    // =====================================================
 
     const parts = [
       params.propertyType,
@@ -44,15 +40,7 @@ export class ListingSlugGeneratorService {
       .filter(Boolean)
       .join(' ');
 
-    // =====================================================
-    // SLUGIFY
-    // =====================================================
-
     const baseSlug = this.slugify(parts);
-
-    // =====================================================
-    // UNIQUE TOKEN
-    // =====================================================
 
     const token =
       Math.random()
@@ -61,10 +49,6 @@ export class ListingSlugGeneratorService {
 
     const slug =
       `${baseSlug}-${token}`;
-
-    // =====================================================
-    // SAFETY CHECK
-    // =====================================================
 
     const exists =
       await this.listingRepository.existsBySlug(

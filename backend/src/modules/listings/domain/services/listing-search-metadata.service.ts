@@ -8,7 +8,7 @@ export class ListingSearchMetadataService {
     return {
       id: listing.id,
       title: listing.title,
-      city: listing.location.city,
+      city: listing.location.address?.city ?? null,
       propertyType: listing.propertyType,
       operationType: listing.operationType,
       status: listing.status,

@@ -1,6 +1,7 @@
 // backend/src/modules/listings/domain/repositories/listing.repository.port.ts
 
 import { ListingAggregate } from '../aggregates/listing.aggregate';
+
 import { ListingStatus } from '../enums/listing-status.enum';
 import { ListingVisibility } from '../enums/listing-visibility.enum';
 import { ModerationStatus } from '../enums/moderation-status.enum';

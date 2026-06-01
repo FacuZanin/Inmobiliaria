@@ -18,26 +18,20 @@ import {
 } from '@nestjs/swagger';
 
 import { Auth } from '@/shared/security/decorators/auth.decorator';
-
 import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
 
 import { Permission } from '@shared/contracts/enums/permission.enum';
+
 import type { JwtPayload } from '@/modules/auth/application/contracts/jwt-payload.contracts';
 
 import { CreateListingDto } from '@modules/listings/application/dto/create-listing.dto';
-
 import { UpdateListingDto } from '@modules/listings/application/dto/update-listing.dto';
 
 import { CreateListingUseCase } from '@modules/listings/application/use-cases/create-listing.usecase';
-
 import { UpdateListingUseCase } from '@modules/listings/application/use-cases/update-listing.usecase';
-
 import { PublishListingUseCase } from '@modules/listings/application/use-cases/publish-listing.usecase';
-
 import { PauseListingUseCase } from '@modules/listings/application/use-cases/pause-listing.usecase';
-
 import { ArchiveListingUseCase } from '@modules/listings/application/use-cases/archive-listing.usecase';
-
 import { GetListingUseCase } from '@modules/listings/application/use-cases/get-listing.usecase';
 
 import { ListingOwnershipPolicy } from '@modules/listings/application/policies/listing-ownership.policy';
@@ -62,9 +56,6 @@ export class ListingOwnerController {
     private readonly ownershipPolicy: ListingOwnershipPolicy,
   ) {}
 
-  // =====================================================
-  // CREATE
-  // =====================================================
 
   @Post()
   @Auth(Permission.LISTING_CREATE)
@@ -83,10 +74,6 @@ export class ListingOwnerController {
       user.id ?? user.sub,
     );
   }
-
-  // =====================================================
-  // GET OWN LISTING
-  // =====================================================
 
   @Get(':id')
   @ApiOperation({
@@ -112,10 +99,6 @@ export class ListingOwnerController {
 
     return listing;
   }
-
-  // =====================================================
-  // UPDATE
-  // =====================================================
 
   @Patch(':id')
   @Auth(Permission.LISTING_UPDATE)
@@ -149,10 +132,6 @@ export class ListingOwnerController {
     );
   }
 
-  // =====================================================
-  // PUBLISH
-  // =====================================================
-
   @Post(':id/publish')
   @ApiOperation({
     summary: 'Publish listing',
@@ -179,10 +158,6 @@ export class ListingOwnerController {
       id,
     );
   }
-
-  // =====================================================
-  // PAUSE
-  // =====================================================
 
   @Post(':id/pause')
   @ApiOperation({
@@ -211,9 +186,6 @@ export class ListingOwnerController {
     );
   }
 
-  // =====================================================
-  // ARCHIVE
-  // =====================================================
 
   @Post(':id/archive')
   @ApiOperation({
@@ -241,10 +213,6 @@ export class ListingOwnerController {
       id,
     );
   }
-
-  // =====================================================
-  // DELETE
-  // =====================================================
 
   @Delete(':id')
   @Auth(Permission.LISTING_DELETE)

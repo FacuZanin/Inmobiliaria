@@ -3,7 +3,6 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { ListingMediaType } from '../enums/listing-media-type.enum';
-
 import { MediaProcessingStatus } from '../enums/media-processing-status.enum';
 
 import { MediaMetadataVO } from '../value-objects/media-metadata.vo';
@@ -106,10 +105,6 @@ export class ListingMediaEntity {
     this._processingError = props.processingError ?? null;
   }
 
-  // =====================================================
-  // FACTORIES
-  // =====================================================
-
   static create(
     props: Omit<
       ListingMediaProps,
@@ -125,10 +120,6 @@ export class ListingMediaEntity {
   static rehydrate(props: ListingMediaProps) {
     return new ListingMediaEntity(props);
   }
-
-  // =====================================================
-  // GETTERS
-  // =====================================================
 
   get id() {
     return this._id;
@@ -190,10 +181,6 @@ export class ListingMediaEntity {
     return this._processingError;
   }
 
-  // =====================================================
-  // DOMAIN RULES
-  // =====================================================
-
   markAsPrimary() {
     this._isPrimary = true;
   }
@@ -233,10 +220,6 @@ export class ListingMediaEntity {
       this._listingId = listingId;
     }
   }
-
-  // =====================================================
-  // VALIDATIONS
-  // =====================================================
 
   private validate(props: ListingMediaProps) {
     if (!props.url?.trim()) {

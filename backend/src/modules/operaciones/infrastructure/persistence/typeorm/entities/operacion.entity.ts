@@ -6,9 +6,9 @@ import {
   ManyToOne,
   CreateDateColumn,
 } from 'typeorm';
-import { PropertyEntity } from '../../../../../propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
-import { User } from '../../../../../user/domain/entities/user.entity';
-import { Agencia } from '../../../../../agencias/domain/entities/agencia.entity';
+import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/entities/listing.orm-entity';
+import { User } from '@modules/user/domain/entities/user.entity';
+import { Agencia } from '@modules/agencias/domain/entities/agencia.entity';
 import { MedioOperacion} from '@shared/contracts/enums/medio-operacion.enum';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { OperacionEstado } from '@shared/contracts/enums/operacion-estado.enum';
@@ -31,8 +31,8 @@ export class Operacion {
 @Column({ type: 'enum', enum: MedioOperacion, nullable: true })
 medio!: MedioOperacion | null;
 
-  @ManyToOne(() => PropertyEntity, (p) => p.id, { eager: true })
-  propiedad!: PropertyEntity;
+  @ManyToOne(() => ListingOrmEntity, (l) => l.id, { eager: true })
+  propiedad!: ListingOrmEntity;
 
   @ManyToOne(() => Agencia, (a) => a.id, { nullable: true, eager: true })
   agencia?: Agencia;

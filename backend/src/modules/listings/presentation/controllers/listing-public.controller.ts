@@ -17,11 +17,9 @@ import {
 import { Public } from '@/shared/security/decorators/public.decorator';
 
 import { GetListingUseCase } from '@modules/listings/application/use-cases/get-listing.usecase';
-
 import { SearchListingsUseCase } from '@modules/listings/application/use-cases/search-listings.usecase';
 
 import { OperationType } from '@modules/listings/domain/enums/operation-type.enum';
-
 import { PropertyType } from '@modules/listings/domain/enums/property-type.enum';
 
 @ApiTags('Public Listings')
@@ -32,10 +30,6 @@ export class ListingPublicController {
 
     private readonly searchListingsUseCase: SearchListingsUseCase,
   ) {}
-
-  // =====================================================
-  // GET BY ID
-  // =====================================================
 
   @Public()
   @Get(':id')
@@ -53,10 +47,6 @@ export class ListingPublicController {
       id,
     );
   }
-
-  // =====================================================
-  // SEARCH
-  // =====================================================
 
   @Public()
   @Get()

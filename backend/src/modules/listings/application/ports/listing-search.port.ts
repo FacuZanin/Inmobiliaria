@@ -3,9 +3,7 @@
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
-
 import { OperationType } from '@modules/listings/domain/enums/operation-type.enum';
-
 import { PropertyType } from '@modules/listings/domain/enums/property-type.enum';
 
 export type SearchListingsFilters = {

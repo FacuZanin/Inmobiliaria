@@ -6,16 +6,14 @@ import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
 import { ListingMediaOrmEntity } from '../persistence/entities/listing-media.orm-entity';
 import { ListingMediaEntity } from '@modules/listings/domain/entities/listing-media.entity';
 
-import { PricingVO } from '@modules/listings/domain/value-objects/pricing.vo';
-import { LocationVO } from '@modules/listings/domain/value-objects/location.vo';
-import { FeaturesVO } from '@modules/listings/domain/value-objects/features.vo';
+import { ListingPricingVO } from '@modules/listings/domain/value-objects/listing-pricing.vo';
+import { ListingLocationVO } from '@modules/listings/domain/value-objects/listing-location.vo';
+import { ListingFeaturesVO } from '@modules/listings/domain/value-objects/listing-features.vo';
 import { MediaMetadataVO } from '@modules/listings/domain/value-objects/media-metadata.vo';
+import { ListingAddressVO } from '@modules/listings/domain/value-objects/listing-address.vo';
+import { ListingCoordinatesVO } from '@modules/listings/domain/value-objects/listing-coordinates.vo';
 
 export class ListingMapper {
-  // =====================================================
-  // ORM → DOMAIN
-  // =====================================================
-
   static toDomain(entity: ListingOrmEntity): ListingAggregate {
     return ListingAggregate.rehydrate({
       id: entity.id,
@@ -40,7 +38,7 @@ export class ListingMapper {
 
       slug: entity.slug,
 
-      pricing: new PricingVO({
+      pricing: new ListingPricingVO({
         salePrice: entity.salePrice != null ? Number(entity.salePrice) : null,
 
         rentalPrice:
@@ -49,17 +47,25 @@ export class ListingMapper {
         expenses: entity.expenses != null ? Number(entity.expenses) : null,
       }),
 
-      location: new LocationVO({
-        address: entity.address,
+      location: new ListingLocationVO({
+        address:
+          entity.address && entity.city
+            ? new ListingAddressVO({
+                street: entity.address,
+                city: entity.city,
+              })
+            : null,
 
-        city: entity.city,
-
-        latitude: entity.latitude != null ? Number(entity.latitude) : null,
-
-        longitude: entity.longitude != null ? Number(entity.longitude) : null,
+        coordinates:
+          entity.latitude != null && entity.longitude != null
+            ? new ListingCoordinatesVO(
+                Number(entity.latitude),
+                Number(entity.longitude),
+              )
+            : null,
       }),
 
-      features: new FeaturesVO({
+      features: new ListingFeaturesVO({
         rooms: entity.rooms,
 
         bedrooms: entity.bedrooms,
@@ -124,10 +130,6 @@ export class ListingMapper {
     });
   }
 
-  // =====================================================
-  // DOMAIN → ORM
-  // =====================================================
-
   static toOrm(aggregate: ListingAggregate): Partial<ListingOrmEntity> {
     return {
       id: aggregate.id ?? undefined,
@@ -152,31 +154,19 @@ export class ListingMapper {
 
       slug: aggregate.slug ?? null,
 
-      // ===================================================
-      // PRICING
-      // ===================================================
-
       salePrice: aggregate.pricing.salePrice ?? null,
 
       rentalPrice: aggregate.pricing.rentalPrice ?? null,
 
       expenses: aggregate.pricing.expenses ?? null,
 
-      // ===================================================
-      // LOCATION
-      // ===================================================
+      address: aggregate.location.address?.street ?? null,
 
-      address: aggregate.location.address ?? null,
+      city: aggregate.location.address?.city ?? null,
 
-      city: aggregate.location.city ?? null,
+      latitude: aggregate.location.coordinates?.latitude ?? null,
 
-      latitude: aggregate.location.latitude ?? null,
-
-      longitude: aggregate.location.longitude ?? null,
-
-      // ===================================================
-      // FEATURES
-      // ===================================================
+      longitude: aggregate.location.coordinates?.longitude ?? null,
 
       rooms: aggregate.features.rooms ?? null,
 
@@ -190,17 +180,9 @@ export class ListingMapper {
 
       details: aggregate.details ?? {},
 
-      // ===================================================
-      // OWNER
-      // ===================================================
-
       ownerId: aggregate.ownerId,
 
       agencyId: aggregate.agencyId ?? null,
-
-      // ===================================================
-      // MEDIA
-      // ===================================================
 
       media: aggregate.media.map(
         (media): Partial<ListingMediaOrmEntity> => ({
@@ -233,10 +215,6 @@ export class ListingMapper {
           metadata: media.metadata?.toPrimitives() ?? {},
         }),
       ) as ListingMediaOrmEntity[],
-
-      // ===================================================
-      // ANALYTICS
-      // ===================================================
 
       viewsCount: aggregate.analytics.viewsCount,
 

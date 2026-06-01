@@ -1,8 +1,8 @@
-// backend/src/modules/listings/domain/value-objects/coordinates.vo.ts
+// backend/src/modules/listings/domain/value-objects/listing-coordinates.vo.ts
 
 import { BadRequestException } from '@nestjs/common';
 
-export class CoordinatesVO {
+export class ListingCoordinatesVO {
   readonly latitude: number;
 
   readonly longitude: number;

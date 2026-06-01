@@ -1,10 +1,6 @@
 // backend/src/modules/listings/application/use-cases/update-listing.usecase.ts
 
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 
@@ -13,6 +9,10 @@ import type { ListingRepositoryPort } from '@modules/listings/domain/repositorie
 import { UpdateListingDto } from '@modules/listings/application/dto/update-listing.dto';
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
+
+import { ListingLocationVO } from '@modules/listings/domain/value-objects/listing-location.vo';
+import { ListingAddressVO } from '@modules/listings/domain/value-objects/listing-address.vo';
+import { ListingCoordinatesVO } from '@modules/listings/domain/value-objects/listing-coordinates.vo';
 
 @Injectable()
 export class UpdateListingUseCase {
@@ -41,7 +41,24 @@ export class UpdateListingUseCase {
     }
 
     if (dto.location) {
-      listing.updateLocation(dto.location);
+      listing.updateLocation({
+        address:
+          dto.location.address && dto.location.city
+            ? new ListingAddressVO({
+                street: dto.location.address,
+
+                city: dto.location.city,
+              })
+            : undefined,
+
+        coordinates:
+          dto.location.latitude != null && dto.location.longitude != null
+            ? new ListingCoordinatesVO(
+                dto.location.latitude,
+                dto.location.longitude,
+              )
+            : undefined,
+      });
     }
 
     if (dto.features) {
@@ -52,9 +69,6 @@ export class UpdateListingUseCase {
       listing.updateDetails(dto.details);
     }
 
-    return this.listingRepository.update(
-      listingId,
-      listing,
-    );
+    return this.listingRepository.update(listingId, listing);
   }
 }

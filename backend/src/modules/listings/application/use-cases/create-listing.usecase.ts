@@ -1,14 +1,8 @@
 // backend/src/modules/listings/application/use-cases/create-listing.usecase.ts
 
-import {
-  Inject,
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
+import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 
-import {
-  LISTING_REPOSITORY,
-} from '@modules/listings/application/tokens';
+import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 
 import type { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
 
@@ -16,11 +10,11 @@ import { CreateListingDto } from '@modules/listings/application/dto/create-listi
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
-import { PricingVO } from '@modules/listings/domain/value-objects/pricing.vo';
-
-import { LocationVO } from '@modules/listings/domain/value-objects/location.vo';
-
-import { FeaturesVO } from '@modules/listings/domain/value-objects/features.vo';
+import { ListingPricingVO } from '@modules/listings/domain/value-objects/listing-pricing.vo';
+import { ListingLocationVO } from '@modules/listings/domain/value-objects/listing-location.vo';
+import { ListingFeaturesVO } from '@modules/listings/domain/value-objects/listing-features.vo';
+import { ListingAddressVO } from '@modules/listings/domain/value-objects/listing-address.vo';
+import { ListingCoordinatesVO } from '@modules/listings/domain/value-objects/listing-coordinates.vo';
 
 import { ListingSlugGeneratorService } from '@modules/listings/domain/services/listing-slug-generator.service';
 
@@ -37,34 +31,19 @@ export class CreateListingUseCase {
     dto: CreateListingDto,
     ownerId: number,
   ): Promise<ListingAggregate> {
-    // =====================================================
-    // VALIDATIONS
-    // =====================================================
-
     if (!dto.title?.trim()) {
-      throw new BadRequestException(
-        'Title is required',
-      );
+      throw new BadRequestException('Title is required');
     }
 
-    // =====================================================
-    // GENERATE SEO SLUG
-    // =====================================================
+    const slug = await this.slugGenerator.generate({
+      title: dto.title,
 
-    const slug =
-      await this.slugGenerator.generate({
-        title: dto.title,
+      city: dto.location?.city,
 
-        city: dto.location?.city,
+      propertyType: dto.propertyType,
 
-        propertyType: dto.propertyType,
-
-        operationType: dto.operationType,
-      });
-
-    // =====================================================
-    // CREATE AGGREGATE
-    // =====================================================
+      operationType: dto.operationType,
+    });
 
     const listing = ListingAggregate.create({
       title: dto.title,
@@ -79,45 +58,43 @@ export class CreateListingUseCase {
 
       ownerId,
 
-      pricing: new PricingVO({
-        salePrice:
-          dto.pricing?.salePrice ?? null,
+      pricing: new ListingPricingVO({
+        salePrice: dto.pricing?.salePrice ?? null,
 
-        rentalPrice:
-          dto.pricing?.rentalPrice ?? null,
+        rentalPrice: dto.pricing?.rentalPrice ?? null,
 
-        expenses:
-          dto.pricing?.expenses ?? null,
+        expenses: dto.pricing?.expenses ?? null,
       }),
 
-      location: new LocationVO({
+      location: new ListingLocationVO({
         address:
-          dto.location?.address ?? null,
+          dto.location?.address && dto.location?.city
+            ? new ListingAddressVO({
+                street: dto.location.address,
 
-        city: dto.location?.city ?? null,
+                city: dto.location.city,
+              })
+            : null,
 
-        latitude:
-          dto.location?.latitude ?? null,
-
-        longitude:
-          dto.location?.longitude ?? null,
+        coordinates:
+          dto.location?.latitude != null && dto.location?.longitude != null
+            ? new ListingCoordinatesVO(
+                dto.location.latitude,
+                dto.location.longitude,
+              )
+            : null,
       }),
 
-      features: new FeaturesVO({
-        bedrooms:
-          dto.features?.bedrooms ?? null,
+      features: new ListingFeaturesVO({
+        bedrooms: dto.features?.bedrooms ?? null,
 
-        bathrooms:
-          dto.features?.bathrooms ?? null,
+        bathrooms: dto.features?.bathrooms ?? null,
 
-        rooms:
-          dto.features?.rooms ?? null,
+        rooms: dto.features?.rooms ?? null,
 
-        coveredArea:
-          dto.features?.coveredArea ?? null,
+        coveredArea: dto.features?.coveredArea ?? null,
 
-        totalArea:
-          dto.features?.totalArea ?? null,
+        totalArea: dto.features?.totalArea ?? null,
       }),
 
       details: dto.details ?? {},
@@ -125,12 +102,6 @@ export class CreateListingUseCase {
       media: [],
     });
 
-    // =====================================================
-    // SAVE
-    // =====================================================
-
-    return this.listingRepository.save(
-      listing,
-    );
+    return this.listingRepository.save(listing);
   }
 }

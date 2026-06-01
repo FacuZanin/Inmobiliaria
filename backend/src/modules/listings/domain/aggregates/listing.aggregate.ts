@@ -12,9 +12,12 @@ import { MediaProcessingStatus } from '@modules/listings/domain/enums/media-proc
 
 import type { ListingMediaEntity } from '@modules/listings/domain/entities/listing-media.entity';
 
-import { PricingVO } from '../value-objects/pricing.vo';
-import { LocationVO } from '../value-objects/location.vo';
-import { FeaturesVO } from '../value-objects/features.vo';
+import { ListingPricingVO } from '@modules/listings/domain/value-objects/listing-pricing.vo';
+import { ListingLocationVO } from '@modules/listings/domain/value-objects/listing-location.vo';
+import { ListingFeaturesVO } from '@modules/listings/domain/value-objects/listing-features.vo';
+import { ListingAddressVO } from '../value-objects/listing-address.vo';
+import { ListingCoordinatesVO } from '../value-objects/listing-coordinates.vo';
+import { ListingLocationProps } from '../value-objects/listing-location.vo';
 
 type ListingAggregateProps = {
   id?: number | null;
@@ -37,26 +40,32 @@ type ListingAggregateProps = {
 
   moderationReason?: string | null;
 
-  pricing?: PricingVO | {
-    salePrice?: number | null;
-    rentalPrice?: number | null;
-    expenses?: number | null;
-  };
+  pricing?:
+    | ListingPricingVO
+    | {
+        salePrice?: number | null;
+        rentalPrice?: number | null;
+        expenses?: number | null;
+      };
 
-  location?: LocationVO | {
-    address?: string | null;
-    city?: string | null;
-    latitude?: number | null;
-    longitude?: number | null;
-  };
+  location?:
+    | ListingLocationVO
+    | {
+        address?: string | null;
+        city?: string | null;
+        latitude?: number | null;
+        longitude?: number | null;
+      };
 
-  features?: FeaturesVO | {
-    rooms?: number | null;
-    bedrooms?: number | null;
-    bathrooms?: number | null;
-    coveredArea?: number | null;
-    totalArea?: number | null;
-  };
+  features?:
+    | ListingFeaturesVO
+    | {
+        rooms?: number | null;
+        bedrooms?: number | null;
+        bathrooms?: number | null;
+        coveredArea?: number | null;
+        totalArea?: number | null;
+      };
 
   details?: Record<string, any>;
 
@@ -106,11 +115,11 @@ export class ListingAggregate {
 
   private _slug: string | null;
 
-  private _pricing: PricingVO;
+  private _pricing: ListingPricingVO;
 
-  private _location: LocationVO;
+  private _location: ListingLocationVO;
 
-  private _features: FeaturesVO;
+  private _features: ListingFeaturesVO;
 
   private _details: Record<string, any>;
 
@@ -155,19 +164,36 @@ export class ListingAggregate {
     this._slug = props.slug ?? null;
 
     this._pricing =
-      props.pricing instanceof PricingVO
+      props.pricing instanceof ListingPricingVO
         ? props.pricing
-        : new PricingVO(props.pricing ?? {});
+        : new ListingPricingVO(props.pricing ?? {});
 
     this._location =
-      props.location instanceof LocationVO
+      props.location instanceof ListingLocationVO
         ? props.location
-        : new LocationVO(props.location ?? {});
+        : new ListingLocationVO({
+            address:
+              props.location?.address && props.location?.city
+                ? new ListingAddressVO({
+                    street: props.location.address,
+                    city: props.location.city,
+                  })
+                : null,
+
+            coordinates:
+              props.location?.latitude != null &&
+              props.location?.longitude != null
+                ? new ListingCoordinatesVO(
+                    props.location.latitude,
+                    props.location.longitude,
+                  )
+                : null,
+          });
 
     this._features =
-      props.features instanceof FeaturesVO
+      props.features instanceof ListingFeaturesVO
         ? props.features
-        : new FeaturesVO(props.features ?? {});
+        : new ListingFeaturesVO(props.features ?? {});
 
     this._details = props.details ?? {};
 
@@ -183,10 +209,6 @@ export class ListingAggregate {
 
     this._updatedAt = props.updatedAt;
   }
-
-  // =====================================================
-  // FACTORIES
-  // =====================================================
 
   static create(
     props: Omit<
@@ -209,10 +231,6 @@ export class ListingAggregate {
   static rehydrate(props: ListingAggregateProps) {
     return new ListingAggregate(props);
   }
-
-  // =====================================================
-  // GETTERS
-  // =====================================================
 
   get id() {
     return this._id;
@@ -326,24 +344,12 @@ export class ListingAggregate {
     this._media = this._media.filter((media) => media.id !== mediaId);
   }
 
-  // =====================================================
-  // BUSINESS RULES
-  // =====================================================
-
   publish() {
-    // =====================================================
-    // MODERATION VALIDATION
-    // =====================================================
-
     if (this._moderationStatus !== ModerationStatus.APPROVED) {
       throw new BadRequestException(
         'Listing must be approved before publishing',
       );
     }
-
-    // =====================================================
-    // MEDIA VALIDATION
-    // =====================================================
 
     const readyMedia = this._media.filter(
       (media) => media.processingStatus === MediaProcessingStatus.READY,
@@ -355,29 +361,17 @@ export class ListingAggregate {
       );
     }
 
-    // =====================================================
-    // PRICING VALIDATION
-    // =====================================================
-
     if (!this._pricing.hasValidPrice()) {
       throw new BadRequestException(
         'Listing requires pricing before publishing',
       );
     }
 
-    // =====================================================
-    // LOCATION VALIDATION
-    // =====================================================
-
     if (!this._location.hasValidAddress()) {
       throw new BadRequestException(
         'Listing requires location before publishing',
       );
     }
-
-    // =====================================================
-    // STATUS TRANSITION
-    // =====================================================
 
     this._status = ListingStatus.ACTIVE;
   }
@@ -422,10 +416,6 @@ export class ListingAggregate {
     this._moderationStatus = ModerationStatus.PENDING_REVIEW;
   }
 
-  // =====================================================
-  // UPDATE METHODS
-  // =====================================================
-
   updateBasicInfo(data: { title?: string; description?: string | null }) {
     if (data.title !== undefined) {
       this._title = data.title;
@@ -441,21 +431,17 @@ export class ListingAggregate {
     rentalPrice?: number | null;
     expenses?: number | null;
   }) {
-    this._pricing = new PricingVO({
+    this._pricing = new ListingPricingVO({
       ...this._pricing.toPrimitives(),
       ...pricing,
     });
   }
 
-  updateLocation(location: {
-    address?: string | null;
-    city?: string | null;
-    latitude?: number | null;
-    longitude?: number | null;
-  }) {
-    this._location = new LocationVO({
-      ...this._location.toPrimitives(),
-      ...location,
+  updateLocation(location: Partial<ListingLocationProps>) {
+    this._location = new ListingLocationVO({
+      address: location.address ?? this._location.address,
+
+      coordinates: location.coordinates ?? this._location.coordinates,
     });
   }
 
@@ -466,7 +452,7 @@ export class ListingAggregate {
     coveredArea?: number | null;
     totalArea?: number | null;
   }) {
-    this._features = new FeaturesVO({
+    this._features = new ListingFeaturesVO({
       ...this._features.toPrimitives(),
       ...features,
     });

@@ -30,19 +30,24 @@ export class ListingFeaturesVO {
   constructor(props: ListingFeaturesProps) {
     this.rooms = props.rooms ?? null;
 
-    this.bedrooms =
-      props.bedrooms ?? null;
+    this.bedrooms = props.bedrooms ?? null;
 
-    this.bathrooms =
-      props.bathrooms ?? null;
+    this.bathrooms = props.bathrooms ?? null;
 
-    this.coveredArea =
-      props.coveredArea ?? null;
+    this.coveredArea = props.coveredArea ?? null;
 
-    this.totalArea =
-      props.totalArea ?? null;
+    this.totalArea = props.totalArea ?? null;
 
-    this.details =
-      props.details ?? {};
+    this.details = props.details ?? {};
+  }
+  public toPrimitives() {
+    return {
+      rooms: this.rooms,
+      bedrooms: this.bedrooms,
+      bathrooms: this.bathrooms,
+      coveredArea: this.coveredArea,
+      totalArea: this.totalArea,
+      details: this.details,
+    };
   }
 }
