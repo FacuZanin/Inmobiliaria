@@ -50,4 +50,18 @@ export class ListingOwnershipPolicy {
       );
     }
   }
+
+  assertOwnership(
+    listing: ListingAggregate,
+    userId: number,
+    role: UserRole,
+  ): void {
+    ListingOwnershipPolicy.assertCanModify(
+      {
+        sub: userId,
+        role,
+      } as any,
+      listing,
+    );
+  }
 }

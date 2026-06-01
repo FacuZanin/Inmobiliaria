@@ -55,7 +55,7 @@ export class CreateListingUseCase {
       await this.slugGenerator.generate({
         title: dto.title,
 
-        city: dto.city,
+        city: dto.location?.city,
 
         propertyType: dto.propertyType,
 
@@ -81,43 +81,43 @@ export class CreateListingUseCase {
 
       pricing: new PricingVO({
         salePrice:
-          dto.salePrice ?? null,
+          dto.pricing?.salePrice ?? null,
 
         rentalPrice:
-          dto.rentalPrice ?? null,
+          dto.pricing?.rentalPrice ?? null,
 
         expenses:
-          dto.expenses ?? null,
+          dto.pricing?.expenses ?? null,
       }),
 
       location: new LocationVO({
         address:
-          dto.address ?? null,
+          dto.location?.address ?? null,
 
-        city: dto.city ?? null,
+        city: dto.location?.city ?? null,
 
         latitude:
-          dto.latitude ?? null,
+          dto.location?.latitude ?? null,
 
         longitude:
-          dto.longitude ?? null,
+          dto.location?.longitude ?? null,
       }),
 
       features: new FeaturesVO({
         bedrooms:
-          dto.bedrooms ?? null,
+          dto.features?.bedrooms ?? null,
 
         bathrooms:
-          dto.bathrooms ?? null,
+          dto.features?.bathrooms ?? null,
 
         rooms:
-          dto.rooms ?? null,
+          dto.features?.rooms ?? null,
 
         coveredArea:
-          dto.coveredArea ?? null,
+          dto.features?.coveredArea ?? null,
 
         totalArea:
-          dto.totalArea ?? null,
+          dto.features?.totalArea ?? null,
       }),
 
       details: dto.details ?? {},

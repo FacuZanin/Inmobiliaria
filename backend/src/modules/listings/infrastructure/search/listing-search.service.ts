@@ -21,7 +21,7 @@ import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enu
 
 import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
 
-import { ListingMapper } from '../persistence/mappers/listing.mapper';
+import { ListingMapper } from '../mappers/listing.mapper';
 
 @Injectable()
 export class ListingSearchService

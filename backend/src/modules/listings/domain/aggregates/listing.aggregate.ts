@@ -37,20 +37,20 @@ type ListingAggregateProps = {
 
   moderationReason?: string | null;
 
-  pricing?: {
+  pricing?: PricingVO | {
     salePrice?: number | null;
     rentalPrice?: number | null;
     expenses?: number | null;
   };
 
-  location?: {
+  location?: LocationVO | {
     address?: string | null;
     city?: string | null;
     latitude?: number | null;
     longitude?: number | null;
   };
 
-  features?: {
+  features?: FeaturesVO | {
     rooms?: number | null;
     bedrooms?: number | null;
     bathrooms?: number | null;
@@ -106,11 +106,7 @@ export class ListingAggregate {
 
   private _slug: string | null;
 
-  private _pricing: {
-    salePrice?: number | null;
-    rentalPrice?: number | null;
-    expenses?: number | null;
-  };
+  private _pricing: PricingVO;
 
   private _location: LocationVO;
 
@@ -158,11 +154,20 @@ export class ListingAggregate {
 
     this._slug = props.slug ?? null;
 
-    this._pricing = props.pricing ?? new PricingVO({});
+    this._pricing =
+      props.pricing instanceof PricingVO
+        ? props.pricing
+        : new PricingVO(props.pricing ?? {});
 
-    this._location = props.location ?? new LocationVO({});
+    this._location =
+      props.location instanceof LocationVO
+        ? props.location
+        : new LocationVO(props.location ?? {});
 
-    this._features = props.features ?? new FeaturesVO({});
+    this._features =
+      props.features instanceof FeaturesVO
+        ? props.features
+        : new FeaturesVO(props.features ?? {});
 
     this._details = props.details ?? {};
 
@@ -397,6 +402,18 @@ export class ListingAggregate {
 
   rejectModeration(reason: string) {
     this._moderationStatus = ModerationStatus.REJECTED;
+
+    this._moderationReason = reason;
+  }
+
+  observeModeration(reason: string) {
+    this._moderationStatus = ModerationStatus.OBSERVED;
+
+    this._moderationReason = reason;
+  }
+
+  suspendModeration(reason: string) {
+    this._moderationStatus = ModerationStatus.SUSPENDED;
 
     this._moderationReason = reason;
   }

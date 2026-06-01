@@ -1,25 +1,28 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
-import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
-
+import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 import { ModerationStatus } from '../../domain/enums/moderation-status.enum';
 
 import { ListingRepositoryPort } from '../../domain/repositories/listing.repository.port';
+import { ListingModerationPolicy } from '../policies/listing-moderation.policy';
 
 @Injectable()
 export class ModerateListingUseCase {
   constructor(
     @Inject(LISTING_REPOSITORY)
     private readonly repository: ListingRepositoryPort,
+
+    private readonly moderationPolicy: ListingModerationPolicy,
   ) {}
 
   async execute(params: {
     listingId: number;
-    approved: boolean;
+    status: ModerationStatus;
     reason?: string;
   }) {
     const listing =
@@ -33,13 +36,32 @@ export class ModerateListingUseCase {
       );
     }
 
-    if (params.approved) {
-      listing.approveModeration();
-    } else {
-      listing.rejectModeration(
-        params.reason ??
-          'Rejected by moderation',
-      );
+    this.moderationPolicy.assertValidDecision(
+      params.status,
+      params.reason,
+    );
+
+    switch (params.status) {
+      case ModerationStatus.APPROVED:
+        listing.approveModeration();
+        break;
+      case ModerationStatus.REJECTED:
+        listing.rejectModeration(params.reason!);
+        break;
+      case ModerationStatus.OBSERVED:
+        listing.observeModeration(params.reason!);
+        break;
+      case ModerationStatus.SUSPENDED:
+        listing.suspendModeration(params.reason!);
+        break;
+      case ModerationStatus.PENDING_REVIEW:
+      case ModerationStatus.UNDER_REVIEW:
+        listing.markAsUnderReview();
+        break;
+      default:
+        throw new BadRequestException(
+          'Unsupported moderation decision',
+        );
     }
 
     return this.repository.save(listing);

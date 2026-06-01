@@ -65,6 +65,13 @@ export class ListingMediaOrmEntity {
     length: 2048,
     nullable: true,
   })
+  storageKey!: string | null;
+
+  @Column({
+    type: 'varchar',
+    length: 2048,
+    nullable: true,
+  })
   thumbnailUrl!: string | null;
 
   @Column({

@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
+import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 
 import type { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
 
@@ -36,18 +36,24 @@ export class UpdateListingUseCase {
       description: dto.description,
     });
 
-    listing.updateFeatures({
-      bedrooms: dto.bedrooms,
-      bathrooms: dto.bathrooms,
-      rooms: dto.rooms,
-      coveredArea: dto.coveredArea,
-      totalArea: dto.totalArea,
-    });
+    if (dto.pricing) {
+      listing.updatePricing(dto.pricing);
+    }
 
-    listing.updateDetails(dto.details ?? {});
+    if (dto.location) {
+      listing.updateLocation(dto.location);
+    }
+
+    if (dto.features) {
+      listing.updateFeatures(dto.features);
+    }
+
+    if (dto.details !== undefined) {
+      listing.updateDetails(dto.details);
+    }
 
     return this.listingRepository.update(
-      listing.id,
+      listingId,
       listing,
     );
   }

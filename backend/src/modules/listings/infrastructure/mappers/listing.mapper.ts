@@ -1,14 +1,15 @@
-// backend/src/modules/listings/infrastructure/persistence/mappers/listing.mapper.ts
+// backend/src/modules/listings/infrastructure/mappers/listing.mapper.ts
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
-import { ListingOrmEntity } from '../entities/listing.orm-entity';
-import { ListingMediaOrmEntity } from '../entities/listing-media.orm-entity';
+import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
+import { ListingMediaOrmEntity } from '../persistence/entities/listing-media.orm-entity';
 import { ListingMediaEntity } from '@modules/listings/domain/entities/listing-media.entity';
 
 import { PricingVO } from '@modules/listings/domain/value-objects/pricing.vo';
 import { LocationVO } from '@modules/listings/domain/value-objects/location.vo';
 import { FeaturesVO } from '@modules/listings/domain/value-objects/features.vo';
+import { MediaMetadataVO } from '@modules/listings/domain/value-objects/media-metadata.vo';
 
 export class ListingMapper {
   // =====================================================
@@ -76,7 +77,7 @@ export class ListingMapper {
 
       media:
         entity.media?.map((media) => {
-          return new ListingMediaEntity({
+          return ListingMediaEntity.rehydrate({
             id: media.id,
 
             listingId: media.listingId,
@@ -85,13 +86,15 @@ export class ListingMapper {
 
             url: media.url,
 
+            storageKey: media.storageKey ?? media.url,
+
             thumbnailUrl: media.thumbnailUrl,
 
             filename: media.filename,
 
-            mimeType: media.mimeType,
+            mimeType: media.mimeType ?? 'application/octet-stream',
 
-            size: media.size ? Number(media.size) : null,
+            sizeInBytes: media.size ? Number(media.size) : null,
 
             sortOrder: media.sortOrder,
 
@@ -101,7 +104,9 @@ export class ListingMapper {
 
             processingError: media.processingError,
 
-            metadata: media.metadata,
+            metadata: media.metadata
+              ? new MediaMetadataVO(media.metadata)
+              : null,
           });
         }) ?? [],
 
@@ -201,11 +206,13 @@ export class ListingMapper {
         (media): Partial<ListingMediaOrmEntity> => ({
           id: media.id ?? undefined,
 
-          listingId: media.listingId,
+          listingId: media.listingId ?? undefined,
 
           type: media.type,
 
           url: media.url,
+
+          storageKey: media.storageKey,
 
           thumbnailUrl: media.thumbnailUrl ?? null,
 
@@ -213,7 +220,7 @@ export class ListingMapper {
 
           mimeType: media.mimeType ?? null,
 
-          size: media.size ?? null,
+          size: media.sizeInBytes ?? null,
 
           sortOrder: media.sortOrder,
 
@@ -223,7 +230,7 @@ export class ListingMapper {
 
           processingError: media.processingError ?? null,
 
-          metadata: media.metadata ?? {},
+          metadata: media.metadata?.toPrimitives() ?? {},
         }),
       ) as ListingMediaOrmEntity[],
 

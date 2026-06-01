@@ -11,10 +11,7 @@ import { Repository } from 'typeorm';
 
 import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
 import { FavoriteRepositoryPort } from '@/modules/favoritos/application/ports/favorite-repository.port';
-
-import { User } from '@/modules/user/domain/entities/user.entity';
-
-import { PropertyEntity } from '@/modules/propiedades/infrastructure/persistence/typeorm/entities/propiedad.entity';
+import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/entities/listing.orm-entity';
 
 @Injectable()
 export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
@@ -22,36 +19,35 @@ export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
 
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-
-    @InjectRepository(PropertyEntity)
-    private readonly propertyRepository: Repository<PropertyEntity>,
+    @InjectRepository(ListingOrmEntity)
+    private readonly listingRepository: Repository<ListingOrmEntity>,
   ) {}
 
   async addFavorite(userId: number, propertyId: number): Promise<Favorite> {
-    const property = await this.propertyRepository.findOne({
-      where: { id: propertyId },
+    const listing = await this.listingRepository.findOne({
+      where: {
+        id: propertyId,
+      },
     });
 
-    if (!property) {
-      throw new NotFoundException('Propiedad no encontrada');
+    if (!listing) {
+      throw new NotFoundException('Listing no encontrado');
     }
 
     const exists = await this.favoriteRepository.exists({
       where: {
         user: { id: userId },
-        property: { id: propertyId },
+        listing: { id: propertyId },
       },
     });
 
     if (exists) {
-      throw new ConflictException('La propiedad ya está en favoritos');
+      throw new ConflictException('El listing ya esta en favoritos');
     }
 
     const favorite = this.favoriteRepository.create({
       user: { id: userId },
-      property: { id: propertyId },
+      listing: { id: propertyId },
     });
 
     return this.favoriteRepository.save(favorite);
@@ -61,7 +57,7 @@ export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
     const favorite = await this.favoriteRepository.findOne({
       where: {
         user: { id: userId },
-        property: { id: propertyId },
+        listing: { id: propertyId },
       },
     });
 
@@ -75,15 +71,11 @@ export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
   async getUserFavorites(userId: number): Promise<Favorite[]> {
     return this.favoriteRepository
       .createQueryBuilder('favorite')
-
-      .leftJoinAndSelect('favorite.property', 'property')
-
-      .where('favorite.user.Id = :userId', {
+      .leftJoinAndSelect('favorite.listing', 'listing')
+      .where('favorite.user.id = :userId', {
         userId,
       })
-
       .orderBy('favorite.createdAt', 'DESC')
-
       .getMany();
   }
 
@@ -91,7 +83,7 @@ export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
     return this.favoriteRepository.exists({
       where: {
         user: { id: userId },
-        property: { id: propertyId },
+        listing: { id: propertyId },
       },
     });
   }
@@ -99,7 +91,7 @@ export class FavoriteTypeOrmRepository implements FavoriteRepositoryPort {
   async countByProperty(propertyId: number): Promise<number> {
     return this.favoriteRepository.count({
       where: {
-        property: { id: propertyId },
+        listing: { id: propertyId },
       },
     });
   }

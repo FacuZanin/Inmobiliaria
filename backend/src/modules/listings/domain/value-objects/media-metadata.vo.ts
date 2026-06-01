@@ -47,4 +47,16 @@ export class MediaMetadataVO {
 
     this.exif = props.exif ?? null;
   }
+
+  toPrimitives(): MediaMetadataProps {
+    return {
+      width: this.width,
+      height: this.height,
+      duration: this.duration,
+      blurhash: this.blurhash,
+      alt: this.alt,
+      dominantColor: this.dominantColor,
+      exif: this.exif,
+    };
+  }
 }

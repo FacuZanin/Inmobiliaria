@@ -15,7 +15,7 @@ import { AppController } from './app.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/user/users.module';
 import { AgenciasModule } from './modules/agencias/agencias.module';
-import { PropiedadesModule } from './modules/propiedades/propiedades.module';
+import { ListingsModule } from './modules/listings/listings.module';
 import { OperacionesModule } from './modules/operaciones/operaciones.module';
 import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
@@ -73,7 +73,7 @@ import { HealthModule } from './health/health.module';
     AuthModule,
     UsersModule,
     AgenciasModule,
-    PropiedadesModule,
+    ListingsModule,
     OperacionesModule,
     InquilinosModule,
     UploadsModule,

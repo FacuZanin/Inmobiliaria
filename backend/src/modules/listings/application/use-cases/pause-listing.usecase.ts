@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
+import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 
 import { ListingRepositoryPort } from '../../domain/repositories/listing.repository.port';
 

@@ -17,11 +17,12 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 
-import { Auth } from '@shared/security/decorators/auth.decorator';
+import { Auth } from '@/shared/security/decorators/auth.decorator';
 
-import { CurrentUser } from '@shared/security/decorators/current-user.decorator';
+import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
 
 import { Permission } from '@shared/contracts/enums/permission.enum';
+import type { JwtPayload } from '@/modules/auth/application/contracts/jwt-payload.contracts';
 
 import { CreateListingDto } from '@modules/listings/application/dto/create-listing.dto';
 
@@ -66,7 +67,7 @@ export class ListingOwnerController {
   // =====================================================
 
   @Post()
-  @Auth(Permission.PROPERTY_CREATE)
+  @Auth(Permission.LISTING_CREATE)
   @ApiOperation({
     summary: 'Create listing',
   })
@@ -75,11 +76,11 @@ export class ListingOwnerController {
     dto: CreateListingDto,
 
     @CurrentUser()
-    user: any,
+    user: JwtPayload & { id?: number },
   ) {
     return this.createListingUseCase.execute(
       dto,
-      user.sub,
+      user.id ?? user.sub,
     );
   }
 
@@ -96,7 +97,7 @@ export class ListingOwnerController {
     id: number,
 
     @CurrentUser()
-    user: any,
+    user: JwtPayload & { id?: number },
   ) {
     const listing =
       await this.getListingUseCase.execute(
@@ -105,7 +106,7 @@ export class ListingOwnerController {
 
     this.ownershipPolicy.assertOwnership(
       listing,
-      user.sub,
+      user.id ?? user.sub,
       user.role,
     );
 
@@ -117,7 +118,7 @@ export class ListingOwnerController {
   // =====================================================
 
   @Patch(':id')
-  @Auth(Permission.PROPERTY_UPDATE)
+  @Auth(Permission.LISTING_UPDATE)
   @ApiOperation({
     summary: 'Update listing',
   })
@@ -129,7 +130,7 @@ export class ListingOwnerController {
     dto: UpdateListingDto,
 
     @CurrentUser()
-    user: any,
+    user: JwtPayload & { id?: number },
   ) {
     const listing =
       await this.getListingUseCase.execute(
@@ -138,7 +139,7 @@ export class ListingOwnerController {
 
     this.ownershipPolicy.assertOwnership(
       listing,
-      user.sub,
+      user.id ?? user.sub,
       user.role,
     );
 
@@ -161,7 +162,7 @@ export class ListingOwnerController {
     id: number,
 
     @CurrentUser()
-    user: any,
+    user: JwtPayload & { id?: number },
   ) {
     const listing =
       await this.getListingUseCase.execute(
@@ -170,7 +171,7 @@ export class ListingOwnerController {
 
     this.ownershipPolicy.assertOwnership(
       listing,
-      user.sub,
+      user.id ?? user.sub,
       user.role,
     );
 
@@ -192,7 +193,7 @@ export class ListingOwnerController {
     id: number,
 
     @CurrentUser()
-    user: any,
+    user: JwtPayload & { id?: number },
   ) {
     const listing =
       await this.getListingUseCase.execute(
@@ -201,7 +202,7 @@ export class ListingOwnerController {
 
     this.ownershipPolicy.assertOwnership(
       listing,
-      user.sub,
+      user.id ?? user.sub,
       user.role,
     );
 
@@ -223,7 +224,7 @@ export class ListingOwnerController {
     id: number,
 
     @CurrentUser()
-    user: any,
+    user: JwtPayload & { id?: number },
   ) {
     const listing =
       await this.getListingUseCase.execute(
@@ -232,7 +233,7 @@ export class ListingOwnerController {
 
     this.ownershipPolicy.assertOwnership(
       listing,
-      user.sub,
+      user.id ?? user.sub,
       user.role,
     );
 
@@ -246,7 +247,7 @@ export class ListingOwnerController {
   // =====================================================
 
   @Delete(':id')
-  @Auth(Permission.PROPERTY_DELETE)
+  @Auth(Permission.LISTING_DELETE)
   @ApiOperation({
     summary: 'Delete listing',
   })
@@ -255,7 +256,7 @@ export class ListingOwnerController {
     id: number,
 
     @CurrentUser()
-    user: any,
+    user: JwtPayload & { id?: number },
   ) {
     const listing =
       await this.getListingUseCase.execute(
@@ -264,7 +265,7 @@ export class ListingOwnerController {
 
     this.ownershipPolicy.assertOwnership(
       listing,
-      user.sub,
+      user.id ?? user.sub,
       user.role,
     );
 

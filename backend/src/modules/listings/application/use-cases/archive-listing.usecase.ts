@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { LISTING_REPOSITORY } from '@modules/listings/listings.tokens';
+import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 
 import type { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
 
@@ -28,7 +28,7 @@ export class ArchiveListingUseCase {
     listing.archive();
 
     await this.listingRepository.update(
-      listing.id,
+      listingId,
       listing,
     );
   }

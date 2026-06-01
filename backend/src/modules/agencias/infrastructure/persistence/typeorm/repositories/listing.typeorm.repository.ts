@@ -22,11 +22,11 @@ import {
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
-import { ListingOrmEntity } from '../../entities/listing.orm-entity';
+import { ListingOrmEntity } from '@modules/listings/infrastructure/persistence/entities/listing.orm-entity';
 
-import { ListingMapper } from '../../mappers/listing.mapper';
+import { ListingMapper } from '@modules/listings/infrastructure/mappers/listing.mapper';
 
-import { LISTING_FULL_RELATIONS } from './constants/listing-relations.constants';
+import { LISTING_FULL_RELATIONS } from '@modules/listings/infrastructure/persistence/entities/listing-relations.constants';
 
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 
@@ -86,7 +86,7 @@ export class ListingTypeOrmRepository
   async update(
     id: number,
     listing: ListingAggregate,
-  ): Promise<ListingAggregate | null> {
+  ): Promise<ListingAggregate> {
     try {
       const orm = this.repo.create({
         ...ListingMapper.toOrm(listing),
@@ -95,7 +95,15 @@ export class ListingTypeOrmRepository
 
       await this.repo.save(orm);
 
-      return this.findById(id);
+      const updated = await this.findById(id);
+
+      if (!updated) {
+        throw new BadRequestException(
+          'Listing could not be reloaded',
+        );
+      }
+
+      return updated;
     } catch (error) {
       console.error(
         '[ListingTypeOrmRepository.update]',
@@ -110,6 +118,10 @@ export class ListingTypeOrmRepository
 
   async softDelete(id: number): Promise<void> {
     await this.repo.softDelete(id);
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.softDelete(id);
   }
 
   // =====================================================
@@ -225,6 +237,29 @@ export class ListingTypeOrmRepository
     return this.executePaginatedQuery(qb);
   }
 
+  async findByOwner(
+    ownerId: number,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedListingsResult> {
+    return this.searchOwnerListings(ownerId, {
+      page,
+      limit,
+    });
+  }
+
+  async findDraftsByOwner(
+    ownerId: number,
+  ): Promise<ListingAggregate[]> {
+    const result = await this.searchOwnerListings(ownerId, {
+      status: ListingStatus.DRAFT,
+      page: 1,
+      limit: 100,
+    });
+
+    return result.items;
+  }
+
   // =====================================================
   // AGENCY DASHBOARD
   // =====================================================
@@ -263,6 +298,25 @@ export class ListingTypeOrmRepository
     this.applyFilters(qb, filters);
 
     return this.executePaginatedQuery(qb);
+  }
+
+  async adminSearch(params: {
+    query?: string;
+    status?: string;
+    moderationStatus?: string;
+    ownerId?: number;
+    page: number;
+    limit: number;
+  }): Promise<PaginatedListingsResult> {
+    return this.searchAdmin({
+      search: params.query,
+      status: params.status as ListingStatus | undefined,
+      moderationStatus:
+        params.moderationStatus as ModerationStatus | undefined,
+      ownerId: params.ownerId,
+      page: params.page,
+      limit: params.limit,
+    });
   }
 
   // =====================================================

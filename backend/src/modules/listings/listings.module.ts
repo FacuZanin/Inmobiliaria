@@ -16,7 +16,7 @@ import { ListingMediaOrmEntity } from './infrastructure/persistence/entities/lis
 // REPOSITORIES
 // =====================================================
 
-import { ListingRepository } from './infrastructure/persistence/repositories/listing.repository';
+import { ListingRepository } from './infrastructure/repositories/listing.repository';
 
 // =====================================================
 // SEARCH
@@ -52,6 +52,9 @@ import { ArchiveListingUseCase } from './application/use-cases/archive-listing.u
 import { ModerateListingUseCase } from './application/use-cases/moderate-listing.usecase';
 
 import { SearchListingsUseCase } from './application/use-cases/search-listings.usecase';
+import { AttachMediaUseCase } from './application/use-cases/attach-media.usecase';
+import { UpdateLocationUseCase } from './application/use-cases/update-location.usecase';
+import { UpdatePricingUseCase } from './application/use-cases/update-pricing.usecase';
 
 // =====================================================
 // CONTROLLERS
@@ -60,18 +63,27 @@ import { SearchListingsUseCase } from './application/use-cases/search-listings.u
 import { ListingPublicController } from './presentation/controllers/listing-public.controller';
 
 import { ListingOwnerController } from './presentation/controllers/listing-owner.controller';
+import { ListingAdminController } from './presentation/controllers/listing-admin.controller';
+import { ModerationController } from './presentation/controllers/moderation.controller';
 
 // =====================================================
 // POLICIES
 // =====================================================
 
 import { ListingOwnershipPolicy } from './application/policies/listing-ownership.policy';
+import { ListingModerationPolicy } from './application/policies/listing-moderation.policy';
+import { ListingPublicationPolicy } from './application/policies/listing-publication.policy';
 
 // =====================================================
 // SERVICES
 // =====================================================
 
 import { ListingSlugGeneratorService } from './domain/services/listing-slug-generator.service';
+import { ListingRankingService } from './domain/services/listing-ranking.service';
+import { ListingSearchMetadataService } from './domain/services/listing-search-metadata.service';
+import { ListingIndexingProcessor } from './infrastructure/queues/listing-indexing.processor';
+import { ListingMediaProcessor } from './infrastructure/queues/listing-media.processor';
+import { ListingEventsSubscriber } from './infrastructure/subscribers/listing-events.subscriber';
 
 @Module({
   imports: [
@@ -88,6 +100,8 @@ import { ListingSlugGeneratorService } from './domain/services/listing-slug-gene
   controllers: [
     ListingPublicController,
     ListingOwnerController,
+    ListingAdminController,
+    ModerationController,
   ],
 
   // =====================================================
@@ -118,12 +132,16 @@ import { ListingSlugGeneratorService } from './domain/services/listing-slug-gene
     // ===================================================
 
     ListingSlugGeneratorService,
+    ListingRankingService,
+    ListingSearchMetadataService,
 
     // ===================================================
     // POLICIES
     // ===================================================
 
     ListingOwnershipPolicy,
+    ListingModerationPolicy,
+    ListingPublicationPolicy,
 
     // ===================================================
     // USE CASES
@@ -144,6 +162,16 @@ import { ListingSlugGeneratorService } from './domain/services/listing-slug-gene
     ModerateListingUseCase,
 
     SearchListingsUseCase,
+
+    AttachMediaUseCase,
+
+    UpdateLocationUseCase,
+
+    UpdatePricingUseCase,
+
+    ListingIndexingProcessor,
+    ListingMediaProcessor,
+    ListingEventsSubscriber,
   ],
 
   // =====================================================

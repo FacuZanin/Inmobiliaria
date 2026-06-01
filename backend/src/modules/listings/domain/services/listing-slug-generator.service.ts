@@ -5,8 +5,6 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-import slugify from 'slugify';
-
 import {
   LISTING_REPOSITORY,
 } from '@modules/listings/application/tokens';
@@ -50,12 +48,7 @@ export class ListingSlugGeneratorService {
     // SLUGIFY
     // =====================================================
 
-    const baseSlug = slugify(parts, {
-      lower: true,
-      strict: true,
-      trim: true,
-      locale: 'es',
-    });
+    const baseSlug = this.slugify(parts);
 
     // =====================================================
     // UNIQUE TOKEN
@@ -84,5 +77,15 @@ export class ListingSlugGeneratorService {
 
     // edge-case ultra raro
     return `${slug}-${Date.now()}`;
+  }
+
+  private slugify(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 220);
   }
 }
