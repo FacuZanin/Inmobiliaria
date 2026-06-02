@@ -3,15 +3,12 @@
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
 import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
-import { ListingMediaOrmEntity } from '../persistence/entities/listing-media.orm-entity';
-import { ListingMediaEntity } from '@modules/listings/domain/entities/listing-media.entity';
 
-import { ListingPricingVO } from '@modules/listings/domain/value-objects/listing-pricing.vo';
-import { ListingLocationVO } from '@modules/listings/domain/value-objects/listing-location.vo';
 import { ListingFeaturesVO } from '@modules/listings/domain/value-objects/listing-features.vo';
-import { MediaMetadataVO } from '@modules/listings/domain/value-objects/media-metadata.vo';
-import { ListingAddressVO } from '@modules/listings/domain/value-objects/listing-address.vo';
-import { ListingCoordinatesVO } from '@modules/listings/domain/value-objects/listing-coordinates.vo';
+
+import { ListingMediaMapper } from './listing-media.mapper';
+import { ListingPricingMapper } from './listing-pricing.mapper';
+import { ListingLocationMapper } from './listing-location.mapper';
 
 export class ListingMapper {
   static toDomain(entity: ListingOrmEntity): ListingAggregate {
@@ -38,28 +35,9 @@ export class ListingMapper {
 
       slug: entity.slug,
 
-      pricing: new ListingPricingVO({
-        salePrice: entity.salePrice,
+      pricing: ListingPricingMapper.toDomain(entity),
 
-        rentalPrice: entity.rentalPrice,
-
-        expenses: entity.expenses,
-      }),
-
-      location: new ListingLocationVO({
-        address:
-          entity.address && entity.city
-            ? new ListingAddressVO({
-                street: entity.address,
-                city: entity.city,
-              })
-            : null,
-
-        coordinates:
-          entity.latitude != null && entity.longitude != null
-            ? new ListingCoordinatesVO(entity.latitude, entity.longitude)
-            : null,
-      }),
+      location: ListingLocationMapper.toDomain(entity),
 
       features: new ListingFeaturesVO({
         rooms: entity.rooms,
@@ -78,39 +56,7 @@ export class ListingMapper {
       agencyId: entity.agencyId,
 
       media:
-        entity.media?.map((media) => {
-          return ListingMediaEntity.rehydrate({
-            id: media.id,
-
-            listingId: media.listingId,
-
-            type: media.type,
-
-            url: media.url,
-
-            storageKey: media.storageKey ?? media.url,
-
-            thumbnailUrl: media.thumbnailUrl,
-
-            filename: media.filename,
-
-            mimeType: media.mimeType ?? 'application/octet-stream',
-
-            sizeInBytes: media.size ?? null,
-
-            sortOrder: media.sortOrder,
-
-            isPrimary: media.isPrimary,
-
-            processingStatus: media.processingStatus,
-
-            processingError: media.processingError,
-
-            metadata: media.metadata
-              ? new MediaMetadataVO(media.metadata)
-              : null,
-          });
-        }) ?? [],
+        entity.media?.map((media) => ListingMediaMapper.toDomain(media)) ?? [],
 
       analytics: {
         viewsCount: entity.viewsCount,
@@ -127,94 +73,60 @@ export class ListingMapper {
   }
 
   static toOrm(aggregate: ListingAggregate): Partial<ListingOrmEntity> {
-    return {
-      id: aggregate.id ?? undefined,
+    const ormEntity = new ListingOrmEntity();
 
-      title: aggregate.title,
+    ormEntity.id = aggregate.id ?? undefined!;
 
-      description: aggregate.description ?? null,
+    ormEntity.title = aggregate.title;
 
-      category: aggregate.category,
+    ormEntity.description = aggregate.description ?? null;
 
-      propertyType: aggregate.propertyType,
+    ormEntity.category = aggregate.category;
 
-      operationType: aggregate.operationType,
+    ormEntity.propertyType = aggregate.propertyType;
 
-      status: aggregate.status,
+    ormEntity.operationType = aggregate.operationType;
 
-      moderationStatus: aggregate.moderationStatus,
+    ormEntity.status = aggregate.status;
 
-      moderationReason: aggregate.moderationReason ?? null,
+    ormEntity.moderationStatus = aggregate.moderationStatus;
 
-      visibility: aggregate.visibility,
+    ormEntity.moderationReason = aggregate.moderationReason ?? null;
 
-      slug: aggregate.slug ?? null,
+    ormEntity.visibility = aggregate.visibility;
 
-      salePrice: aggregate.pricing.salePrice ?? null,
+    ormEntity.slug = aggregate.slug ?? null;
 
-      rentalPrice: aggregate.pricing.rentalPrice ?? null,
+    Object.assign(ormEntity, ListingPricingMapper.toOrm(aggregate.pricing));
 
-      expenses: aggregate.pricing.expenses ?? null,
+    Object.assign(ormEntity, ListingLocationMapper.toOrm(aggregate.location));
 
-      address: aggregate.location.address?.street ?? null,
+    ormEntity.rooms = aggregate.features.rooms ?? null;
 
-      city: aggregate.location.address?.city ?? null,
+    ormEntity.bedrooms = aggregate.features.bedrooms ?? null;
 
-      latitude: aggregate.location.coordinates?.latitude ?? null,
+    ormEntity.bathrooms = aggregate.features.bathrooms ?? null;
 
-      longitude: aggregate.location.coordinates?.longitude ?? null,
+    ormEntity.coveredArea = aggregate.features.coveredArea ?? null;
 
-      rooms: aggregate.features.rooms ?? null,
+    ormEntity.totalArea = aggregate.features.totalArea ?? null;
 
-      bedrooms: aggregate.features.bedrooms ?? null,
+    ormEntity.details = aggregate.details ?? {};
 
-      bathrooms: aggregate.features.bathrooms ?? null,
+    ormEntity.ownerId = aggregate.ownerId;
 
-      coveredArea: aggregate.features.coveredArea ?? null,
+    ormEntity.agencyId = aggregate.agencyId ?? null;
 
-      totalArea: aggregate.features.totalArea ?? null,
+    ormEntity.media = aggregate.media.map((media) =>
+      ListingMediaMapper.toOrm(media),
+    );
 
-      details: aggregate.details ?? {},
+    ormEntity.viewsCount = aggregate.analytics.viewsCount;
 
-      ownerId: aggregate.ownerId,
+    ormEntity.contactsCount = aggregate.analytics.contactsCount;
 
-      agencyId: aggregate.agencyId ?? null,
+    ormEntity.favoritesCount = aggregate.analytics.favoritesCount;
 
-      media: aggregate.media.map((media) => ({
-        id: media.id ?? undefined,
-
-        listingId: media.listingId ?? undefined,
-
-        type: media.type,
-
-        url: media.url,
-
-        storageKey: media.storageKey,
-
-        thumbnailUrl: media.thumbnailUrl ?? null,
-
-        filename: media.filename ?? null,
-
-        mimeType: media.mimeType ?? null,
-
-        size: media.sizeInBytes ?? null,
-
-        sortOrder: media.sortOrder,
-
-        isPrimary: media.isPrimary,
-
-        processingStatus: media.processingStatus,
-
-        processingError: media.processingError ?? null,
-
-        metadata: media.metadata?.toPrimitives() ?? null,
-      })),
-
-      viewsCount: aggregate.analytics.viewsCount,
-
-      contactsCount: aggregate.analytics.contactsCount,
-
-      favoritesCount: aggregate.analytics.favoritesCount,
-    };
+    return ormEntity;
   }
 }

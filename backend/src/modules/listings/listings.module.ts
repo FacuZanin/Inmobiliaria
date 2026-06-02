@@ -4,22 +4,18 @@ import { Module } from '@nestjs/common';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-
-
 import { ListingOrmEntity } from './infrastructure/persistence/entities/listing.orm-entity';
 import { ListingMediaOrmEntity } from './infrastructure/persistence/entities/listing-media.orm-entity';
 
-import { ListingRepository } from './infrastructure/repositories/listing.repository';
+import { ListingRepository } from '@modules/listings/infrastructure/repositories/listing.repository';
+import { ListingQueryRepository } from '@modules/listings/infrastructure/repositories/listing-query.repository';
 
 import { ListingSearchService } from './infrastructure/search/listing-search.service';
-
-
 
 import {
   LISTING_REPOSITORY,
   LISTING_SEARCH_SERVICE,
 } from './application/tokens';
-
 
 import { CreateListingUseCase } from './application/use-cases/create-listing.usecase';
 import { UpdateListingUseCase } from './application/use-cases/update-listing.usecase';
@@ -58,18 +54,21 @@ import { ListingEventsSubscriber } from './infrastructure/subscribers/listing-ev
       ListingMediaOrmEntity,
     ]),
   ],
+
   controllers: [
     ListingPublicController,
     ListingOwnerController,
     ListingAdminController,
     ModerationController,
   ],
-  providers: [
 
+  providers: [
     {
       provide: LISTING_REPOSITORY,
       useClass: ListingRepository,
     },
+
+    ListingQueryRepository,
 
     {
       provide: LISTING_SEARCH_SERVICE,
@@ -79,33 +78,20 @@ import { ListingEventsSubscriber } from './infrastructure/subscribers/listing-ev
     ListingSlugGeneratorService,
     ListingRankingService,
     ListingSearchMetadataService,
-
     ListingOwnershipPolicy,
     ListingModerationPolicy,
     ListingPublicationPolicy,
-
     CreateListingUseCase,
-
     UpdateListingUseCase,
-
     GetListingUseCase,
-
     PublishListingUseCase,
-
     PauseListingUseCase,
-
     ArchiveListingUseCase,
-
     ModerateListingUseCase,
-
     SearchListingsUseCase,
-
     AttachMediaUseCase,
-
     UpdateLocationUseCase,
-
     UpdatePricingUseCase,
-
     ListingIndexingProcessor,
     ListingMediaProcessor,
     ListingEventsSubscriber,
@@ -113,6 +99,7 @@ import { ListingEventsSubscriber } from './infrastructure/subscribers/listing-ev
 
   exports: [
     LISTING_REPOSITORY,
+    ListingQueryRepository,
     LISTING_SEARCH_SERVICE,
   ],
 })
