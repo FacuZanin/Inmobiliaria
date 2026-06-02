@@ -13,37 +13,23 @@ import {
 } from 'typeorm';
 
 import { User } from '@modules/user/domain/entities/user.entity';
-
 import { Agencia } from '@modules/agencias/domain/entities/agencia.entity';
-
 import { Favorite } from '@modules/favoritos/domain/entities/favorite.entity';
-
-import { ListingMediaOrmEntity } from './listing-media.orm-entity';
+import { ListingMediaOrmEntity } from '@modules/listings/infrastructure/persistence/entities/listing-media.orm-entity';
 
 import { ListingCategory } from '@modules/listings/domain/enums/listing-category.enum';
-
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
-
 import { ListingVisibility } from '@modules/listings/domain/enums/listing-visibility.enum';
-
 import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';
-
 import { OperationType } from '@modules/listings/domain/enums/operation-type.enum';
-
 import { PropertyType } from '@modules/listings/domain/enums/property-type.enum';
 
 @Entity('listings')
+@Index(['status', 'moderationStatus'])
+@Index(['operationType', 'propertyType'])
 export class ListingOrmEntity {
-  // =====================================================
-  // IDENTITY
-  // =====================================================
-
   @PrimaryGeneratedColumn()
   id!: number;
-
-  // =====================================================
-  // CORE
-  // =====================================================
 
   @Index()
   @Column({
@@ -80,10 +66,6 @@ export class ListingOrmEntity {
   })
   operationType!: OperationType;
 
-  // =====================================================
-  // STATUS
-  // =====================================================
-
   @Index()
   @Column({
     type: 'enum',
@@ -114,15 +96,16 @@ export class ListingOrmEntity {
   })
   visibility!: ListingVisibility;
 
-  // =====================================================
-  // PRICING
-  // =====================================================
-
   @Column({
     type: 'decimal',
     precision: 14,
     scale: 2,
     nullable: true,
+    transformer: {
+      to: (value?: number | null) => value,
+      from: (value?: string | null) =>
+        value !== null && value !== undefined ? Number(value) : null,
+    },
   })
   salePrice!: number | null;
 
@@ -131,6 +114,11 @@ export class ListingOrmEntity {
     precision: 14,
     scale: 2,
     nullable: true,
+    transformer: {
+      to: (value?: number | null) => value,
+      from: (value?: string | null) =>
+        value !== null && value !== undefined ? Number(value) : null,
+    },
   })
   rentalPrice!: number | null;
 
@@ -139,12 +127,13 @@ export class ListingOrmEntity {
     precision: 14,
     scale: 2,
     nullable: true,
+    transformer: {
+      to: (value?: number | null) => value,
+      from: (value?: string | null) =>
+        value !== null && value !== undefined ? Number(value) : null,
+    },
   })
   expenses!: number | null;
-
-  // =====================================================
-  // LOCATION
-  // =====================================================
 
   @Column({
     type: 'varchar',
@@ -166,6 +155,11 @@ export class ListingOrmEntity {
     precision: 10,
     scale: 7,
     nullable: true,
+    transformer: {
+      to: (value?: number | null) => value,
+      from: (value?: string | null) =>
+        value !== null && value !== undefined ? Number(value) : null,
+    },
   })
   latitude!: number | null;
 
@@ -174,12 +168,13 @@ export class ListingOrmEntity {
     precision: 10,
     scale: 7,
     nullable: true,
+    transformer: {
+      to: (value?: number | null) => value,
+      from: (value?: string | null) =>
+        value !== null && value !== undefined ? Number(value) : null,
+    },
   })
   longitude!: number | null;
-
-  // =====================================================
-  // FEATURES
-  // =====================================================
 
   @Column({
     type: 'int',
@@ -211,23 +206,16 @@ export class ListingOrmEntity {
   })
   totalArea!: number | null;
 
-  // =====================================================
-  // FLEXIBLE DETAILS
-  // =====================================================
-
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  details!: Record<string, any> | null;
-
-  // =====================================================
-  // RELATIONS
-  // =====================================================
+  details!: Record<string, unknown> | null;
 
   @ManyToOne(() => User, {
     nullable: false,
     onDelete: 'CASCADE',
+    eager: false,
   })
   owner!: User;
 
@@ -238,6 +226,7 @@ export class ListingOrmEntity {
   @ManyToOne(() => Agencia, {
     nullable: true,
     onDelete: 'SET NULL',
+    eager: false,
   })
   agency!: Agencia | null;
 
@@ -247,28 +236,20 @@ export class ListingOrmEntity {
   })
   agencyId!: number | null;
 
-  @OneToMany(
-    () => ListingMediaOrmEntity,
-    (media) => media.listing,
-    {
-      cascade: true,
-    },
-  )
+  @OneToMany(() => ListingMediaOrmEntity, (media) => media.listing, {
+    cascade: ['insert', 'update'],
+    orphanedRowAction: 'delete',
+    eager: false,
+  })
   media!: ListingMediaOrmEntity[];
 
-  @OneToMany(
-    () => Favorite,
-    (favorite) => favorite.listing,
-  )
+  @OneToMany(() => Favorite, (favorite) => favorite.listing)
   favorites!: Favorite[];
-
-  // =====================================================
-  // ANALYTICS
-  // =====================================================
 
   @Column({
     type: 'int',
     default: 0,
+    nullable: false,
   })
   viewsCount!: number;
 
@@ -284,11 +265,7 @@ export class ListingOrmEntity {
   })
   favoritesCount!: number;
 
-  // =====================================================
-  // SEO
-  // =====================================================
-
-  @Index({
+  @Index('IDX_LISTING_SLUG_UNIQUE', {
     unique: true,
   })
   @Column({
@@ -298,19 +275,11 @@ export class ListingOrmEntity {
   })
   slug!: string | null;
 
-  // =====================================================
-  // SOFT DELETE
-  // =====================================================
-
   @DeleteDateColumn({
     type: 'timestamp',
     nullable: true,
   })
   deletedAt!: Date | null;
-
-  // =====================================================
-  // TIMESTAMPS
-  // =====================================================
 
   @CreateDateColumn()
   createdAt!: Date;

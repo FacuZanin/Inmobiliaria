@@ -11,23 +11,14 @@ import {
 } from 'typeorm';
 
 import { ListingOrmEntity } from './listing.orm-entity';
-
 import { ListingMediaType } from '@modules/listings/domain/enums/listing-media-type.enum';
-
 import { MediaProcessingStatus } from '@modules/listings/domain/enums/media-processing-status.enum';
 
 @Entity('listing_media')
 export class ListingMediaOrmEntity {
-  // =====================================================
-  // IDENTITY
-  // =====================================================
 
   @PrimaryGeneratedColumn()
   id!: number;
-
-  // =====================================================
-  // RELATION
-  // =====================================================
 
   @ManyToOne(
     () => ListingOrmEntity,
@@ -42,10 +33,6 @@ export class ListingMediaOrmEntity {
   @Index()
   @Column()
   listingId!: number;
-
-  // =====================================================
-  // MEDIA
-  // =====================================================
 
   @Index()
   @Column({
@@ -94,10 +81,6 @@ export class ListingMediaOrmEntity {
   })
   size!: number | null;
 
-  // =====================================================
-  // DISPLAY
-  // =====================================================
-
   @Column({
     type: 'int',
     default: 0,
@@ -109,10 +92,6 @@ export class ListingMediaOrmEntity {
     default: false,
   })
   isPrimary!: boolean;
-
-  // =====================================================
-  // PROCESSING
-  // =====================================================
 
   @Index()
   @Column({
@@ -128,19 +107,11 @@ export class ListingMediaOrmEntity {
   })
   processingError!: string | null;
 
-  // =====================================================
-  // METADATA
-  // =====================================================
-
   @Column({
     type: 'jsonb',
     nullable: true,
   })
   metadata!: Record<string, any> | null;
-
-  // =====================================================
-  // TIMESTAMPS
-  // =====================================================
 
   @CreateDateColumn()
   createdAt!: Date;

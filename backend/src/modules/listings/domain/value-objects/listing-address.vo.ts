@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-address.vo.ts
 
-import { BadRequestException } from '@nestjs/common';
+import { DomainException } from '@/shared/domain/exceptions/domain.exception';
 
 export type ListingAddressProps = {
   street: string;
@@ -27,13 +27,13 @@ export class ListingAddressVO {
 
   constructor(props: ListingAddressProps) {
     if (!props.street?.trim()) {
-      throw new BadRequestException(
+      throw new DomainException(
         'Invalid street',
       );
     }
 
     if (!props.city?.trim()) {
-      throw new BadRequestException(
+      throw new DomainException(
         'Invalid city',
       );
     }
@@ -50,6 +50,8 @@ export class ListingAddressVO {
 
     this.zipCode =
       props.zipCode?.trim() ?? null;
+
+    Object.freeze(this);
   }
 
   public getValue(): string {

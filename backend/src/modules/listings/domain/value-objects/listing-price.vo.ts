@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-price.vo.ts
 
-import { BadRequestException } from '@nestjs/common';
+import { DomainException } from '@/shared/domain/exceptions/domain.exception';
 
 export class ListingPriceVO {
   readonly value: number;
@@ -11,7 +11,7 @@ export class ListingPriceVO {
       Number.isNaN(value) ||
       value < 0
     ) {
-      throw new BadRequestException(
+      throw new DomainException(
         'Invalid listing price',
       );
     }

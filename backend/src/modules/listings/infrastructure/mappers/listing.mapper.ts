@@ -39,12 +39,11 @@ export class ListingMapper {
       slug: entity.slug,
 
       pricing: new ListingPricingVO({
-        salePrice: entity.salePrice != null ? Number(entity.salePrice) : null,
+        salePrice: entity.salePrice,
 
-        rentalPrice:
-          entity.rentalPrice != null ? Number(entity.rentalPrice) : null,
+        rentalPrice: entity.rentalPrice,
 
-        expenses: entity.expenses != null ? Number(entity.expenses) : null,
+        expenses: entity.expenses,
       }),
 
       location: new ListingLocationVO({
@@ -58,10 +57,7 @@ export class ListingMapper {
 
         coordinates:
           entity.latitude != null && entity.longitude != null
-            ? new ListingCoordinatesVO(
-                Number(entity.latitude),
-                Number(entity.longitude),
-              )
+            ? new ListingCoordinatesVO(entity.latitude, entity.longitude)
             : null,
       }),
 
@@ -100,7 +96,7 @@ export class ListingMapper {
 
             mimeType: media.mimeType ?? 'application/octet-stream',
 
-            sizeInBytes: media.size ? Number(media.size) : null,
+            sizeInBytes: media.size ?? null,
 
             sortOrder: media.sortOrder,
 
@@ -184,37 +180,35 @@ export class ListingMapper {
 
       agencyId: aggregate.agencyId ?? null,
 
-      media: aggregate.media.map(
-        (media): Partial<ListingMediaOrmEntity> => ({
-          id: media.id ?? undefined,
+      media: aggregate.media.map((media) => ({
+        id: media.id ?? undefined,
 
-          listingId: media.listingId ?? undefined,
+        listingId: media.listingId ?? undefined,
 
-          type: media.type,
+        type: media.type,
 
-          url: media.url,
+        url: media.url,
 
-          storageKey: media.storageKey,
+        storageKey: media.storageKey,
 
-          thumbnailUrl: media.thumbnailUrl ?? null,
+        thumbnailUrl: media.thumbnailUrl ?? null,
 
-          filename: media.filename ?? null,
+        filename: media.filename ?? null,
 
-          mimeType: media.mimeType ?? null,
+        mimeType: media.mimeType ?? null,
 
-          size: media.sizeInBytes ?? null,
+        size: media.sizeInBytes ?? null,
 
-          sortOrder: media.sortOrder,
+        sortOrder: media.sortOrder,
 
-          isPrimary: media.isPrimary,
+        isPrimary: media.isPrimary,
 
-          processingStatus: media.processingStatus,
+        processingStatus: media.processingStatus,
 
-          processingError: media.processingError ?? null,
+        processingError: media.processingError ?? null,
 
-          metadata: media.metadata?.toPrimitives() ?? {},
-        }),
-      ) as ListingMediaOrmEntity[],
+        metadata: media.metadata?.toPrimitives() ?? null,
+      })),
 
       viewsCount: aggregate.analytics.viewsCount,
 

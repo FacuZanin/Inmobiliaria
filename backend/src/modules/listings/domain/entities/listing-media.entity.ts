@@ -1,6 +1,6 @@
 // backend\src\modules\listings\domain\entities\listing-media.entity.ts
 
-import { BadRequestException } from '@nestjs/common';
+import { DomainException } from '@/shared/domain/exceptions/domain.exception';
 
 import { ListingMediaType } from '../enums/listing-media-type.enum';
 import { MediaProcessingStatus } from '../enums/media-processing-status.enum';
@@ -209,7 +209,7 @@ export class ListingMediaEntity {
 
   updateSortOrder(SortOrder: number) {
     if (SortOrder < 0) {
-      throw new BadRequestException('Invalid media order');
+      throw new DomainException('Invalid media order');
     }
 
     this._sortOrder = SortOrder;
@@ -223,19 +223,19 @@ export class ListingMediaEntity {
 
   private validate(props: ListingMediaProps) {
     if (!props.url?.trim()) {
-      throw new BadRequestException('Media URL is required');
+      throw new DomainException('Media URL is required');
     }
 
     if (!props.storageKey?.trim()) {
-      throw new BadRequestException('Media storageKey is required');
+      throw new DomainException('Media storageKey is required');
     }
 
     if (!props.mimeType?.trim()) {
-      throw new BadRequestException('Media mimeType is required');
+      throw new DomainException('Media mimeType is required');
     }
 
     if (props.sizeInBytes != null && props.sizeInBytes < 0) {
-      throw new BadRequestException('Invalid media size');
+      throw new DomainException('Invalid media size');
     }
   }
 }

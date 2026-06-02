@@ -1,6 +1,6 @@
 // backend\src\modules\listings\domain\aggregates\listing.aggregate.ts
 
-import { BadRequestException } from '@nestjs/common';
+import { DomainException } from '@/shared/domain/exceptions/domain.exception';
 
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';
@@ -135,6 +135,16 @@ export class ListingAggregate {
 
   private _updatedAt?: Date;
 
+  private validateInvariants() {
+    if (!this._title?.trim()) {
+      throw new DomainException('Listing title is required');
+    }
+
+    if (!this._ownerId) {
+      throw new DomainException('Listing owner is required');
+    }
+  }
+
   private constructor(props: ListingAggregateProps) {
     this._id = props.id ?? null;
 
@@ -208,6 +218,8 @@ export class ListingAggregate {
     this._createdAt = props.createdAt;
 
     this._updatedAt = props.updatedAt;
+
+    this.validateInvariants();
   }
 
   static create(
@@ -285,11 +297,11 @@ export class ListingAggregate {
   }
 
   get details() {
-    return this._details;
+    return { ...this._details };
   }
 
   get media() {
-    return this._media;
+    return [...this._media];
   }
 
   get category() {
@@ -305,7 +317,7 @@ export class ListingAggregate {
   }
 
   get analytics() {
-    return this._analytics;
+    return { ...this._analytics };
   }
 
   get createdAt() {
@@ -318,102 +330,138 @@ export class ListingAggregate {
 
   incrementViews() {
     this._analytics.viewsCount += 1;
+
+    this.touch();
   }
 
   incrementContacts() {
     this._analytics.contactsCount += 1;
+
+    this.touch();
   }
 
   syncFavorites(count: number) {
     this._analytics.favoritesCount = count;
+
+    this.touch();
   }
 
   setSlug(slug: string) {
     this._slug = slug;
+
+    this.touch();
   }
 
   makePrivate() {
     this._visibility = ListingVisibility.PRIVATE;
+
+    this.touch();
   }
 
   makePublic() {
     this._visibility = ListingVisibility.PUBLIC;
+
+    this.touch();
   }
 
   removeMedia(mediaId: number) {
+    const mediaToRemove = this._media.find((media) => media.id === mediaId);
+
+    if (!mediaToRemove) {
+      return;
+    }
+
     this._media = this._media.filter((media) => media.id !== mediaId);
+
+    const hasPrimary = this._media.some((media) => media.isPrimary);
+
+    if (!hasPrimary && this._media.length > 0) {
+      this._media[0].markAsPrimary();
+    }
+
+    this.normalizeMediaOrder();
+
+    this.touch();
   }
 
   publish() {
     if (this._moderationStatus !== ModerationStatus.APPROVED) {
-      throw new BadRequestException(
-        'Listing must be approved before publishing',
-      );
+      throw new DomainException('Listing must be approved before publishing');
     }
 
-    const readyMedia = this._media.filter(
-      (media) => media.processingStatus === MediaProcessingStatus.READY,
-    );
-
-    if (!readyMedia.length) {
-      throw new BadRequestException(
-        'Listing requires processed media before publishing',
-      );
-    }
-
-    if (!this._pricing.hasValidPrice()) {
-      throw new BadRequestException(
-        'Listing requires pricing before publishing',
-      );
-    }
-
-    if (!this._location.hasValidAddress()) {
-      throw new BadRequestException(
-        'Listing requires location before publishing',
-      );
-    }
+    this.ensurePublishable();
 
     this._status = ListingStatus.ACTIVE;
+
+    this.touch();
   }
 
   pause() {
     if (this._status !== ListingStatus.ACTIVE) {
-      throw new BadRequestException('Only active listings can be paused');
+      throw new DomainException('Only active listings can be paused');
     }
 
     this._status = ListingStatus.PAUSED;
+
+    this.touch();
+  }
+
+  reactivate() {
+    if (this._status !== ListingStatus.PAUSED) {
+      throw new DomainException('Only paused listings can be reactivated');
+    }
+
+    this._status = ListingStatus.ACTIVE;
+
+    this.touch();
   }
 
   archive() {
+    if (this._status === ListingStatus.ARCHIVED) {
+      throw new DomainException('Listing already archived');
+    }
+
     this._status = ListingStatus.ARCHIVED;
+
+    this.touch();
   }
 
   approveModeration() {
     this._moderationStatus = ModerationStatus.APPROVED;
 
     this._moderationReason = null;
+
+    this.touch();
   }
 
   rejectModeration(reason: string) {
     this._moderationStatus = ModerationStatus.REJECTED;
 
     this._moderationReason = reason;
+
+    this.touch();
   }
 
   observeModeration(reason: string) {
     this._moderationStatus = ModerationStatus.OBSERVED;
 
     this._moderationReason = reason;
+
+    this.touch();
   }
 
   suspendModeration(reason: string) {
     this._moderationStatus = ModerationStatus.SUSPENDED;
 
     this._moderationReason = reason;
+
+    this.touch();
   }
 
   markAsUnderReview() {
     this._moderationStatus = ModerationStatus.PENDING_REVIEW;
+
+    this.touch();
   }
 
   updateBasicInfo(data: { title?: string; description?: string | null }) {
@@ -424,6 +472,8 @@ export class ListingAggregate {
     if (data.description !== undefined) {
       this._description = data.description;
     }
+
+    this.touch();
   }
 
   updatePricing(pricing: {
@@ -435,6 +485,8 @@ export class ListingAggregate {
       ...this._pricing.toPrimitives(),
       ...pricing,
     });
+
+    this.touch();
   }
 
   updateLocation(location: Partial<ListingLocationProps>) {
@@ -443,6 +495,8 @@ export class ListingAggregate {
 
       coordinates: location.coordinates ?? this._location.coordinates,
     });
+
+    this.touch();
   }
 
   updateFeatures(features: {
@@ -456,10 +510,17 @@ export class ListingAggregate {
       ...this._features.toPrimitives(),
       ...features,
     });
+
+    this.touch();
   }
 
   updateDetails(details: Record<string, any>) {
-    this._details = details;
+    this._details = {
+      ...this._details,
+      ...details,
+    };
+
+    this.touch();
   }
 
   attachMedia(media: ListingMediaEntity[]) {
@@ -474,16 +535,24 @@ export class ListingAggregate {
         this.clearPrimaryMedia();
       }
 
+      if (this._media.length >= 50) {
+        throw new DomainException('Listing media limit exceeded');
+      }
+
       this._media.push(item);
     }
 
     this.normalizeMediaOrder();
+
+    this.touch();
   }
 
-  setId(id: number) {
-    if (!this._id) {
-      this._id = id;
+  assignPersistenceId(id: number) {
+    if (this._id !== null) {
+      throw new DomainException('Listing already has a persistence id');
     }
+
+    this._id = id;
   }
 
   private clearPrimaryMedia() {
@@ -496,5 +565,87 @@ export class ListingAggregate {
     this._media.forEach((media, index) => {
       media.updateSortOrder(index);
     });
+  }
+
+  private touch() {
+    this._updatedAt = new Date();
+  }
+
+  private ensurePublishable() {
+    if (this._title.trim().length < 10) {
+      throw new DomainException('Listing title is too short');
+    }
+
+    if (!this._description || this._description.length < 30) {
+      throw new DomainException('Listing description is too short');
+    }
+
+    if (!this._pricing.hasValidPrice()) {
+      throw new DomainException('Listing requires pricing before publishing');
+    }
+
+    if (!this._location.hasValidAddress()) {
+      throw new DomainException('Listing requires location before publishing');
+    }
+
+    const readyMedia = this._media.filter(
+      (media) => media.processingStatus === MediaProcessingStatus.READY,
+    );
+
+    if (!readyMedia.length) {
+      throw new DomainException(
+        'Listing requires processed media before publishing',
+      );
+    }
+
+    const hasPrimary = readyMedia.some((media) => media.isPrimary);
+
+    if (!hasPrimary) {
+      throw new DomainException('Listing requires a primary image');
+    }
+  }
+
+  toPrimitives() {
+    return {
+      id: this._id,
+
+      title: this._title,
+
+      description: this._description,
+
+      category: this._category,
+
+      propertyType: this._propertyType,
+
+      operationType: this._operationType,
+
+      ownerId: this._ownerId,
+
+      agencyId: this._agencyId,
+
+      status: this._status,
+
+      moderationStatus: this._moderationStatus,
+
+      moderationReason: this._moderationReason,
+
+      visibility: this._visibility,
+
+      slug: this._slug,
+
+      pricing: this._pricing.toPrimitives(),
+
+      location: this._location.toPrimitives(),
+
+      features: this._features.toPrimitives(),
+
+      details: this._details,
+
+      analytics: this._analytics,
+
+      createdAt: this._createdAt,
+
+      updatedAt: this._updatedAt,
+    };
   }
 }

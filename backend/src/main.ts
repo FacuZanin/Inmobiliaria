@@ -1,7 +1,7 @@
 // backend\src\main.ts
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { BadRequestException } from '@nestjs/common';
+import { DomainException } from '@/shared/domain/exceptions/domain.exception';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
