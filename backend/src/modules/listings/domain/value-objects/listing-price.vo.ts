@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-price.vo.ts
 
-import { DomainException } from '@/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
 
 export class ListingPriceVO {
   readonly value: number;

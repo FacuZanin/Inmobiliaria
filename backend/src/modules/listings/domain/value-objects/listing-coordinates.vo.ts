@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-coordinates.vo.ts
 
-import { DomainException } from '@/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
 
 export class ListingCoordinatesVO {
   readonly latitude: number;

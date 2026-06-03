@@ -1,7 +1,7 @@
 // backend\src\modules\listings\infrastructure\mappers\listing-pricing.mapper.ts
 import { ListingPricingVO } from '@modules/listings/domain/value-objects/listing-pricing.vo';
 
-import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
+import { ListingOrmEntity } from '../persistence/typeorm/entities/listing.orm-entity';
 
 export class ListingPricingMapper {
   static toDomain(

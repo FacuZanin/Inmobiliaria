@@ -18,13 +18,13 @@ import { PasswordHasherService } from '@modules/auth/infrastructure/services/pas
 import { RefreshTokenService } from '@modules/auth/application/services/refresh-token.service';
 
 // Entities
-import { RefreshToken } from '@modules/auth/infrastructure/entities/refresh-token.entity';
+import { RefreshToken } from '@/modules/auth/infrastructure/persistence/typeorm/entities/refresh-token.entity';
 
 // Guards / Strategy
 import { JwtStrategy } from '@modules/auth/infrastructure/strategies/jwt.strategy';
 import { JwtAuthGuard } from '@modules/auth/infrastructure/guards/jwt-auth.guard';
 
-import { UserTypeGuard } from '@/shared/security/guards/user-type.guard';
+import { UserTypeGuard } from '@/core/shared/security/guards/user-type.guard';
 
 // Ports
 import {
@@ -33,8 +33,8 @@ import {
 } from '@modules/auth/application/tokens';
 
 // User module
-import { UsersModule } from '@modules/user/users.module';
-import { AgenciasModule } from '@modules/agencias/agencias.module';
+import { UsersModule } from '@/modules/users/users.module';
+import { AgenciasModule } from '@/modules/agencies/agencias.module';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 @Global()

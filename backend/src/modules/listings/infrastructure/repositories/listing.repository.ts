@@ -9,7 +9,7 @@ import { ListingRepositoryPort } from '@modules/listings/domain/repositories/lis
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
-import { ListingOrmEntity } from '@modules/listings/infrastructure/persistence/entities/listing.orm-entity';
+import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing.orm-entity';
 
 import { ListingMapper } from '@modules/listings/infrastructure/mappers/listing.mapper';
 

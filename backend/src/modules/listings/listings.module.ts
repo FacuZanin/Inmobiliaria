@@ -4,8 +4,8 @@ import { Module } from '@nestjs/common';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ListingOrmEntity } from './infrastructure/persistence/entities/listing.orm-entity';
-import { ListingMediaOrmEntity } from './infrastructure/persistence/entities/listing-media.orm-entity';
+import { ListingOrmEntity } from './infrastructure/persistence/typeorm/entities/listing.orm-entity';
+import { ListingMediaOrmEntity } from './infrastructure/persistence/typeorm/entities/listing-media.orm-entity';
 
 import { ListingRepository } from '@modules/listings/infrastructure/repositories/listing.repository';
 import { ListingQueryRepository } from '@modules/listings/infrastructure/repositories/listing-query.repository';
@@ -29,10 +29,10 @@ import { AttachMediaUseCase } from './application/use-cases/attach-media.usecase
 import { UpdateLocationUseCase } from './application/use-cases/update-location.usecase';
 import { UpdatePricingUseCase } from './application/use-cases/update-pricing.usecase';
 
-import { ListingPublicController } from './presentation/controllers/listing-public.controller';
-import { ListingOwnerController } from './presentation/controllers/listing-owner.controller';
-import { ListingAdminController } from './presentation/controllers/listing-admin.controller';
-import { ModerationController } from './presentation/controllers/moderation.controller';
+import { ListingPublicController } from './presentation/http/controllers/listing-public.controller';
+import { ListingOwnerController } from './presentation/http/controllers/listing-owner.controller';
+import { ListingAdminController } from './presentation/http/controllers/listing-admin.controller';
+import { ModerationController } from './presentation/http/controllers/moderation.controller';
 
 import { ListingOwnershipPolicy } from './application/policies/listing-ownership.policy';
 import { ListingModerationPolicy } from './application/policies/listing-moderation.policy';
@@ -45,7 +45,7 @@ import { ListingSearchMetadataService } from './domain/services/listing-search-m
 import { ListingIndexingProcessor } from './infrastructure/queues/listing-indexing.processor';
 import { ListingMediaProcessor } from './infrastructure/queues/listing-media.processor';
 
-import { ListingEventsSubscriber } from './infrastructure/subscribers/listing-events.subscriber';
+import { ListingEventsSubscriber } from './infrastructure/persistence/typeorm/subscribers/listing-events.subscriber';
 
 @Module({
   imports: [

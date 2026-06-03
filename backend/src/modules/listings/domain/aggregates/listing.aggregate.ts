@@ -1,6 +1,6 @@
 // backend\src\modules\listings\domain\aggregates\listing.aggregate.ts
 
-import { DomainException } from '@/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
 
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';

@@ -4,9 +4,9 @@ import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { USER_REPOSITORY } from '@modules/user/application/tokens';
+import { USER_REPOSITORY } from '@/modules/users/application/tokens';
 
-import type { UserRepositoryPort } from '@modules/user/application/ports/user-repository.port';
+import type { UserRepositoryPort } from '@/modules/users/application/ports/user-repository.port';
 
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 

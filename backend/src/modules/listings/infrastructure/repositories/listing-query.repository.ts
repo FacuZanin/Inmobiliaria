@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository, SelectQueryBuilder } from 'typeorm';
 
-import { ListingOrmEntity } from '@modules/listings/infrastructure/persistence/entities/listing.orm-entity';
+import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing.orm-entity';
 
 import { ListingMapper } from '@modules/listings/infrastructure/mappers/listing.mapper';
 

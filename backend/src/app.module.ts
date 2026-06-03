@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bullmq';
 
-import { AuditInterceptor } from '@/shared/infrastructure/interceptors/audit.interceptor';
+import { AuditInterceptor } from '@/core/infrastructure/interceptors/audit.interceptor';
 
 import ormconfig from './database/typeorm.config';
 
@@ -13,25 +13,25 @@ import { AppController } from './app.controller';
 
 // MÓDULOS DE DOMINIOAuditAction
 import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/user/users.module';
-import { AgenciasModule } from './modules/agencias/agencias.module';
+import { UsersModule } from './modules/users/users.module';
+import { AgenciasModule } from './modules/agencies/agencias.module';
 import { ListingsModule } from './modules/listings/listings.module';
 import { OperacionesModule } from './modules/operaciones/operaciones.module';
 import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
-import { UploadsModule } from './modules/uploads/uploads.module';
-import { FavoritosModule } from './modules/favoritos/favoritos.module';
+import { UploadsModule } from './modules/media/uploads/uploads.module';
+import { FavoritosModule } from './modules/favorites/favoritos.module';
 import { AuditModule } from './modules/audit/audit.module';
 
 // GLOBALS
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
-import { HttpExceptionFilter } from './shared/infrastructure/filters/http-exception.filter';
-import { LoggingInterceptor } from './shared/infrastructure/interceptors/logging.interceptor';
-import { TimingInterceptor } from './shared/infrastructure/interceptors/timing.interceptor';
-import { ValidationPipe } from './shared/infrastructure/pipes/validation.pipe';
+import { HttpExceptionFilter } from '@/core/infrastructure/filters/http-exception.filter';
+import { LoggingInterceptor } from '@/core/infrastructure/interceptors/logging.interceptor';
+import { TimingInterceptor } from '@/core/infrastructure/interceptors/timing.interceptor';
+import { ValidationPipe } from '@/core/infrastructure/pipes/validation.pipe';
 
 // LOGGER
-import { LoggerModule } from './shared/infrastructure/logger/logger.module';
+import { LoggerModule } from '@/core/infrastructure/logger/logger.module';
 
 // HEALTH
 import { HealthModule } from './health/health.module';

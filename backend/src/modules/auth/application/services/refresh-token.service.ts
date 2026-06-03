@@ -3,8 +3,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { RefreshToken } from '../../infrastructure/entities/refresh-token.entity';
-import { User } from '@/modules/user/domain/entities/user.entity';
+import { RefreshToken } from '../../infrastructure/persistence/typeorm/entities/refresh-token.entity';
+import { User } from '@/modules/users/domain/entities/user.entity';
 
 import * as crypto from 'crypto';
 

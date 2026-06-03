@@ -19,7 +19,7 @@ import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.ag
 
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 
-import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
+import { ListingOrmEntity } from '../persistence/typeorm/entities/listing.orm-entity';
 
 import { ListingMapper } from '../mappers/listing.mapper';
 

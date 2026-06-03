@@ -2,7 +2,7 @@
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { User } from '../../modules/user/domain/entities/user.entity';
+import { User } from '../../modules/users/domain/entities/user.entity';
 import { UserRole } from '@shared/contracts/enums/user-role.enum';
 import { UserType } from '@shared/contracts/enums/user-type.enum';
 

@@ -23,9 +23,9 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
-import { Public } from '@/shared/security/decorators/public.decorator';
-import { CurrentUser } from '@/shared/security/decorators/current-user.decorator';
-import { Auth } from '@/shared/security/decorators/auth.decorator';
+import { Public } from '@/core/shared/security/decorators/public.decorator';
+import { CurrentUser } from '@/core/shared/security/decorators/current-user.decorator';
+import { Auth } from '@/core/shared/security/decorators/auth.decorator';
 
 import { LoginDto } from '@modules/auth/application/dto/login.dto';
 import { RegisterDto } from '@modules/auth/application/dto/register.dto';
@@ -36,8 +36,8 @@ import { LoginUseCase } from '@modules/auth/application/use-cases/login.usecase'
 import { RegisterUseCase } from '@modules/auth/application/use-cases/register.usecase';
 import { RefreshTokenUseCase } from '@modules/auth/application/use-cases/refresh-token.usecase';
 
-import type { UserRepositoryPort } from '@modules/user/application/ports/user-repository.port';
-import { USER_REPOSITORY } from '@modules/user/application/tokens';
+import type { UserRepositoryPort } from '@/modules/users/application/ports/user-repository.port';
+import { USER_REPOSITORY } from '@/modules/users/application/tokens';
 
 import { JwtPayload } from '@modules/auth/application/contracts/jwt-payload.contracts';
 

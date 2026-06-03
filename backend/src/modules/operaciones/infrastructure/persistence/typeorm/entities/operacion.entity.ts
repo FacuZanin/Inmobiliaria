@@ -6,9 +6,9 @@ import {
   ManyToOne,
   CreateDateColumn,
 } from 'typeorm';
-import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/entities/listing.orm-entity';
-import { User } from '@modules/user/domain/entities/user.entity';
-import { Agencia } from '@modules/agencias/domain/entities/agencia.entity';
+import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing.orm-entity';
+import { User } from '@/modules/users/domain/entities/user.entity';
+import { Agencia } from '@/modules/agencies/domain/entities/agencia.entity';
 import { MedioOperacion} from '@shared/contracts/enums/medio-operacion.enum';
 import { OperacionTipo } from '@shared/contracts/enums/operacion-tipo.enum';
 import { OperacionEstado } from '@shared/contracts/enums/operacion-estado.enum';

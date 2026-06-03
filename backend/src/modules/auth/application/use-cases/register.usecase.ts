@@ -3,8 +3,8 @@ import { Inject, BadRequestException } from '@nestjs/common';
 import { PASSWORD_HASHER } from '../tokens';
 import type { PasswordHasherPort } from '../ports/password-hasher.port';
 
-import { USER_REPOSITORY } from '../../../user/application/tokens';
-import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
+import { USER_REPOSITORY } from '../../../users/application/tokens';
+import type { UserRepositoryPort } from '../../../users/application/ports/user-repository.port';
 
 import { RegisterDto } from '../dto/register.dto';
 import { UserType } from '@shared/contracts/enums/user-type.enum';

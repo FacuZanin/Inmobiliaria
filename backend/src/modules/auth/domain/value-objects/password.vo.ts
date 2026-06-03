@@ -1,5 +1,5 @@
 // backend\src\modules\auth\domain\value-objects\password.vo.ts
-import { DomainException } from '@/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
 import { PasswordHasherPort } from '../../application/ports/password-hasher.port';
 
 export class Password {

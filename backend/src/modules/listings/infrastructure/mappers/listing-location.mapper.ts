@@ -3,7 +3,7 @@ import { ListingLocationVO } from '@modules/listings/domain/value-objects/listin
 import { ListingAddressVO } from '@modules/listings/domain/value-objects/listing-address.vo';
 import { ListingCoordinatesVO } from '@modules/listings/domain/value-objects/listing-coordinates.vo';
 
-import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
+import { ListingOrmEntity } from '../persistence/typeorm/entities/listing.orm-entity';
 
 export class ListingLocationMapper {
   static toDomain(

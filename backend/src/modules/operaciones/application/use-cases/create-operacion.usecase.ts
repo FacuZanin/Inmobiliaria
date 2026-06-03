@@ -10,8 +10,8 @@ import { OPERACION_REPOSITORY } from '../tokens';
 import type { OperacionRepositoryPort } from '../ports/operacion-repository.port';
 import { CreateOperacionDto } from '../dto/create-operacion.dto';
 import { OperacionAggregate } from '../../domain/entities/operacion.aggregate';
-import { User } from '@/modules/user/domain/entities/user.entity';
-import { getUserTypeCapabilities } from '@/modules/user/domain/capabilities/property-publishers';
+import { User } from '@/modules/users/domain/entities/user.entity';
+import { getUserTypeCapabilities } from '@/modules/users/domain/capabilities/property-publishers';
 
 @Injectable()
 export class CreateOperacionUseCase {

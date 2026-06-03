@@ -1,7 +1,7 @@
 // backend\src\modules\auth\application\use-cases\logout.usecase.ts
 import { Inject, Injectable } from '@nestjs/common';
-import { USER_REPOSITORY } from '../../../user/application/tokens';
-import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
+import { USER_REPOSITORY } from '../../../users/application/tokens';
+import type { UserRepositoryPort } from '../../../users/application/ports/user-repository.port';
 
 @Injectable()
 export class LogoutUseCase {

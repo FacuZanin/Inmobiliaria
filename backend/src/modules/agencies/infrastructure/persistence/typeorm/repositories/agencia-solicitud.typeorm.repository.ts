@@ -1,0 +1,151 @@
+// backend\src\modules\agencias\infrastructure\persistence\typeorm\repositories\agencia-solicitud.typeorm.repository.ts
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Between } from 'typeorm';
+
+import type { AgenciaSolicitudRepositoryPort } from '../../../../application/ports/agencia-solicitud-repository.port';
+
+import { AgenciaSolicitudEstado } from '@shared/contracts/enums/agencia-solicitud-estado.enum';
+
+import type { CreateSolicitudAgenciaDto } from '../../../../application/dto/create-solicitud-agencia.dto';
+
+import { Agencia } from '../../../../domain/entities/agencia.entity';
+import { User } from '../../../../../users/domain/entities/user.entity';
+import { AgenciaSolicitud } from '../../../../domain/entities/agencia-solicitud.entity';
+@Injectable()
+export class AgenciaSolicitudTypeOrmRepository implements AgenciaSolicitudRepositoryPort {
+  constructor(
+    @InjectRepository(AgenciaSolicitud)
+    private readonly repo: Repository<AgenciaSolicitud>,
+
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+
+    @InjectRepository(Agencia)
+    private readonly agenciaRepo?: Repository<Agencia>,
+  ) {}
+
+  async create(
+    data: CreateSolicitudAgenciaDto,
+    userId: number,
+  ): Promise<AgenciaSolicitud> {
+    // crear y castear explícitamente a la entidad para evitar inferencias indeseadas
+    const s = this.repo.create({
+      ...data,
+      usuario: { id: userId } as any,
+      estado: AgenciaSolicitudEstado.PENDIENTE,
+    } as Partial<AgenciaSolicitud>) as AgenciaSolicitud;
+
+    return await this.repo.save(s);
+  }
+
+  async findPendientes(): Promise<AgenciaSolicitud[]> {
+    // usar el enum en lugar de string literal
+    return this.repo.find({
+      where: { estado: AgenciaSolicitudEstado.PENDIENTE },
+      order: { creadaEn: 'DESC' },
+      relations: ['usuario'],
+    });
+  }
+
+  async findOne(id: number): Promise<AgenciaSolicitud | null> {
+    return this.repo.findOne({
+      where: { id },
+      relations: ['usuario'],
+    });
+  }
+
+  async save(solicitud: AgenciaSolicitud): Promise<AgenciaSolicitud> {
+    return this.repo.save(solicitud);
+  }
+
+  async approveAndAssignUser(
+    solicitudId: number,
+    nuevaAgencia: Agencia,
+  ): Promise<AgenciaSolicitud> {
+    // Cargar solicitud con usuario
+    const solicitud = await this.repo.findOne({
+      where: { id: solicitudId },
+      relations: ['usuario'],
+    });
+    if (!solicitud) throw new BadRequestException('Solicitud no encontrada');
+
+    // Crear agencia
+    const agenciaEntity = this.agenciaRepo
+      ? this.agenciaRepo.create(nuevaAgencia as any)
+      : undefined;
+    const savedAgencia = agenciaEntity
+      ? await this.agenciaRepo!.save(agenciaEntity)
+      : undefined;
+
+    // Actualizar usuario (asignar tipo y agencia)
+    if (solicitud.usuario) {
+      (solicitud.usuario as any).tipo = 'AGENCIA';
+      if (savedAgencia) (solicitud.usuario as any).agencia = savedAgencia;
+      await this.userRepo.save(solicitud.usuario);
+    }
+
+    // Marcar solicitud aprobada
+    solicitud.estado = AgenciaSolicitudEstado.APROBADA;
+    return this.repo.save(solicitud);
+  }
+
+  async findPendienteByUserId(userId: number): Promise<boolean> {
+    const solicitud = await this.repo.findOne({
+      where: {
+        usuario: {
+          id: userId,
+        },
+        estado: AgenciaSolicitudEstado.PENDIENTE,
+      },
+      relations: ['usuario'],
+    });
+
+    return !!solicitud;
+  }
+
+  async countByEstado(estado: AgenciaSolicitudEstado): Promise<number> {
+    return this.repo.count({
+      where: {
+        estado,
+      },
+    });
+  }
+
+  async countThisMonth(): Promise<number> {
+    const now = new Date();
+
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    return this.repo.count({
+      where: {
+        creadaEn: Between(start, now),
+      },
+    });
+  }
+
+  async getSolicitudesByMonth(): Promise<
+    {
+      month: string;
+      total: number;
+    }[]
+  > {
+    return this.repo
+      .createQueryBuilder('solicitud')
+      .select(`TO_CHAR(solicitud."creadaEn", 'YYYY-MM')`, 'month')
+      .addSelect('COUNT(*)', 'total')
+      .groupBy(`TO_CHAR(solicitud."creadaEn", 'YYYY-MM')`)
+      .orderBy('month', 'ASC')
+      .getRawMany();
+  }
+
+  async findRecent(limit: number): Promise<AgenciaSolicitud[]> {
+    return this.repo.find({
+      order: {
+        creadaEn: 'DESC',
+      },
+      take: limit,
+      relations: ['usuario'],
+    });
+  }
+}

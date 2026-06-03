@@ -1,4 +1,4 @@
-import type { DomainEvent } from '@/shared/domain/events/domain-event';
+import type { DomainEvent } from '@/core/shared/domain/events/domain-event';
 
 export type ListingPriceChangedPayload = {
   listingId: number;

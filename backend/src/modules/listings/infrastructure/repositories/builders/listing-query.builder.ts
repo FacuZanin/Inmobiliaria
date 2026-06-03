@@ -1,7 +1,7 @@
 // backend\src\modules\listings\infrastructure\repositories\builders\listing-query.builder.ts
 import { SelectQueryBuilder } from 'typeorm';
 
-import { ListingOrmEntity } from '@modules/listings/infrastructure/persistence/entities/listing.orm-entity';
+import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing.orm-entity';
 
 import { ListingSearchFilters } from '@modules/listings/domain/repositories/listing-query.repository.port';
 

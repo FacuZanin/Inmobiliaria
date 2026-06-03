@@ -1,5 +1,5 @@
 // backend\src\modules\listings\infrastructure\mappers\listing-media.mapper.ts
-import { ListingMediaOrmEntity } from '../persistence/entities/listing-media.orm-entity';
+import { ListingMediaOrmEntity } from '../persistence/typeorm/entities/listing-media.orm-entity';
 
 import { ListingMediaEntity } from '@modules/listings/domain/entities/listing-media.entity';
 

@@ -12,14 +12,14 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 
-import { Auth } from '../../shared/security/decorators/auth.decorator';
-import { CurrentUser } from '../../shared/security/decorators/current-user.decorator';
+import { Auth } from '../../core/shared/security/decorators/auth.decorator';
+import { CurrentUser } from '../../core/shared/security/decorators/current-user.decorator';
 
 import { Permission }
 from '@shared/contracts/enums/permission.enum';
 
 import { User }
-from '../user/domain/entities/user.entity';
+from '../users/domain/entities/user.entity';
 
 import {
   CreateOperacionDto,

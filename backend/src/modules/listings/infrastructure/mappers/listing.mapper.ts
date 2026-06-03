@@ -2,7 +2,7 @@
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
-import { ListingOrmEntity } from '../persistence/entities/listing.orm-entity';
+import { ListingOrmEntity } from '../persistence/typeorm/entities/listing.orm-entity';
 
 import { ListingFeaturesVO } from '@modules/listings/domain/value-objects/listing-features.vo';
 

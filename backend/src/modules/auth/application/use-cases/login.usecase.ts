@@ -4,11 +4,11 @@ import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { LoginDto } from '../dto/login.dto';
 import { UserStatus } from '@shared/contracts/enums/user-status.enum';
 
-import type { UserRepositoryPort } from '../../../user/application/ports/user-repository.port';
+import type { UserRepositoryPort } from '../../../users/application/ports/user-repository.port';
 import type { PasswordHasherPort } from '../ports/password-hasher.port';
 import type { TokenServicePort } from '../ports/token-service.port';
 
-import { USER_REPOSITORY } from '../../../user/application/tokens';
+import { USER_REPOSITORY } from '../../../users/application/tokens';
 import { PASSWORD_HASHER, TOKEN_SERVICE } from '../tokens';
 
 import { RefreshTokenService } from '../services/refresh-token.service';
