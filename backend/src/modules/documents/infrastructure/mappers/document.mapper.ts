@@ -30,7 +30,7 @@ export class DocumentMapper {
   static toOrm(domain: DocumentEntity): DocumentOrmEntity {
     const orm = new DocumentOrmEntity();
 
-    if (domain.id) {
+    if (domain.id !== null) {
       orm.id = domain.id;
     }
 

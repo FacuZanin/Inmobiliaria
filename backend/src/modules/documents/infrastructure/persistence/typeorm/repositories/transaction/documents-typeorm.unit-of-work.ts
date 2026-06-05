@@ -1,5 +1,6 @@
 // backend\src\modules\documents\infrastructure\persistence\typeorm\repositories\transaction\documents-typeorm.unit-of-work.ts
 import { Injectable } from '@nestjs/common';
+
 import { DataSource } from 'typeorm';
 
 import { DomainEvent } from '@/core/domain/events/domain-event';
@@ -10,37 +11,46 @@ import { DomainEventPublisherPort } from '@/core/application/ports/domain-event-
 import { TransactionalRepositoryFactory } from './transactional-repository.factory';
 
 @Injectable()
-export class DocumentsTypeOrmUnitOfWork implements DocumentsUnitOfWorkPort {
+export class DocumentsTypeOrmUnitOfWork
+  implements DocumentsUnitOfWorkPort
+{
   constructor(
     private readonly dataSource: DataSource,
+
     private readonly repositoryFactory: TransactionalRepositoryFactory,
+
     private readonly domainEventPublisher: DomainEventPublisherPort,
   ) {}
 
   async execute<T>(
-    work: (
-      repos: ReturnType<TransactionalRepositoryFactory['create']>,
-    ) => Promise<T>,
+    work: Parameters<
+      DocumentsUnitOfWorkPort['execute']
+    >[0],
   ): Promise<T> {
-    return this.dataSource.transaction<T>(async (manager) => {
-      const repositories = this.repositoryFactory.create(manager);
+    return this.dataSource.transaction<T>(
+      async (manager) => {
+        const repositories =
+          this.repositoryFactory.create(manager);
 
-      const result = await work(repositories);
+        const collectedEvents: DomainEvent[] =
+          [];
 
-      const domainEvents: DomainEvent[] = [];
+        const result = await work(
+          repositories,
 
-      for (const repository of Object.values(repositories)) {
-        if (
-          'pullDomainEvents' in repository &&
-          typeof repository.pullDomainEvents === 'function'
-        ) {
-          domainEvents.push(...repository.pullDomainEvents());
+          (events: DomainEvent[]) => {
+            collectedEvents.push(...events);
+          },
+        );
+
+        if (collectedEvents.length > 0) {
+          await this.domainEventPublisher.publishAll(
+            collectedEvents,
+          );
         }
-      }
 
-      await this.domainEventPublisher.publishAll(domainEvents);
-
-      return result;
-    });
+        return result;
+      },
+    );
   }
 }

@@ -1,11 +1,14 @@
 // backend\src\modules\documents\infrastructure\persistence\typeorm\repositories\document.typeorm.repository.ts
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
-import { DomainEvent } from '@/core/domain/events/domain-event';
+import { PaginatedResponseDto } from '@/core/application/dto/paginated-response.dto';
 
+import {
+  FindDocumentsByOwnerParams,
+  FindDocumentsByStatusParams,
+} from '@/modules/documents/domain/repositories/document.repository.port';
 import { DocumentRepositoryPort } from '@/modules/documents/domain/repositories/document.repository.port';
 
 import { DocumentEntity } from '@/modules/documents/domain/entities/document.entity';
@@ -20,7 +23,6 @@ import { DocumentMapper } from '@/modules/documents/infrastructure/mappers/docum
 
 @Injectable()
 export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
-  private readonly domainEvents: DomainEvent[] = [];
   constructor(private readonly manager: EntityManager) {}
 
   async findById(id: number): Promise<DocumentEntity | null> {
@@ -36,26 +38,35 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
 
     const saved = await this.manager.save(DocumentOrmEntity, ormEntity);
 
-    this.domainEvents.push(...document.pullDomainEvents());
-
     return DocumentMapper.toDomain(saved);
   }
 
   async findByOwner(
-    ownerId: number,
-    ownerType: DocumentOwnerType,
-  ): Promise<DocumentEntity[]> {
-    const documents = await this.manager.find(DocumentOrmEntity, {
-      where: {
-        ownerId,
-        ownerType,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    params: FindDocumentsByOwnerParams,
+  ): Promise<PaginatedResponseDto<DocumentEntity>> {
+    const { ownerId, ownerType, page, limit } = params;
 
-    return documents.map(DocumentMapper.toDomain);
+    const [documents, total] = await this.manager.findAndCount(
+      DocumentOrmEntity,
+      {
+        where: {
+          ownerId,
+          ownerType,
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      },
+    );
+
+    return new PaginatedResponseDto(
+      documents.map(DocumentMapper.toDomain),
+      total,
+      page,
+      limit,
+    );
   }
 
   async findByOwnerAndType(
@@ -87,7 +98,7 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
       },
     });
 
-    return documents.map(DocumentMapper.toDomain);
+    return documents.map((document) => DocumentMapper.toDomain(document));
   }
 
   async exists(
@@ -104,24 +115,30 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
     });
   }
 
-  async findByStatus(status: DocumentStatus): Promise<DocumentEntity[]> {
-    const documents = await this.manager.find(DocumentOrmEntity, {
-      where: {
-        status,
+  async findByStatus(
+    params: FindDocumentsByStatusParams,
+  ): Promise<PaginatedResponseDto<DocumentEntity>> {
+    const { status, page, limit } = params;
+
+    const [documents, total] = await this.manager.findAndCount(
+      DocumentOrmEntity,
+      {
+        where: {
+          status,
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+        skip: (page - 1) * limit,
+        take: limit,
       },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    );
 
-    return documents.map(DocumentMapper.toDomain);
-  }
-
-  pullDomainEvents(): DomainEvent[] {
-    const events = [...this.domainEvents];
-
-    this.domainEvents.length = 0;
-
-    return events;
+    return new PaginatedResponseDto(
+      documents.map(DocumentMapper.toDomain),
+      total,
+      page,
+      limit,
+    );
   }
 }

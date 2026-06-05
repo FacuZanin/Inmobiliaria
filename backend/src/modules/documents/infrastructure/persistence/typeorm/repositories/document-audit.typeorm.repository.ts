@@ -6,7 +6,6 @@ import { EntityManager } from 'typeorm';
 import { DocumentAuditRepositoryPort } from '@/modules/documents/domain/repositories/document-audit.repository.port';
 
 import { DocumentAuditEntity } from '@/modules/documents/domain/entities/document-audit.entity';
-
 import { DocumentAuditOrmEntity } from '../entities/document-audit.orm-entity';
 
 import { DocumentAuditMapper } from '@/modules/documents/infrastructure/mappers/document-audit.mapper';
