@@ -6,6 +6,7 @@ import {
   UploadedFile,
   UseFilters,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -14,9 +15,10 @@ import { Auth } from '@/core/security/decorators/auth.decorator';
 import { CurrentUser } from '@/core/security/decorators/current-user.decorator';
 
 import { UploadDocumentDto } from '../../application/dto/upload-document.dto';
+import { PaginationQueryDto } from '@/core/application/dto/pagination-query.dto';
 
-import { ListDocumentsByOwnerUseCase } from '../../application/use-cases/list-documents-by-owner.usecase';
-import { UploadDocumentUseCase } from '../../application/use-cases/upload-document.usecase';
+import { ListDocumentsByOwnerQueryHandler } from '@modules/documents/application/queries/handlers/list-documents-by-owner.usecase';
+import { UploadDocumentUseCase } from '@modules/documents/application/commands/use-cases/upload-document.usecase';
 
 import { DocumentOwnerType } from '../../domain/enums/document-owner-type.enum';
 import { DocumentDomainExceptionFilter } from '../filters/document-domain-exception.filter';
@@ -30,7 +32,7 @@ type AuthenticatedUser = {
 export class OwnerDocumentsController {
   constructor(
     private readonly uploadDocument: UploadDocumentUseCase,
-    private readonly listDocuments: ListDocumentsByOwnerUseCase,
+    private readonly listDocuments: ListDocumentsByOwnerQueryHandler,
   ) {}
 
   @Post()
@@ -51,10 +53,16 @@ export class OwnerDocumentsController {
 
   @Get()
   @Auth()
-  list(@CurrentUser() user: AuthenticatedUser) {
-    return this.listDocuments.execute({
-      ownerId: user.id,
-      ownerType: DocumentOwnerType.USER,
-    });
+  list(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() pagination: PaginationQueryDto,
+  ) {
+    return this.listDocuments.execute(
+      {
+        ownerId: user.id,
+        ownerType: DocumentOwnerType.USER,
+      },
+      pagination,
+    );
   }
 }

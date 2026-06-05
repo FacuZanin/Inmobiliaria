@@ -12,10 +12,11 @@ import { Auth } from '@/core/security/decorators/auth.decorator';
 import { CurrentUser } from '@/core/security/decorators/current-user.decorator';
 
 import { UpdateDocumentStatusDto } from '@modules/documents/application/dto/update-document-status.dto';
+import { PaginationQueryDto } from '@/core/application/dto/pagination-query.dto';
 
-import { ChangeDocumentStatusUseCase } from '../../application/use-cases/change-document-status.usecase';
-import { GetDocumentsByStatusUseCase } from '../../application/use-cases/get-documents-by-status.usecase';
-import { ListDocumentsByOwnerUseCase } from '../../application/use-cases/list-documents-by-owner.usecase';
+import { ChangeDocumentStatusUseCase } from '../../application/commands/use-cases/change-document-status.usecase';
+import { GetDocumentsByStatusQueryHandler } from '../../application/queries/handlers/get-documents-by-status.query-handler';
+import { ListDocumentsByOwnerQueryHandler } from '../../application/queries/handlers/list-documents-by-owner.usecase';
 
 import { DocumentOwnerType } from '../../domain/enums/document-owner-type.enum';
 import { DocumentStatus } from '../../domain/enums/document-status.enum';
@@ -26,19 +27,21 @@ import { DocumentDomainExceptionFilter } from '../filters/document-domain-except
 export class AdminDocumentsController {
   constructor(
     private readonly changeDocumentStatus: ChangeDocumentStatusUseCase,
-    private readonly getDocumentsByStatus: GetDocumentsByStatusUseCase,
-    private readonly listDocuments: ListDocumentsByOwnerUseCase,
+    private readonly getDocumentsByStatus: GetDocumentsByStatusQueryHandler,
+    private readonly listDocuments: ListDocumentsByOwnerQueryHandler,
   ) {}
 
-  @Get()
-  @Auth()
-  listByStatus(@Query('status') status?: DocumentStatus) {
-    if (status) {
-      return this.getDocumentsByStatus.execute(status);
-    }
-
-    return this.getDocumentsByStatus.execute(DocumentStatus.PENDING);
-  }
+@Get()
+@Auth()
+async listByStatus(
+  @Query('status') status: DocumentStatus = DocumentStatus.PENDING,
+  @Query() pagination: PaginationQueryDto,
+) {
+  return this.getDocumentsByStatus.execute(
+    status,
+    pagination,
+  );
+}
 
   @Get(':ownerType/:ownerId')
   @Auth()

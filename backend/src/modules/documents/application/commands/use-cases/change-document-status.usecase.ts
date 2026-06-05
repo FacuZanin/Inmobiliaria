@@ -2,18 +2,18 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 
-import { DOCUMENTS_UNIT_OF_WORK } from '../tokens/document.tokens';
+import { DOCUMENTS_UNIT_OF_WORK } from '../../tokens/document.tokens';
 
-import type { DocumentsUnitOfWorkPort } from '../ports/unit-of-work.port';
+import type { DocumentsUnitOfWorkPort } from '../../ports/unit-of-work.port';
 
-import { DocumentAuditEntity } from '../../domain/entities/document-audit.entity';
-import { DocumentEntity } from '../../domain/entities/document.entity';
+import { DocumentAuditEntity } from '../../../domain/entities/document-audit.entity';
+import { DocumentEntity } from '../../../domain/entities/document.entity';
 
-import { DocumentAuditAction } from '../../domain/enums/document-audit-action.enum';
-import { DocumentStatus } from '../../domain/enums/document-status.enum';
+import { DocumentAuditAction } from '../../../domain/enums/document-audit-action.enum';
+import { DocumentStatus } from '../../../domain/enums/document-status.enum';
 
-import { DocumentNotFoundException } from '../../domain/exceptions/document-not-found.exception';
-import { InvalidDocumentStatusException } from '../../domain/exceptions/invalid-document-status.exception';
+import { DocumentNotFoundException } from '../../../domain/exceptions/document-not-found.exception';
+import { InvalidDocumentStatusException } from '../../../domain/exceptions/invalid-document-status.exception';
 
 @Injectable()
 export class ChangeDocumentStatusUseCase {
