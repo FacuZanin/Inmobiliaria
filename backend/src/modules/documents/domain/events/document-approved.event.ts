@@ -1,9 +1,30 @@
 // backend\src\modules\documents\domain\events\document-approved.event.ts
-export class DocumentApprovedEvent {
+import { DomainEvent } from '@/core/domain/events/domain-event';
+
+interface DocumentApprovedPayload {
+  approvedBy: number;
+}
+
+export class DocumentApprovedEvent
+  implements DomainEvent<DocumentApprovedPayload>
+{
+  readonly name =
+    'documents.document.approved';
+
   readonly occurredAt = new Date();
 
+  readonly aggregateId: string;
+
+  readonly payload: DocumentApprovedPayload;
+
   constructor(
-    public readonly documentId: number | null,
-    public readonly approvedBy: number,
-  ) {}
+    documentId: number | null,
+    approvedBy: number,
+  ) {
+    this.aggregateId = String(documentId);
+
+    this.payload = {
+      approvedBy,
+    };
+  }
 }

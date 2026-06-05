@@ -1,4 +1,5 @@
 // backend\src\modules\documents\domain\entities\document.entity.ts
+
 import { DocumentOwnerEntity } from './document-owner.entity';
 import { DocumentVerificationEntity } from './document-verification.entity';
 
@@ -14,19 +15,13 @@ import { DocumentRejectedEvent } from '../events/document-rejected.event';
 import { DocumentUploadedEvent } from '../events/document-uploaded.event';
 import { DocumentReplacedEvent } from '../events/document-replaced.event';
 import { DocumentStatusChangedEvent } from '../events/document-status-changed.event';
+
 import { DocumentReviewableSpecification } from '../specifications/document-reviewable.specification';
 import { DocumentReplaceableSpecification } from '../specifications/document-replaceable.specification';
 
-type DocumentDomainEvent =
-  | DocumentApprovedEvent
-  | DocumentRejectedEvent
-  | DocumentUploadedEvent
-  | DocumentReplacedEvent
-  | DocumentStatusChangedEvent;
+import { AggregateRoot } from '@/core/domain/aggregates/aggregate-root';
 
-export class DocumentEntity {
-  private readonly domainEvents: DocumentDomainEvent[] = [];
-
+export class DocumentEntity extends AggregateRoot {
   private _fileUrl: string;
 
   private _verification: DocumentVerificationEntity;
@@ -44,6 +39,8 @@ export class DocumentEntity {
 
     public readonly createdAt: Date,
   ) {
+    super();
+
     this.ensureValidType(type);
     this.ensureValidFileUrl(fileUrl);
 
@@ -65,7 +62,7 @@ export class DocumentEntity {
       new Date(),
     );
 
-    document.addEvent(
+    document.addDomainEvent(
       new DocumentUploadedEvent(params.owner.ownerId, params.type),
     );
 
@@ -107,9 +104,9 @@ export class DocumentEntity {
 
     this._verification = this._verification.approve(adminId);
 
-    this.addEvent(new DocumentApprovedEvent(this.id, adminId));
+    this.addDomainEvent(new DocumentApprovedEvent(this.id, adminId));
 
-    this.addEvent(
+    this.addDomainEvent(
       new DocumentStatusChangedEvent(this.id, DocumentStatus.APPROVED),
     );
   }
@@ -119,9 +116,9 @@ export class DocumentEntity {
 
     this._verification = this._verification.reject(adminId, reason);
 
-    this.addEvent(new DocumentRejectedEvent(this.id, adminId, reason));
+    this.addDomainEvent(new DocumentRejectedEvent(this.id, adminId, reason));
 
-    this.addEvent(
+    this.addDomainEvent(
       new DocumentStatusChangedEvent(this.id, DocumentStatus.REJECTED),
     );
   }
@@ -135,13 +132,14 @@ export class DocumentEntity {
 
     this._verification = this._verification.markUnderReview();
 
-    this.addEvent(
+    this.addDomainEvent(
       new DocumentStatusChangedEvent(this.id, DocumentStatus.UNDER_REVIEW),
     );
   }
 
   replaceFile(newFileUrl: string): void {
     this.ensureReplaceable();
+
     this.ensureValidFileUrl(newFileUrl);
 
     const oldFileUrl = this._fileUrl;
@@ -150,19 +148,13 @@ export class DocumentEntity {
 
     this._verification = new DocumentVerificationEntity(DocumentStatus.PENDING);
 
-    this.addEvent(new DocumentReplacedEvent(this.id, oldFileUrl, newFileUrl));
+    this.addDomainEvent(
+      new DocumentReplacedEvent(this.id, oldFileUrl, newFileUrl),
+    );
 
-    this.addEvent(
+    this.addDomainEvent(
       new DocumentStatusChangedEvent(this.id, DocumentStatus.PENDING),
     );
-  }
-
-  pullDomainEvents(): DocumentDomainEvent[] {
-    const events = [...this.domainEvents];
-
-    this.domainEvents.length = 0;
-
-    return events;
   }
 
   private ensureReviewable(): void {
@@ -193,9 +185,5 @@ export class DocumentEntity {
         'Document file url cannot be empty.',
       );
     }
-  }
-
-  private addEvent(event: DocumentDomainEvent): void {
-    this.domainEvents.push(event);
   }
 }

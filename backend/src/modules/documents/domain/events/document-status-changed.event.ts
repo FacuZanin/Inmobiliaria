@@ -1,11 +1,32 @@
 // backend\src\modules\documents\domain\events\document-status-changed.event.ts
+import { DomainEvent } from '@/core/domain/events/domain-event';
+
 import { DocumentStatus } from '../enums/document-status.enum';
 
-export class DocumentStatusChangedEvent {
+interface DocumentStatusChangedPayload {
+  newStatus: DocumentStatus;
+}
+
+export class DocumentStatusChangedEvent
+  implements DomainEvent<DocumentStatusChangedPayload>
+{
+  readonly name =
+    'documents.document.status-changed';
+
   readonly occurredAt = new Date();
 
+  readonly aggregateId: string;
+
+  readonly payload: DocumentStatusChangedPayload;
+
   constructor(
-    public readonly documentId: number | null,
-    public readonly newStatus: DocumentStatus,
-  ) {}
+    documentId: number | null,
+    newStatus: DocumentStatus,
+  ) {
+    this.aggregateId = String(documentId);
+
+    this.payload = {
+      newStatus,
+    };
+  }
 }
