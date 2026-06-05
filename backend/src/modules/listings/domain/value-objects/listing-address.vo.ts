@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-address.vo.ts
 
-import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/domain/exceptions/domain.exception';
 
 export type ListingAddressProps = {
   street: string;

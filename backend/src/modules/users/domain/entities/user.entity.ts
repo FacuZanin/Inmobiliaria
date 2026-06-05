@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 import { Agencia } from '../../../agencies/domain/entities/agencia.entity';
-import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
+import { Favorite } from '@/modules/favorites/domain/entities/favorite.entity';
 import { RefreshToken } from '@/modules/auth/infrastructure/persistence/typeorm/entities/refresh-token.entity';
 import { Permission } from '@shared/contracts/enums/permission.enum';
 

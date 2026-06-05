@@ -19,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { Auth } from '../../../../core/shared/security/decorators/auth.decorator';
+import { Auth } from '@/core/security/decorators/auth.decorator';
 
 import { Permission } from '@shared/contracts/enums/permission.enum';
 

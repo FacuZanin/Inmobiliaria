@@ -21,9 +21,9 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 
-import { Auth } from '../../../../core/shared/security/decorators/auth.decorator';
-import { CurrentUser } from '../../../../core/shared/security/decorators/current-user.decorator';
-import { Audit } from '../../../../core/shared/security/decorators/audit.decorator';
+import { Auth } from '@/core/security/decorators/auth.decorator';
+import { CurrentUser } from '@/core/security/decorators/current-user.decorator';
+import { Audit } from '@/core/security/decorators/audit.decorator';
 
 import { Permission } from '@shared/contracts/enums/permission.enum';
 import { AuditAction } from '@shared/contracts/enums/audit-action.enum';

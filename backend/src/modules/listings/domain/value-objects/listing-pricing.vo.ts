@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-pricing.vo.ts
 
-import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/domain/exceptions/domain.exception';
 
 type ListingPricingVOProps = {
   salePrice?: number | null;

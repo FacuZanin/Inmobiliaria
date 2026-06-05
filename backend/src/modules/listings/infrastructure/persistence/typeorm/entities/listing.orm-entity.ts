@@ -14,7 +14,7 @@ import {
 
 import { User } from '@/modules/users/domain/entities/user.entity';
 import { Agencia } from '@/modules/agencies/domain/entities/agencia.entity';
-import { Favorite } from '@modules/favoritos/domain/entities/favorite.entity';
+import { Favorite } from '@modules/favorites/domain/entities/favorite.entity';
 import { ListingMediaOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing-media.orm-entity';
 
 import { ListingCategory } from '@modules/listings/domain/enums/listing-category.enum';

@@ -1,6 +1,6 @@
 // backend\src\modules\listings\domain\entities\listing-media.entity.ts
 
-import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/domain/exceptions/domain.exception';
 
 import { ListingMediaType } from '../enums/listing-media-type.enum';
 import { MediaProcessingStatus } from '../enums/media-processing-status.enum';

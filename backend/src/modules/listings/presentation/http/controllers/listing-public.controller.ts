@@ -14,7 +14,7 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 
-import { Public } from '@/core/shared/security/decorators/public.decorator';
+import { Public } from '@/core/security/decorators/public.decorator';
 
 import { GetListingUseCase } from '@modules/listings/application/use-cases/get-listing.usecase';
 import { SearchListingsUseCase } from '@modules/listings/application/use-cases/search-listings.usecase';

@@ -18,7 +18,6 @@ import { AgenciasModule } from './modules/agencies/agencias.module';
 import { ListingsModule } from './modules/listings/listings.module';
 import { OperacionesModule } from './modules/operaciones/operaciones.module';
 import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
-import { UploadsModule } from './modules/media/uploads/uploads.module';
 import { FavoritosModule } from './modules/favorites/favoritos.module';
 import { AuditModule } from './modules/audit/audit.module';
 
@@ -76,7 +75,6 @@ import { HealthModule } from './health/health.module';
     ListingsModule,
     OperacionesModule,
     InquilinosModule,
-    UploadsModule,
     FavoritosModule,
     AuditModule,
   ],

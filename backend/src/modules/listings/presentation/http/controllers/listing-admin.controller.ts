@@ -7,13 +7,14 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { Auth } from '@/core/shared/security/decorators/auth.decorator';
+import { Auth } from '@/core/security/decorators/auth.decorator';
 import { Permission } from '@shared/contracts/enums/permission.enum';
 import { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
 import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 import { Inject } from '@nestjs/common';
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';
+
 
 @ApiTags('Admin Listings')
 @ApiBearerAuth('access-token')

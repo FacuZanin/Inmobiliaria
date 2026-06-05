@@ -1,7 +1,7 @@
 // backend\src\main.ts
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
+import { DomainException } from '@/core/domain/exceptions/domain.exception';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -9,8 +9,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
 import { seedAdmin } from '@/database/seeds/admin.seed';
-import { LoggingInterceptor } from '@/core/shared/infrastructure/interceptors/logging.interceptor';
-import { AppLogger } from '@/core/shared/infrastructure/logger/logger.service';
+import { LoggingInterceptor } from '@/core/infrastructure/interceptors/logging.interceptor';
+import { AppLogger } from '@/core/infrastructure/logger/logger.service';
 
 import cookieParser from 'cookie-parser';
 
