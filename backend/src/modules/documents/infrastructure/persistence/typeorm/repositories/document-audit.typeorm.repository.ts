@@ -1,8 +1,7 @@
 // backend\src\modules\documents\infrastructure\persistence\typeorm\repositories\document-audit.typeorm.repository.ts
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { DocumentAuditRepositoryPort } from '@/modules/documents/domain/repositories/document-audit.repository.port';
 
@@ -14,21 +13,18 @@ import { DocumentAuditMapper } from '@/modules/documents/infrastructure/mappers/
 
 @Injectable()
 export class DocumentAuditTypeOrmRepository implements DocumentAuditRepositoryPort {
-  constructor(
-    @InjectRepository(DocumentAuditOrmEntity)
-    private readonly repository: Repository<DocumentAuditOrmEntity>,
-  ) {}
+  constructor(private readonly manager: EntityManager) {}
 
   async save(audit: DocumentAuditEntity): Promise<DocumentAuditEntity> {
-    const orm = DocumentAuditMapper.toOrm(audit);
+    const ormEntity = DocumentAuditMapper.toOrm(audit);
 
-    const saved = await this.repository.save(orm);
+    const saved = await this.manager.save(DocumentAuditOrmEntity, ormEntity);
 
     return DocumentAuditMapper.toDomain(saved);
   }
 
   async findByDocumentId(documentId: number): Promise<DocumentAuditEntity[]> {
-    const audits = await this.repository.find({
+    const audits = await this.manager.find(DocumentAuditOrmEntity, {
       where: {
         documentId,
       },

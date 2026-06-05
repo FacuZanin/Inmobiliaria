@@ -7,6 +7,8 @@ import { DocumentAuditOrmEntity } from './infrastructure/persistence/typeorm/ent
 
 import { DocumentTypeOrmRepository } from './infrastructure/persistence/typeorm/repositories/document.typeorm.repository';
 import { DocumentAuditTypeOrmRepository } from './infrastructure/persistence/typeorm/repositories/document-audit.typeorm.repository';
+import { DocumentsTypeOrmUnitOfWork } from './infrastructure/persistence/typeorm/repositories/transaction/documents-typeorm.unit-of-work';
+import { TransactionalRepositoryFactory } from './infrastructure/persistence/typeorm/repositories/transaction/transactional-repository.factory';
 
 import {
   DOCUMENT_REPOSITORY,
@@ -14,6 +16,7 @@ import {
 } from './application/tokens/document.tokens';
 
 import { FILE_STORAGE } from './application/tokens/storage.tokens';
+import { DOCUMENTS_UNIT_OF_WORK } from './application/tokens/document.tokens';
 
 import { LocalFileStorageService } from './infrastructure/storage/local/local-file-storage.service';
 
@@ -43,6 +46,7 @@ import { AdminDocumentsController } from './infrastructure/controllers/admin-doc
     ChangeDocumentStatusUseCase,
     GetDocumentsByStatusUseCase,
     ListDocumentsByOwnerUseCase,
+    TransactionalRepositoryFactory,
 
     {
       provide: DOCUMENT_REPOSITORY,
@@ -57,6 +61,11 @@ import { AdminDocumentsController } from './infrastructure/controllers/admin-doc
     {
       provide: FILE_STORAGE,
       useClass: LocalFileStorageService,
+    },
+
+    {
+      provide: DOCUMENTS_UNIT_OF_WORK,
+      useClass: DocumentsTypeOrmUnitOfWork,
     },
   ],
 

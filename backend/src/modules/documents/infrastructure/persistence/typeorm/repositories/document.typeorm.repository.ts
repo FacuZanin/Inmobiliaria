@@ -2,7 +2,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Repository, EntityManager } from 'typeorm';
+
+import { DomainEvent } from '@/core/domain/events/domain-event';
 
 import { DocumentRepositoryPort } from '@/modules/documents/domain/repositories/document.repository.port';
 
@@ -18,13 +20,11 @@ import { DocumentMapper } from '@/modules/documents/infrastructure/mappers/docum
 
 @Injectable()
 export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
-  constructor(
-    @InjectRepository(DocumentOrmEntity)
-    private readonly repository: Repository<DocumentOrmEntity>,
-  ) {}
+  private readonly domainEvents: DomainEvent[] = [];
+  constructor(private readonly manager: EntityManager) {}
 
   async findById(id: number): Promise<DocumentEntity | null> {
-    const document = await this.repository.findOne({
+    const document = await this.manager.findOne(DocumentOrmEntity, {
       where: { id },
     });
 
@@ -34,7 +34,9 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
   async save(document: DocumentEntity): Promise<DocumentEntity> {
     const ormEntity = DocumentMapper.toOrm(document);
 
-    const saved = await this.repository.save(ormEntity);
+    const saved = await this.manager.save(DocumentOrmEntity, ormEntity);
+
+    this.domainEvents.push(...document.pullDomainEvents());
 
     return DocumentMapper.toDomain(saved);
   }
@@ -43,7 +45,7 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
     ownerId: number,
     ownerType: DocumentOwnerType,
   ): Promise<DocumentEntity[]> {
-    const documents = await this.repository.find({
+    const documents = await this.manager.find(DocumentOrmEntity, {
       where: {
         ownerId,
         ownerType,
@@ -61,7 +63,7 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
     ownerType: DocumentOwnerType,
     type: DocumentType,
   ): Promise<DocumentEntity | null> {
-    const document = await this.repository.findOne({
+    const document = await this.manager.findOne(DocumentOrmEntity, {
       where: {
         ownerId,
         ownerType,
@@ -77,7 +79,7 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
     ownerType: DocumentOwnerType,
     status: DocumentStatus,
   ): Promise<DocumentEntity[]> {
-    const documents = await this.repository.find({
+    const documents = await this.manager.find(DocumentOrmEntity, {
       where: {
         ownerId,
         ownerType,
@@ -93,7 +95,7 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
     ownerType: DocumentOwnerType,
     type: DocumentType,
   ): Promise<boolean> {
-    return this.repository.exists({
+    return this.manager.exists(DocumentOrmEntity, {
       where: {
         ownerId,
         ownerType,
@@ -103,7 +105,7 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
   }
 
   async findByStatus(status: DocumentStatus): Promise<DocumentEntity[]> {
-    const documents = await this.repository.find({
+    const documents = await this.manager.find(DocumentOrmEntity, {
       where: {
         status,
       },
@@ -113,5 +115,13 @@ export class DocumentTypeOrmRepository implements DocumentRepositoryPort {
     });
 
     return documents.map(DocumentMapper.toDomain);
+  }
+
+  pullDomainEvents(): DomainEvent[] {
+    const events = [...this.domainEvents];
+
+    this.domainEvents.length = 0;
+
+    return events;
   }
 }

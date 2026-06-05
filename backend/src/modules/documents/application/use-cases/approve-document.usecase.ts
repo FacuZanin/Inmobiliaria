@@ -5,6 +5,10 @@ import {
   DOCUMENT_REPOSITORY,
 } from '@/modules/documents/application/tokens/document.tokens';
 
+import { DOCUMENTS_UNIT_OF_WORK } from '@/modules/documents/application/tokens/document.tokens';
+
+import type { DocumentsUnitOfWorkPort } from '@/modules/documents/application/ports/unit-of-work.port';
+
 import type { DocumentAuditRepositoryPort } from '@/modules/documents/domain/repositories/document-audit.repository.port';
 import type { DocumentRepositoryPort } from '@/modules/documents/domain/repositories/document.repository.port';
 
@@ -18,34 +22,33 @@ import { DocumentNotFoundException } from '@/modules/documents/domain/exceptions
 @Injectable()
 export class ApproveDocumentUseCase {
   constructor(
-    @Inject(DOCUMENT_REPOSITORY)
-    private readonly documentsRepository: DocumentRepositoryPort,
-
-    @Inject(DOCUMENT_AUDIT_REPOSITORY)
-    private readonly auditRepository: DocumentAuditRepositoryPort,
+    @Inject(DOCUMENTS_UNIT_OF_WORK)
+    private readonly uow: DocumentsUnitOfWorkPort,
   ) {}
 
   async execute(documentId: number, adminId: number): Promise<DocumentEntity> {
-    const document = await this.documentsRepository.findById(documentId);
+    return this.uow.execute(async ({ documents, audits }) => {
+      const document = await documents.findById(documentId);
 
-    if (!document) {
-      throw new DocumentNotFoundException(documentId);
-    }
+      if (!document) {
+        throw new DocumentNotFoundException(documentId);
+      }
 
-    document.approve(adminId);
+      document.approve(adminId);
 
-    const updated = await this.documentsRepository.save(document);
+      const updated = await documents.save(document);
 
-    await this.auditRepository.save(
-      new DocumentAuditEntity(
-        null,
-        updated.id!,
-        DocumentAuditAction.APPROVED,
-        adminId,
-        null,
-      ),
-    );
+      await audits.save(
+        new DocumentAuditEntity(
+          null,
+          updated.id!,
+          DocumentAuditAction.APPROVED,
+          adminId,
+          null,
+        ),
+      );
 
-    return updated;
+      return updated;
+    });
   }
 }
