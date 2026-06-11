@@ -1,16 +1,16 @@
 // backend\src\core\querying\translation\typeorm\filtering\typeorm-filter-condition-translator.ts
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { FilterConditionNode } from '@/querying/domain/ast/filter/filter-condition-node';
+import { FilterConditionNode } from '@/core/querying/domain/ast/filter/filter-condition-node';
 
-import { FILTER_OPERATORS } from '@/querying/domain/ast/filter/filter-operator';
+import { FILTER_OPERATORS } from '@/core/querying/domain/ast/filter/filter-operator';
 
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
 
-import { TypeOrmJoinManager } from '../joins/typeorm-join-manager';
+import { TypeOrmJoinManager } from '../../joins/typeorm-join-manager';
 
 export class TypeOrmFilterConditionTranslator<
-  TEntity,
+  TEntity extends ObjectLiteral,
   TField extends string = string,
 > {
   constructor(

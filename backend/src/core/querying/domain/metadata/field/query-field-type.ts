@@ -1,4 +1,4 @@
-// backend\src\core\querying\metadata\field\query-field-type.ts
+// backend/src/core/querying/domain/metadata/field/query-field-type.ts
 export const QUERY_FIELD_TYPES = {
   STRING: 'string',
 

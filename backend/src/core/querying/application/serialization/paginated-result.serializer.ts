@@ -1,4 +1,4 @@
-import { PaginatedResponse } from '../../contracts/paginated-response';
+import { PaginatedResponse } from '../../domain/contracts/paginated-response';
 
 export class PaginatedResultSerializer {
   serialize<TResult>(

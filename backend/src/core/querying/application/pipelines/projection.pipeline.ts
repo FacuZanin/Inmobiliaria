@@ -1,7 +1,7 @@
-import { ExecutionContext } from '../contracts/execution-context';
-import { ExecutionStage } from '../contracts/execution-stage';
-import { ProjectionRegistry } from '@/core/querying/projections/registry/projection.registry';
-import { QueryExecutionContextFactory } from '../context/query-execution-context';
+import { ExecutionContext } from '../execution/contracts/execution-context';
+import { ExecutionStage } from '../execution/contracts/execution-stage';
+import { ProjectionRegistry } from '@/core/querying/domain/projections/registry/projection.registry';
+import { QueryExecutionContextFactory } from '../execution/context/query-execution-context';
 
 /**
  * Stage que resuelve la proyección activa para la query.

@@ -1,18 +1,18 @@
 // backend\src\core\querying\translation\typeorm\filtering\typeorm-filter-group-translator.ts
-import { Brackets, SelectQueryBuilder } from 'typeorm';
+import { Brackets, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { FilterGroupNode } from '@/querying/domain/ast/filter/filter-group-node';
+import { FilterGroupNode } from '@/core/querying/domain/ast/filter/filter-group-node';
 
-import { FILTER_GROUP_OPERATORS } from '@/querying/domain/ast/filter/filter-group-operator';
+import { FILTER_GROUP_OPERATORS } from '@/core/querying/domain/ast/filter/filter-group-operator';
 
-import { FilterNode } from '@/querying/domain/ast/filter/filter-node';
+import { FilterNode } from '@/core/querying/domain/ast/filter/filter-node';
 
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
 
-import { TypeOrmJoinManager } from '../joins/typeorm-join-manager';
+import { TypeOrmJoinManager } from '../../joins/typeorm-join-manager';
 
 export class TypeOrmFilterGroupTranslator<
-  TEntity,
+  TEntity extends ObjectLiteral,
   TField extends string = string,
 > {
   constructor(

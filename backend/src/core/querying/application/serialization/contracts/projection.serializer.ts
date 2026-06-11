@@ -1,3 +1,4 @@
+// backend/src/core/querying/application/serialization/contracts/projection.serializer.ts
 import { ProjectionSerializer } from './projection-serializer';
 
 import { Projection } from '../../../domain/projections/projection';

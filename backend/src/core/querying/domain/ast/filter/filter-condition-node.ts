@@ -1,3 +1,4 @@
+// backend/src/core/querying/domain/ast/filter/filter-condition-node.ts
 import { FilterOperator } from './filter-operator';
 
 import { FilterValue } from './filter-value';

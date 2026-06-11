@@ -1,18 +1,18 @@
 // backend\src\core\querying\translation\typeorm\filtering\typeorm-filter-translator.ts
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { FilterNode } from '@/querying/domain/ast/filter/filter-node';
+import { FilterNode } from '@/core/querying/domain/ast/filter/filter-node';
 
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
 
-import { TypeOrmJoinManager } from '../joins/typeorm-join-manager';
+import { TypeOrmJoinManager } from '../../joins/typeorm-join-manager';
 
 import { TypeOrmFilterConditionTranslator } from './typeorm-filter-condition-translator';
 
 import { TypeOrmFilterGroupTranslator } from './typeorm-filter-group-translator';
 
 export class TypeOrmFilterTranslator<
-  TEntity,
+  TEntity extends ObjectLiteral,
   TField extends string = string,
 > {
   private parameterIndex = 0;

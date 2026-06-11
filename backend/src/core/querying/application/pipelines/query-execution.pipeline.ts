@@ -1,6 +1,6 @@
-import { ExecutionContext } from '../contracts/execution-context';
-import { ExecutionPipeline } from '../contracts/execution-pipeline';
-import { ExecutionStage } from '../contracts/execution-stage';
+import { ExecutionContext } from '../execution/contracts/execution-context';
+import { ExecutionPipeline } from '../execution/contracts/execution-pipeline';
+import { ExecutionStage } from '../execution/contracts/execution-stage';
 
 /**
  * Implementación del pipeline de ejecución de queries.

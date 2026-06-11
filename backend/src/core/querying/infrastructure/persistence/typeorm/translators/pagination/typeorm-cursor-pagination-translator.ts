@@ -1,17 +1,17 @@
 // backend/src/core/querying/translation/typeorm/pagination/typeorm-cursor-pagination-translator.ts
 
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { CursorPaginationNode } from '@/querying/domain/ast/pagination/cursor/cursor-pagination-node';
-import { CursorEncoder } from '@/querying/domain/ast/pagination/cursor/cursor-encoder';
+import { CursorPaginationNode } from '@/core/querying/domain/ast/pagination/cursor/cursor-pagination-node';
+import { CursorEncoder } from '@/core/querying/domain/ast/pagination/cursor/cursor-encoder';
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
-import { TypeOrmJoinManager } from '../joins/typeorm-join-manager';
-import { SORT_DIRECTIONS } from '@/querying/domain/ast/sorting/sort-direction';
-import { SortingNode } from '@/querying/domain/ast/sorting/sorting-node';
+import { TypeOrmJoinManager } from '../../joins/typeorm-join-manager';
+import { SORT_DIRECTIONS } from '@/core/querying/domain/ast/sorting/sort-direction';
+import { SortingNode } from '@/core/querying/domain/ast/sorting/sorting-node';
 
 
 export class TypeOrmCursorPaginationTranslator<
-  TEntity,
+  TEntity extends ObjectLiteral,
   TField extends string = string,
 > {
   constructor(

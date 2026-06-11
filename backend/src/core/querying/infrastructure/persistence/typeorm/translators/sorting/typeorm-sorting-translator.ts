@@ -1,15 +1,19 @@
 // backend\src\core\querying\translation\typeorm\sorting\typeorm-sorting-translator.ts
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { SortingNode } from '@/querying/domain/ast/sorting/sorting-node';
+import { SortingNode } from '@/core/querying/domain/ast/sorting/sorting-node';
+import { SortNode } from '@/core/querying/domain/ast/sorting/sort-node';
 
-import { SORT_DIRECTIONS } from '@/querying/domain/ast/sorting/sort-direction';
+import { SORT_DIRECTIONS } from '@/core/querying/domain/ast/sorting/sort-direction';
 
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
 
-import { TypeOrmJoinManager } from '../joins/typeorm-join-manager';
+import { TypeOrmJoinManager } from '../../joins/typeorm-join-manager';
 
-export class TypeOrmSortingTranslator<TEntity, TField extends string = string> {
+export class TypeOrmSortingTranslator<
+  TEntity extends ObjectLiteral,
+  TField extends string = string,
+> {
   constructor(
     private readonly queryBuilder: SelectQueryBuilder<TEntity>,
 
@@ -20,7 +24,7 @@ export class TypeOrmSortingTranslator<TEntity, TField extends string = string> {
     private readonly stableSortField?: TField,
   ) {}
 
-  translate(sorting: readonly SortingNode<TField>[]): void {
+  translate(sorting: SortingNode<TField>): void {
     const appliedFields = new Set<string>();
 
     for (const node of sorting) {
@@ -32,7 +36,7 @@ export class TypeOrmSortingTranslator<TEntity, TField extends string = string> {
     this.applyStableSorting(appliedFields, sorting);
   }
 
-  private translateNode(node: SortingNode<TField>): void {
+  private translateNode(node: SortNode<TField>): void {
     const metadata = this.registry.getField(node.field);
 
     if (!metadata) {
@@ -51,7 +55,7 @@ export class TypeOrmSortingTranslator<TEntity, TField extends string = string> {
   private applyStableSorting(
     appliedFields: Set<string>,
 
-    sorting: readonly SortingNode<TField>[],
+    sorting: SortingNode<TField>,
   ): void {
     if (!this.stableSortField) {
       return;

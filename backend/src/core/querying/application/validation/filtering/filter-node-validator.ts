@@ -1,8 +1,8 @@
-import { FilterConditionNode } from '@/querying/domain/ast/filter/filter-condition-node';
+import { FilterConditionNode } from '@/core/querying/domain/ast/filter/filter-condition-node';
 
-import { FilterGroupNode } from '@/querying/domain/ast/filter/filter-group-node';
+import { FilterGroupNode } from '@/core/querying/domain/ast/filter/filter-group-node';
 
-import { FilterNode } from '@/querying/domain/ast/filter/filter-node';
+import { FilterNode } from '@/core/querying/domain/ast/filter/filter-node';
 
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
 

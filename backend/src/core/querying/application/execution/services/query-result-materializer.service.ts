@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectionRegistry } from '@/core/querying/domain/projections/registry/projection.registry';
-import { DefaultProjectionSerializer } from '@/querying/application/serialization/contracts/projection.serializer';
+import { DefaultProjectionSerializer } from '@/core/querying/application/serialization/contracts/projection.serializer';
 
 /**
  * Servicio de materialización de resultados.

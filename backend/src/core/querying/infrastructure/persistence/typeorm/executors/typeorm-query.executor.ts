@@ -1,22 +1,17 @@
 // backend\src\core\querying\infrastructure\persistence\typeorm\executors\typeorm-query.executor.ts
 
-import { SelectQueryBuilder } from 'typeorm';
-import { QueryRequest } from '@/core/querying/contracts/query-request';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { QueryRequest } from '@/core/querying/domain/contracts/query-request';
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
-import { ProjectionRegistry } from '@/core/querying/projections/registry/projection.registry';
-import { TypeOrmQueryTranslator } from '@/core/querying/translation/typeorm/typeorm-query-translator';
-import { DefaultProjectionSerializer } from '@/querying/application/serialization/contracts/projection.serializer';
-import { QueryExecutionContextFactory } from '../context/query-execution-context';
-import { QueryExecutionPipeline } from '../pipelines/query-execution.pipeline';
-import { ProjectionResolutionStage } from '../pipelines/projection.pipeline';
-import { SerializationStage } from '../pipelines/serialization.pipeline';
-import { QueryExecutor } from '../../../../application/execution/contracts/query-executor';
-import { QueryExecutionResult } from '../../../../application/execution/contracts/query-execution-result';
-import { PaginatedQueryResultBuilder } from '../../../../application/execution/result/paginated-query-result';
-import { CursorQueryResultBuilder } from '../../../../application/execution/result/cursor-query-result';
-import { ProjectedQueryResultBuilder } from '../../../../application/execution/result/projected-query-result';
-import { CursorToken } from '@/querying/domain/ast/pagination/cursor/cursor-token';
-import { deriveOffset } from '@/querying/domain/ast/pagination/offset/offset-pagination-node';
+import { ProjectionRegistry } from '@/core/querying/domain/projections/registry/projection.registry';
+import { TypeOrmQueryTranslator } from '@/core/querying/infrastructure/persistence/typeorm/translators/typeorm-query-translator';
+import { DefaultProjectionSerializer } from '@/core/querying/application/serialization/contracts/projection.serializer';
+import { QueryExecutor } from '@/core/querying/application/execution/contracts/query-executor';
+import { QueryExecutionResult } from '@/core/querying/application/execution/contracts/query-execution-result';
+import { PaginatedQueryResultBuilder } from '@/core/querying/application/execution/result/paginated-query-result';
+import { CursorQueryResultBuilder } from '@/core/querying/application/execution/result/cursor-query-result';
+import { ProjectedQueryResultBuilder } from '@/core/querying/application/execution/result/projected-query-result';
+import { CursorToken } from '@/core/querying/domain/ast/pagination/cursor/cursor-token';
 
 /**
  * Executor genérico basado en TypeORM SelectQueryBuilder.
@@ -55,7 +50,7 @@ import { deriveOffset } from '@/querying/domain/ast/pagination/offset/offset-pag
  *   }]
  */
 export class TypeOrmQueryExecutor<
-  TEntity extends Record<string, unknown>,
+  TEntity extends ObjectLiteral,
   TField extends string = string,
   TResult extends Record<string, unknown> = Record<string, unknown>,
 > implements QueryExecutor<TField, TResult> {
@@ -101,17 +96,19 @@ export class TypeOrmQueryExecutor<
         serializer.serialize(projection, raw),
       ) as TResult[];
 
-      return ProjectedQueryResultBuilder.buildList(items);
+      return ProjectedQueryResultBuilder.buildList(
+        items,
+      ) as unknown as QueryExecutionResult<TResult>;
     }
 
     if (pagination.type === 'offset') {
-      const [rawItems, total] = await queryBuilder.getRawAndEntities();
+      const rawItems = await queryBuilder.getRawMany<TEntity>();
       // DECISIÓN: usamos getRawAndEntities para obtener el count eficientemente.
       // En PostgreSQL, un COUNT(*) OVER() en la misma query es más eficiente
       // que dos queries separadas para datasets grandes.
       const count = await this.executeCount(queryBuilder);
 
-      const items = rawItems.raw.map((raw) =>
+      const items = rawItems.map((raw) =>
         serializer.serialize(projection, raw),
       ) as TResult[];
 

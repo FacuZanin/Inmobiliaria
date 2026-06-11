@@ -1,3 +1,4 @@
+// backend/src/core/querying/domain/metadata/registries/query-metadata-registry.ts
 import type { QueryFieldMetadata } from '../field/query-field-metadata';
 import { QueryFieldNotFoundException } from '../exceptions/query-field-not-found.exception';
 

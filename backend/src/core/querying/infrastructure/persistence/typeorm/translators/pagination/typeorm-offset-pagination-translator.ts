@@ -1,6 +1,6 @@
 // backend/src/core/querying/translation/typeorm/pagination/typeorm-offset-pagination-translator.ts
 
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
 import {
   deriveOffset,
@@ -8,7 +8,7 @@ import {
 } from '@/core/querying/domain/ast/pagination/offset/offset-pagination-node';
 
 
-export class TypeOrmOffsetPaginationTranslator<TEntity> {
+export class TypeOrmOffsetPaginationTranslator<TEntity extends ObjectLiteral> {
   constructor(
     private readonly queryBuilder: SelectQueryBuilder<TEntity>,
   ) {}

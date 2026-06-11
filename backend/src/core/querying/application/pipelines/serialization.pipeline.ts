@@ -1,7 +1,7 @@
-import { ExecutionContext } from '../contracts/execution-context';
-import { ExecutionStage } from '../contracts/execution-stage';
-import { ProjectionSerializer } from '@/core/querying/application/serializers/projection-serializer';
-import { QueryExecutionContextFactory } from '../context/query-execution-context';
+import { ExecutionContext } from '../execution/contracts/execution-context';
+import { ExecutionStage } from '../execution/contracts/execution-stage';
+import { ProjectionSerializer } from '@/core/querying/application/serialization/projection-serializer';
+import { QueryExecutionContextFactory } from '../execution/context/query-execution-context';
 
 /**
  * Stage que aplica la proyección a los raw results de la DB.

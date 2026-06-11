@@ -1,10 +1,10 @@
 // backend\src\core\querying\translation\typeorm\joins\typeorm-join-manager.ts
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
 import { RelationMetadata } from '@/core/querying/domain/metadata/field/relation-metadata';
 
 export class TypeOrmJoinManager<
-  TEntity,
+  TEntity extends ObjectLiteral,
 > {
   private readonly appliedJoins =
     new Set<string>();

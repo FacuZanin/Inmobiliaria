@@ -1,4 +1,4 @@
-import { CursorResponse } from '../../contracts/cursor-response';
+import { CursorResponse } from '../../domain/contracts/cursor-response';
 
 export class CursorResultSerializer {
   serialize<TResult>(

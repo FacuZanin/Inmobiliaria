@@ -1,34 +1,34 @@
 // backend\src\core\querying\infrastructure\persistence\typeorm\translators\typeorm-query-translator.ts
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { QueryNode } from '@/querying/domain/ast/query/query-node';
+import { QueryNode } from '@/core/querying/domain/ast/query/query-node';
 
-import { CursorPaginationNode } from '@/querying/domain/ast/pagination/cursor/cursor-pagination-node';
+import { CursorPaginationNode } from '@/core/querying/domain/ast/pagination/cursor/cursor-pagination-node';
 
-import { OffsetPaginationNode } from '@/querying/domain/ast/pagination/offset/offset-pagination-node';
+import { OffsetPaginationNode } from '@/core/querying/domain/ast/pagination/offset/offset-pagination-node';
 
-import { SortingNode } from '@/querying/domain/ast/sorting/sorting-node';
+import { SortingNode } from '@/core/querying/domain/ast/sorting/sorting-node';
 
-import { FilterNode } from '@/querying/domain/ast/filter/filter-node';
+import { FilterNode } from '@/core/querying/domain/ast/filter/filter-node';
 
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
 
 import { QueryTranslator } from '../contracts/query-translator';
 
-import { TranslatedQueryResult } from '../result/translated-query-result';
+import { TranslatedQueryResult } from '@/core/querying/application/execution/result/translated-query-result';
 
 import { TypeOrmFilterTranslator } from './filtering/typeorm-filter-translator';
 
 import { TypeOrmSortingTranslator } from './sorting/typeorm-sorting-translator';
 
-import { TypeOrmOffsetPaginationTranslator } from '../pagination/typeorm-offset-pagination-translator';
+import { TypeOrmOffsetPaginationTranslator } from './pagination/typeorm-offset-pagination-translator';
 
-import { TypeOrmCursorPaginationTranslator } from '../pagination/typeorm-cursor-pagination-translator';
+import { TypeOrmCursorPaginationTranslator } from './pagination/typeorm-cursor-pagination-translator';
 
 import { TypeOrmJoinManager } from '../joins/typeorm-join-manager';
 
 export class TypeOrmQueryTranslator<
-  TEntity,
+  TEntity extends ObjectLiteral,
   TField extends string = string,
 > implements QueryTranslator<QueryNode<TField>, SelectQueryBuilder<TEntity>> {
   private readonly joins: TypeOrmJoinManager<TEntity>;
@@ -48,7 +48,7 @@ export class TypeOrmQueryTranslator<
 
     this.applySorting(query.sorting);
 
-    this.applyPagination(query.pagination);
+    this.applyPagination(query.pagination, query.sorting);
 
     return {
       query: this.queryBuilder,
@@ -87,6 +87,7 @@ export class TypeOrmQueryTranslator<
 
   private applyPagination(
     pagination?: OffsetPaginationNode | CursorPaginationNode,
+    sorting?: SortingNode<TField>,
   ): void {
     if (!pagination) {
       return;
@@ -100,8 +101,13 @@ export class TypeOrmQueryTranslator<
       return;
     }
 
-    new TypeOrmCursorPaginationTranslator(this.queryBuilder).translate(
+    new TypeOrmCursorPaginationTranslator(
+      this.queryBuilder,
+      this.registry,
+      this.joins,
+    ).translate(
       pagination,
+      sorting,
     );
   }
 }

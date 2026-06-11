@@ -1,3 +1,4 @@
+// backend/src/core/querying/domain/ast/filter/filter-group-node.ts
 import { FilterGroupOperator } from './filter-group-operator';
 
 import { FilterNode } from './filter-node';

@@ -1,5 +1,5 @@
-import { SortNode } from '@/querying/domain/ast/sorting/sort-node';
-import { SortingNode } from '@/querying/domain/ast/sorting/sorting-node';
+import { SortNode } from '@/core/querying/domain/ast/sorting/sort-node';
+import { SortingNode } from '@/core/querying/domain/ast/sorting/sorting-node';
 import { QueryMetadataRegistry } from '@/core/querying/domain/metadata/registries/query-metadata-registry';
 import { InvalidSortFieldException } from '../exceptions/invalid-sort-field.exception';
 

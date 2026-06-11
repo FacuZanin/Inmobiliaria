@@ -1,3 +1,4 @@
+// backend/src/core/querying/domain/ast/filter/filter-operator.ts
 export const FILTER_OPERATORS = {
   EQ: 'eq',
   NEQ: 'neq',
