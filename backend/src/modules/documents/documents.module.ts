@@ -21,14 +21,14 @@ import { DOCUMENTS_UNIT_OF_WORK } from './application/tokens/document.tokens';
 import { LocalFileStorageService } from './infrastructure/storage/local/local-file-storage.service';
 
 import { UploadDocumentUseCase } from './application/commands/use-cases/upload-document.usecase';
-import { ChangeDocumentStatusUseCase } from './application/use-cases/change-document-status.usecase';
-import { GetDocumentsByStatusUseCase } from './application/use-cases/get-documents-by-status.usecase';
+import { ChangeDocumentStatusUseCase } from './application/commands/use-cases/change-document-status.usecase';
+import { GetDocumentsByStatusQueryHandler } from './application/queries/use-cases/get-documents-by-status.usecase';
 
-import { ListDocumentsByOwnerUseCase } from './application/queries/handlers/list-documents-by-owner.usecase';
+import { ListDocumentsByOwnerQueryHandler } from './application/queries/use-cases/list-documents-by-owner.usecase';
 
-import { TenantDocumentsController } from './infrastructure/controllers/tenant-documents.controller';
-import { OwnerDocumentsController } from './infrastructure/controllers/owner-documents.controller';
-import { AdminDocumentsController } from './infrastructure/controllers/admin-documents.controller';
+import { TenantDocumentsController } from './presentation/http/controllers/tenant-documents.controller';
+import { OwnerDocumentsController } from './presentation/http/controllers/owner-documents.controller';
+import { AdminDocumentsController } from './presentation/http/controllers/admin-documents.controller';
 
 @Module({
   imports: [
@@ -44,8 +44,8 @@ import { AdminDocumentsController } from './infrastructure/controllers/admin-doc
   providers: [
     UploadDocumentUseCase,
     ChangeDocumentStatusUseCase,
-    GetDocumentsByStatusUseCase,
-    ListDocumentsByOwnerUseCase,
+    GetDocumentsByStatusQueryHandler,
+    ListDocumentsByOwnerQueryHandler,
     TransactionalRepositoryFactory,
 
     {

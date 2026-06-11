@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { Auth } from '@/core/security/decorators/auth.decorator';
+import { Auth } from '@/security/decorators/auth.decorator';
 import { Permission } from '@shared/contracts/enums/permission.enum';
 import { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
 import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';

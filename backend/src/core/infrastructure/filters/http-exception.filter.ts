@@ -1,48 +1,28 @@
-// backend\src\core\infrastructure\filters\http-exception.filter.ts
+// backend/src/core/infrastructure/filters/http-exception.filter.ts
 import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
   HttpException,
-  HttpStatus,
 } from '@nestjs/common';
+import type { Response } from 'express';
 
-@Catch()
+// Captura todas las HttpException y les da un formato de respuesta uniforme.
+// Garantiza que TODOS los errores HTTP salgan con la misma estructura JSON.
+@Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse();
-    const request = ctx.getRequest();
+    const res = ctx.getResponse<Response>();
+    const status = exception.getStatus();
+    const body = exception.getResponse();
 
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message: any = 'Error interno del servidor';
+    const response =
+      typeof body === 'string' ? { code: 'HTTP_ERROR', message: body } : body;
 
-    if (exception instanceof HttpException) {
-      status = exception.getStatus();
-
-      const exceptionResponse = exception.getResponse();
-
-      if (typeof exceptionResponse === 'object') {
-        message = exceptionResponse;
-      } else {
-        message = { message: exceptionResponse };
-      }
-    }
-    console.error('🔥 ERROR COMPLETO:', exception);
-
-    if ((exception as any)?.stack) {
-      console.error('🔥 STACK:', (exception as any).stack);
-    }
-    response.status(status).json({
-      success: false,
+    res.status(status).json({
+      ...(response as object),
       statusCode: status,
-      message:
-        typeof message === 'string'
-          ? message
-          : Array.isArray(message?.message)
-            ? message.message
-            : message?.message || 'Error interno del servidor',
-      path: request.url,
       timestamp: new Date().toISOString(),
     });
   }

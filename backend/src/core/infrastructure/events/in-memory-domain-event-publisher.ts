@@ -1,30 +1,31 @@
-// backend\src\core\infrastructure\events\in-memory-domain-event-publisher.ts
+// backend/src/core/infrastructure/events/in-memory-domain-event-publisher.ts
 import { Injectable } from '@nestjs/common';
-import { EventEmitter } from 'node:events';
+import type { DomainEvent } from '../../domain/events/domain-event.base';
+import type { IDomainEventPublisher } from '../../domain/events/domain-event-publisher.interface';
 
-import type { DomainEventPublisherPort } from '@/core/application/ports/domain-event-publisher.port';
-import type { DomainEvent } from '@/core/domain/events/domain-event';
-
+// Implementación en memoria para desarrollo y testing.
+// En producción se reemplaza por QueueDomainEventPublisher.
+// Registrado como proveedor en CoreModule con un flag de entorno.
 @Injectable()
-export class InMemoryDomainEventPublisher
-  implements DomainEventPublisherPort
-{
-  private readonly emitter = new EventEmitter();
+export class InMemoryDomainEventPublisher implements IDomainEventPublisher {
+  // Handlers registrados manualmente — útil para tests unitarios
+  private readonly handlers = new Map<
+    string,
+    Array<(event: DomainEvent) => Promise<void>>
+  >();
 
-  async publish(event: DomainEvent): Promise<void> {
-    this.emitter.emit(event.name, event);
-  }
-
-  async publishAll(events: DomainEvent[]): Promise<void> {
-    for (const event of events) {
-      await this.publish(event);
-    }
-  }
-
-  on<TEvent extends DomainEvent>(
-    eventName: TEvent['name'],
-    listener: (event: TEvent) => void | Promise<void>,
+  register(
+    eventName: string,
+    handler: (event: DomainEvent) => Promise<void>,
   ): void {
-    this.emitter.on(eventName, listener);
+    const existing = this.handlers.get(eventName) ?? [];
+    this.handlers.set(eventName, [...existing, handler]);
+  }
+
+  async publish(events: DomainEvent[]): Promise<void> {
+    for (const event of events) {
+      const eventHandlers = this.handlers.get(event.eventName) ?? [];
+      await Promise.all(eventHandlers.map((h) => h(event)));
+    }
   }
 }

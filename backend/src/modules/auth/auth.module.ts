@@ -24,7 +24,7 @@ import { RefreshToken } from '@/modules/auth/infrastructure/persistence/typeorm/
 import { JwtStrategy } from '@modules/auth/infrastructure/strategies/jwt.strategy';
 import { JwtAuthGuard } from '@modules/auth/infrastructure/guards/jwt-auth.guard';
 
-import { UserTypeGuard } from '@/core/security/guards/user-type.guard';
+import { UserTypeGuard } from '@/security/guards/user-type.guard';
 
 // Ports
 import {

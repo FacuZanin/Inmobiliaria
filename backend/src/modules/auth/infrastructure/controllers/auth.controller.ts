@@ -23,9 +23,9 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
-import { Public } from '@/core/security/decorators/public.decorator';
-import { CurrentUser } from '@/core/security/decorators/current-user.decorator';
-import { Auth } from '@/core/security/decorators/auth.decorator';
+import { Public } from '@/security/decorators/public.decorator';
+import { CurrentUser } from '@/security/decorators/current-user.decorator';
+import { Auth } from '@/security/decorators/auth.decorator';
 
 import { LoginDto } from '@modules/auth/application/dto/login.dto';
 import { RegisterDto } from '@modules/auth/application/dto/register.dto';

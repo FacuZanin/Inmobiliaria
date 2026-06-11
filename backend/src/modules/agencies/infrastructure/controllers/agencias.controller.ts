@@ -13,9 +13,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { Auth } from '@/core/security/decorators/auth.decorator';
+import { Auth } from '@/security/decorators/auth.decorator';
 
-import { CurrentUser } from '@/core/security/decorators/current-user.decorator';
+import { CurrentUser } from '@/security/decorators/current-user.decorator';
 
 import type { User } from '../../../users/domain/entities/user.entity';
 

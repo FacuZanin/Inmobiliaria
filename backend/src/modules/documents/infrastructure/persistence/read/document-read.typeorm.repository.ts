@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { PaginatedResponseDto } from '@/core/application/dto/paginated-response.dto';
+import { PaginatedResult } from '@/core/querying/pagination/paginated-result';
 
 import {
   DocumentQueryRepositoryPort,
@@ -12,16 +12,34 @@ import {
 
 import { DocumentListItemProjection } from '@/modules/documents/application/queries/projections/document-list-item.projection';
 
+import { DocumentSortableFields } from '@/modules/documents/application/queries/contracts/document-sortable-fields.type';
+
 import { DocumentOrmEntity } from '../typeorm/entities/document.orm-entity';
 
 @Injectable()
-export class DocumentReadTypeOrmRepository implements DocumentQueryRepositoryPort {
-  constructor(private readonly manager: EntityManager) {}
+export class DocumentReadTypeOrmRepository
+  implements DocumentQueryRepositoryPort
+{
+  private readonly sortableFields: Record<
+    DocumentSortableFields,
+    string
+  > = {
+    createdAt: 'document.createdAt',
+    status: 'document.status',
+    type: 'document.type',
+  };
+
+  constructor(
+    private readonly manager: EntityManager,
+  ) {}
 
   async findMany(
     query: FindDocumentsQuery,
-  ): Promise<PaginatedResponseDto<DocumentListItemProjection>> {
-    const qb = this.manager.createQueryBuilder(DocumentOrmEntity, 'document');
+  ): Promise<PaginatedResult<DocumentListItemProjection>> {
+    const qb = this.manager.createQueryBuilder(
+      DocumentOrmEntity,
+      'document',
+    );
 
     qb.select([
       'document.id',
@@ -36,47 +54,53 @@ export class DocumentReadTypeOrmRepository implements DocumentQueryRepositoryPor
     ]);
 
     if (query.status) {
-      qb.andWhere('document.status = :status', {
-        status: query.status,
-      });
+      qb.andWhere(
+        'document.status = :status',
+        {
+          status: query.status,
+        },
+      );
     }
 
     if (query.ownerId) {
-      qb.andWhere('document.ownerId = :ownerId', {
-        ownerId: query.ownerId,
-      });
+      qb.andWhere(
+        'document.ownerId = :ownerId',
+        {
+          ownerId: query.ownerId,
+        },
+      );
     }
 
     if (query.ownerType) {
-      qb.andWhere('document.ownerType = :ownerType', {
-        ownerType: query.ownerType,
-      });
+      qb.andWhere(
+        'document.ownerType = :ownerType',
+        {
+          ownerType: query.ownerType,
+        },
+      );
     }
 
-    const sortableFields: Array<keyof DocumentOrmEntity> = [
-      'createdAt',
-      'status',
-      'type',
-    ];
+    const sortField =
+      this.sortableFields[
+        query.sortBy ?? 'createdAt'
+      ];
 
-    const sortBy =
-      query.sortBy &&
-      sortableFields.includes(query.sortBy as keyof DocumentOrmEntity)
-        ? query.sortBy
-        : 'createdAt';
+    qb.orderBy(
+      sortField,
+      query.sortOrder ?? 'DESC',
+    );
 
-    const sortOrder = query.sortOrder === 'ASC' ? 'ASC' : 'DESC';
-
-    qb.orderBy(`document.${sortBy}`, sortOrder);
-
-    qb.skip((query.page - 1) * query.limit);
+    qb.skip(
+      (query.page - 1) * query.limit,
+    );
 
     qb.take(query.limit);
 
-    const [rows, total] = await qb.getManyAndCount();
+    const [documents, total] =
+      await qb.getManyAndCount();
 
-    return new PaginatedResponseDto(
-      rows.map((document) => ({
+    const projections: DocumentListItemProjection[] =
+      documents.map((document) => ({
         id: document.id,
         type: document.type,
         status: document.status,
@@ -86,7 +110,10 @@ export class DocumentReadTypeOrmRepository implements DocumentQueryRepositoryPor
         reviewedBy: document.reviewedBy,
         reviewedAt: document.reviewedAt,
         createdAt: document.createdAt,
-      })),
+      }));
+
+    return PaginatedResult.create(
+      projections,
       total,
       query.page,
       query.limit,

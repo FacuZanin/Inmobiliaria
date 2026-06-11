@@ -1,43 +1,43 @@
-// backend\src\core\infrastructure\interceptors\logging.interceptor.ts
+// backend/src/core/infrastructure/interceptors/logging.interceptor.ts
 import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  Logger,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, tap } from 'rxjs';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger('HTTP');
-
-  intercept(context: ExecutionContext, next: CallHandler) {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const req = context.switchToHttp().getRequest();
-    const { method, url, body, query, params } = req;
-
-    const safeBody = { ...body };
-    if (safeBody?.password) safeBody.password = '***';
-
     const start = Date.now();
+
+    const meta = {
+      method: req.method,
+      path: req.url,
+      userId: req.user?.id ?? 'anonymous',
+      tenantId: req.user?.tenantId ?? null,
+      ip: req.ip,
+    };
 
     return next.handle().pipe(
       tap({
         next: () => {
-          this.logger.log(
-            `${method} ${url} - ${Date.now() - start}ms | body=${JSON.stringify(
-              safeBody,
-            )}`,
-          );
+          console.log('[HTTP]', {
+            ...meta,
+            duration: `${Date.now() - start}ms`,
+            status: 'success',
+          });
         },
         error: (err) => {
-          this.logger.error(
-            `${method} ${url} FAILED - ${err?.message}`,
-          );
+          console.error('[HTTP Error]', {
+            ...meta,
+            duration: `${Date.now() - start}ms`,
+            error: err?.message,
+          });
         },
       }),
     );
   }
 }
-

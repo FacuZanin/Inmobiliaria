@@ -1,26 +1,25 @@
-// backend\src\core\infrastructure\interceptors\timing.interceptor.ts
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { AppLogger } from '../logger/logger.service';
+// backend/src/core/infrastructure/interceptors/timing.interceptor.ts
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
+import { Observable, tap } from 'rxjs';
 
+// Agrega el header X-Response-Time a cada respuesta HTTP.
+// Útil para detectar endpoints lentos en el portal inmobiliario
+// (búsquedas con filtros geoespaciales, queries de listings, etc.).
 @Injectable()
 export class TimingInterceptor implements NestInterceptor {
-  constructor(private readonly logger: AppLogger) {}
-
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const now = Date.now();
-    const ctx = context.switchToHttp();
-    const req = ctx.getRequest<Request>();
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const start = Date.now();
+    const res = context.switchToHttp().getResponse();
 
     return next.handle().pipe(
       tap(() => {
-        const time = Date.now() - now;
-        this.logger.log(
-          `${req.method} ${req.url} completed in ${time}ms`,
-          'Timing'
-        );
-      })
+        res.setHeader('X-Response-Time', `${Date.now() - start}ms`);
+      }),
     );
   }
 }

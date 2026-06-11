@@ -17,8 +17,8 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 
-import { Auth } from '@/core/security/decorators/auth.decorator';
-import { CurrentUser } from '@/core/security/decorators/current-user.decorator';
+import { Auth } from '@/security/decorators/auth.decorator';
+import { CurrentUser } from '@/security/decorators/current-user.decorator';
 
 import { Permission } from '@shared/contracts/enums/permission.enum';
 

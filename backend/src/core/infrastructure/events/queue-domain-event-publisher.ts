@@ -1,43 +1,25 @@
-// backend\src\core\infrastructure\events\queue-domain-event-publisher.ts
+// backend/src/core/infrastructure/events/queue-domain-event-publisher.ts
 import { Injectable } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bullmq';
-import type { Queue } from 'bullmq';
+import type { DomainEvent } from '../../domain/events/domain-event.base';
+import type { IDomainEventPublisher } from '../../domain/events/domain-event-publisher.interface';
 
-import type { DomainEventPublisherPort } from '@/core/application/ports/domain-event-publisher.port';
-import type { DomainEvent } from '@/core/domain/events/domain-event';
-import { DOMAIN_EVENTS_QUEUE } from '@/core/infrastructure/queues/queues.constants';
-
+// Puerto hacia el sistema de colas (BullMQ, RabbitMQ, etc.).
+// La implementación concreta va en infrastructure/messaging/
+// Este archivo es el adapter que implementa el puerto del dominio.
+// En producción inyectá el cliente de BullMQ o amqplib aquí.
 @Injectable()
-export class QueueDomainEventPublisher implements DomainEventPublisherPort {
-  constructor(
-    @InjectQueue(DOMAIN_EVENTS_QUEUE)
-    private readonly queue: Queue,
-  ) {}
+export class QueueDomainEventPublisher implements IDomainEventPublisher {
+  // Inyectá aquí el cliente de BullMQ: constructor(private readonly queue: Queue) {}
+  // Por ahora loggea — reemplazá con la implementación real de tu broker.
 
-  async publish(event: DomainEvent): Promise<void> {
-    await this.queue.add(
-      event.name,
-      {
-        name: event.name,
-        aggregateId: event.aggregateId,
-        occurredAt: event.occurredAt.toISOString(),
-        payload: event.payload,
-      },
-      {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 1000,
-        },
-        removeOnComplete: 1000,
-        removeOnFail: false,
-      },
-    );
-  }
-
-  async publishAll(events: DomainEvent[]): Promise<void> {
+  async publish(events: DomainEvent[]): Promise<void> {
     for (const event of events) {
-      await this.publish(event);
+      // await this.queue.add(event.eventName, event);
+      console.log(`[QueuePublisher] Publicando evento: ${event.eventName}`, {
+        eventId: event.eventId,
+        aggregateId: event.aggregateId,
+        occurredAt: event.occurredAt,
+      });
     }
   }
 }
