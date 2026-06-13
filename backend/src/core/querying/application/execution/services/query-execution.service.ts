@@ -2,9 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { QueryRequest } from '@/core/querying/domain/contracts/query-request';
 import { QueryExecutor } from '../contracts/query-executor';
 import { QueryExecutionResult } from '../contracts/query-execution-result';
-import {
-  QueryExecutionMetadataBuilder,
-} from '../context/query-execution-metadata';
+import { QueryExecutionMetadataBuilder } from '../context/query-execution-metadata';
 
 /**
  * Servicio NestJS que actúa como facade del sistema de ejecución de queries.
@@ -47,8 +45,8 @@ export class QueryExecutionService {
 
       this.logger.debug(
         `[${requestId}] Query completed in ${metadata.durationMs}ms ` +
-        `| cache: ${metadata.cacheHit ? 'HIT' : 'MISS'} ` +
-        `| type: ${result.type}`,
+          `| cache: ${metadata.cacheHit ? 'HIT' : 'MISS'} ` +
+          `| type: ${result.type}`,
       );
 
       return result;

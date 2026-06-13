@@ -1,5 +1,4 @@
 // backend/src/modules/listings/domain/repositories/listing.repository.port.ts
-
 import { ListingAggregate } from '../aggregates/listing.aggregate';
 
 export abstract class ListingRepositoryPort {

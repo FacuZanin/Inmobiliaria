@@ -7,15 +7,18 @@ import { promises as fs } from 'fs';
 
 import { join } from 'path';
 
-import { FileStoragePort } from '@/modules/documents/application/ports/file-storage.port';
+import {
+  FileStoragePort,
+  StorageFile,
+} from '@/modules/documents/application/ports/file-storage.port';
 
 @Injectable()
 export class LocalFileStorageService implements FileStoragePort {
   async upload(
-    file: Express.Multer.File,
+    file: StorageFile,
     folder = 'documents',
   ): Promise<string> {
-    const fileName = `${randomUUID()}-${file.originalname}`;
+    const fileName = `${randomUUID()}-${file.originalName}`;
 
     const uploadPath = join(process.cwd(), 'uploads', folder);
 
@@ -30,7 +33,7 @@ export class LocalFileStorageService implements FileStoragePort {
     return `/uploads/${folder}/${fileName}`;
   }
 
-  async save(file: Express.Multer.File): Promise<string> {
+  async save(file: StorageFile): Promise<string> {
     return this.upload(file);
   }
 

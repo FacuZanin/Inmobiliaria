@@ -27,9 +27,7 @@ import { DefaultProjectionSerializer } from '@/core/querying/application/seriali
 export class QueryResultMaterializerService {
   private readonly serializer = new DefaultProjectionSerializer();
 
-  constructor(
-    private readonly projectionRegistry: ProjectionRegistry,
-  ) {}
+  constructor(private readonly projectionRegistry: ProjectionRegistry) {}
 
   /**
    * Materializa una lista de raw rows usando la proyección nombrada.
@@ -55,10 +53,7 @@ export class QueryResultMaterializerService {
    *
    * @throws si rawItem es null/undefined — el caller debe verificar existencia
    */
-  materializeOne<TResult>(
-    rawItem: unknown,
-    projectionName: string,
-  ): TResult {
+  materializeOne<TResult>(rawItem: unknown, projectionName: string): TResult {
     const projection = this.projectionRegistry.get(projectionName);
     return this.serializer.serialize(projection, rawItem) as TResult;
   }

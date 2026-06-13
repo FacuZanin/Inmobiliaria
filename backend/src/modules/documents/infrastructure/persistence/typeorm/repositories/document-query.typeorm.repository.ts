@@ -92,16 +92,23 @@ export class DocumentQueryTypeOrmRepository implements DocumentQueryRepositoryPo
     }
 
     const sortField = SafeSort.resolve(
-      params.sorting.field,
+      params.sorting.field ?? params.sorting.sortBy,
       DOCUMENT_SORT_FIELDS,
       'createdAt',
     );
 
-    queryBuilder.orderBy(`document.${sortField}`, params.sorting.direction);
+    const direction = String(
+      params.sorting.direction ?? params.sorting.sortOrder ?? 'DESC',
+    ).toUpperCase() as 'ASC' | 'DESC';
 
-    queryBuilder.skip(params.pagination.offset);
+    queryBuilder.orderBy(`document.${sortField}`, direction);
 
-    queryBuilder.take(params.pagination.limit);
+    const page = params.pagination.page ?? 1;
+    const limit = params.pagination.limit ?? 20;
+
+    queryBuilder.skip((page - 1) * limit);
+
+    queryBuilder.take(limit);
 
     const [documents, total] = await queryBuilder.getManyAndCount();
 
@@ -110,9 +117,9 @@ export class DocumentQueryTypeOrmRepository implements DocumentQueryRepositoryPo
 
       total,
 
-      params.pagination.page,
+      page,
 
-      params.pagination.limit,
+      limit,
     );
   }
 }

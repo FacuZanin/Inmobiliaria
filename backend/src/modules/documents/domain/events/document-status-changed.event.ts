@@ -1,5 +1,5 @@
 // backend\src\modules\documents\domain\events\document-status-changed.event.ts
-import { DomainEvent } from '@/core/domain/events/domain-event';
+import { DomainEvent } from '@/core/domain/events/domain-event.base';
 
 import { DocumentStatus } from '../enums/document-status.enum';
 

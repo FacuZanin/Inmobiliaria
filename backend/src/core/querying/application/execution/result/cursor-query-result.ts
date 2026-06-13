@@ -41,7 +41,11 @@ export class CursorQueryResultBuilder {
     const data = hasNextPage ? items.slice(0, limit) : items;
 
     const nextCursor = hasNextPage
-      ? CursorQueryResultBuilder.encodeCursor(data[data.length - 1], sortField, idField)
+      ? CursorQueryResultBuilder.encodeCursor(
+          data[data.length - 1],
+          sortField,
+          idField,
+        )
       : undefined;
 
     const hasPreviousPage = !!previousCursor;

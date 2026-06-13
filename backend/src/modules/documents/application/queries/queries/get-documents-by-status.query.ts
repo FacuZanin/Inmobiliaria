@@ -1,7 +1,7 @@
 // backend\src\modules\documents\application\queries\queries\get-documents-by-status.query.ts
 import { DocumentStatus } from '@/modules/documents/domain/enums/document-status.enum';
 
-import { PaginationParams } from '@/core/querying/pagination/pagination-params';
+import { PaginationParams } from '@/core/application/pagination/pagination-params';
 
 import { SortingParams } from '@/core/querying/sorting/sorting-params';
 

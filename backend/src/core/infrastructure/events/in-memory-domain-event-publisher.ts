@@ -24,7 +24,8 @@ export class InMemoryDomainEventPublisher implements IDomainEventPublisher {
 
   async publish(events: DomainEvent[]): Promise<void> {
     for (const event of events) {
-      const eventHandlers = this.handlers.get(event.eventName) ?? [];
+      const eventName = event.eventName ?? event.name;
+      const eventHandlers = eventName ? (this.handlers.get(eventName) ?? []) : [];
       await Promise.all(eventHandlers.map((h) => h(event)));
     }
   }

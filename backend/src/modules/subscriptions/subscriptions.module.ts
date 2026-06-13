@@ -1,10 +1,8 @@
 // backend\src\modules\subscriptions\subscriptions.module.ts
 import { Module } from '@nestjs/common';
 
-import { PropertyLimitsService } from '@modules/subscriptions/application/services/property-limits.service';
-
 @Module({
-  providers: [PropertyLimitsService],
-  exports: [PropertyLimitsService],
+  providers: [],
+  exports: [],
 })
 export class SubscriptionsModule {}

@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-pricing.vo.ts
 
-import { DomainException } from '@/core/domain/exceptions/domain.exception';
+import { ValidationError } from '@/core/shared-kernel/errors';
 
 type ListingPricingVOProps = {
   salePrice?: number | null;
@@ -17,15 +17,15 @@ export class ListingPricingVO {
 
   constructor(props: ListingPricingVOProps) {
     if (props.salePrice != null && props.salePrice < 0) {
-      throw new DomainException('Sale price cannot be negative');
+      throw new ValidationError('Sale price cannot be negative');
     }
 
     if (props.rentalPrice != null && props.rentalPrice < 0) {
-      throw new DomainException('Rental price cannot be negative');
+      throw new ValidationError('Rental price cannot be negative');
     }
 
     if (props.expenses != null && props.expenses < 0) {
-      throw new DomainException('Expenses cannot be negative');
+      throw new ValidationError('Expenses cannot be negative');
     }
 
     this._salePrice = props.salePrice ?? null;

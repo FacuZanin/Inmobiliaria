@@ -1,4 +1,4 @@
-// backend\src\modules\documents\application\commands\dto\upload-document.command.ts
+// backend/src/modules/documents/application/commands/dto/upload-document.command.ts
 import { DocumentOwnerType } from '../../../domain/enums/document-owner-type.enum';
 import { DocumentType } from '../../../domain/enums/document-type.enum';
 

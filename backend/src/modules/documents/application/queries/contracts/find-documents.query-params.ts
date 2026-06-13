@@ -1,7 +1,7 @@
 //backend\src\modules\documents\application\queries\contracts\find-documents.query-params.ts 
 import { FilterGroup } from '@/core/querying/filtering/nodes/filter-group';
 
-import { PaginationParams } from '@/core/querying/pagination/pagination-params';
+import { PaginationParams } from '@/core/application/pagination/pagination-params';
 
 import { SortingParams } from '@/core/querying/sorting/sorting-params';
 

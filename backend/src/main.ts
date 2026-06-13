@@ -1,7 +1,6 @@
 // backend\src\main.ts
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { DomainException } from '@/core/domain/exceptions/domain.exception';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -9,8 +8,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
 import { seedAdmin } from '@/database/seeds/admin.seed';
-import { LoggingInterceptor } from '@/core/infrastructure/interceptors/logging.interceptor';
-import { AppLogger } from '@/core/infrastructure/logger/logger.service';
+import { LoggerService } from '@nestjs/common';
+import { LOGGER } from '@/core/application/ports/logger.token';
 
 import cookieParser from 'cookie-parser';
 
@@ -19,7 +18,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   // 🔹 Logger global
-  app.useLogger(app.get(AppLogger));
+  app.useLogger(app.get<LoggerService>(LOGGER));
   // 🔹 Pipes globales
   app.useGlobalPipes(
     new ValidationPipe({

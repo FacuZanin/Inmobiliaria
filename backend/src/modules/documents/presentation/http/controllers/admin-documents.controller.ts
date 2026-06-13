@@ -12,14 +12,14 @@ import {
 import { Auth } from '@/security/decorators/auth.decorator';
 import { CurrentUser } from '@/security/decorators/current-user.decorator';
 
-import { PaginationParams } from '@/core/querying/pagination/pagination-params';
+import { PaginationParams } from '@/core/application/pagination/pagination-params';
 
 import { UpdateDocumentStatusRequest } from '@/modules/documents/presentation/http/requests/update-document-status.request';
 
 import { ChangeDocumentStatusHandler } from '@/modules/documents/application/commands/handlers/change-document-status.handler';
 
-import { GetDocumentsByStatusQuery } from '@/modules/documents/application/queries/queries/get-documents-by-status.query';
-import { ListDocumentsByOwnerQuery } from '@/modules/documents/application/queries/queries/list-documents-by-owner.query';
+import { GetDocumentsByStatusHandler } from '@/modules/documents/application/queries/handlers/get-documents-by-status.handler';
+import { ListDocumentsByOwnerHandler } from '@/modules/documents/application/queries/handlers/list-documents-by-owner.handler';
 
 import { DocumentOwnerType } from '@/modules/documents/domain/enums/document-owner-type.enum';
 import { DocumentStatus } from '@/modules/documents/domain/enums/document-status.enum';
@@ -32,9 +32,9 @@ export class AdminDocumentsController {
   constructor(
     private readonly changeDocumentStatusHandler: ChangeDocumentStatusHandler,
 
-    private readonly getDocumentsByStatus: GetDocumentsByStatusQuery,
+    private readonly getDocumentsByStatus: GetDocumentsByStatusHandler,
 
-    private readonly listDocuments: ListDocumentsByOwnerQuery,
+    private readonly listDocuments: ListDocumentsByOwnerHandler,
   ) {}
 
   @Get()

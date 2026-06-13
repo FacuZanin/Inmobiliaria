@@ -19,9 +19,11 @@ import { DocumentStatusChangedEvent } from '../events/document-status-changed.ev
 import { DocumentReviewableSpecification } from '../specifications/document-reviewable.specification';
 import { DocumentReplaceableSpecification } from '../specifications/document-replaceable.specification';
 
-import { AggregateRoot } from '@/core/domain/aggregates/aggregate-root';
+import type { DomainEvent } from '@/core/domain/events/domain-event.base';
 
-export class DocumentEntity extends AggregateRoot {
+export class DocumentEntity {
+  private _domainEvents: DomainEvent[] = [];
+
   private _fileUrl: string;
 
   private _verification: DocumentVerificationEntity;
@@ -39,13 +41,23 @@ export class DocumentEntity extends AggregateRoot {
 
     public readonly createdAt: Date,
   ) {
-    super();
-
     this.ensureValidType(type);
     this.ensureValidFileUrl(fileUrl);
 
     this._fileUrl = fileUrl;
     this._verification = verification;
+  }
+
+  private addDomainEvent(event: DomainEvent): void {
+    this._domainEvents.push(event);
+  }
+
+  getDomainEvents(): DomainEvent[] {
+    return [...this._domainEvents];
+  }
+
+  clearDomainEvents(): void {
+    this._domainEvents = [];
   }
 
   static create(params: {

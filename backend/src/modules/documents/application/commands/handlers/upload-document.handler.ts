@@ -8,9 +8,9 @@ import { DOCUMENTS_UNIT_OF_WORK } from '../../tokens/document.tokens';
 import type { FileStoragePort } from '../../ports/file-storage.port';
 import type { DocumentsUnitOfWorkPort } from '../../ports/unit-of-work.port';
 
-import type { CommandHandler } from '../contracts/command-handler.contract';
+import type { CommandHandler } from '@modules/documents/application/commands/contracts/command-handler.contract';
 
-import type { UploadDocumentCommand } from '../dto/upload-document.command';
+import type { UploadDocumentCommand } from '@modules/documents/application/commands/dto/upload-document.command';
 
 import { DocumentAuditEntity } from '../../../domain/entities/document-audit.entity';
 import { DocumentEntity } from '../../../domain/entities/document.entity';

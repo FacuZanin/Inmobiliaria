@@ -9,9 +9,7 @@ export interface QueryExecutionMetadata {
 export class QueryExecutionMetadataBuilder {
   private readonly startedAt = new Date();
 
-  constructor(
-    private readonly cacheHit = false,
-  ) {}
+  constructor(private readonly cacheHit = false) {}
 
   build(requestId: string): QueryExecutionMetadata {
     const completedAt = new Date();

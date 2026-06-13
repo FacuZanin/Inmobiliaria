@@ -7,12 +7,12 @@ import { PaginatedResult } from '@/core/querying/pagination/paginated-result';
 
 import {
   DocumentQueryRepositoryPort,
-  FindDocumentsQuery,
 } from '@/modules/documents/application/queries/ports/document-query.repository';
 
 import { DocumentListItemProjection } from '@/modules/documents/application/queries/projections/document-list-item.projection';
 
-import { DocumentSortableFields } from '@/modules/documents/application/queries/contracts/document-sortable-fields.type';
+import { DocumentSortableFields } from '@/modules/documents/application/queries/contracts/document-query-fields';
+import { FindDocumentsQueryParams } from '@/modules/documents/application/queries/contracts/find-documents.query-params';
 
 import { DocumentOrmEntity } from '../typeorm/entities/document.orm-entity';
 
@@ -34,7 +34,7 @@ export class DocumentReadTypeOrmRepository
   ) {}
 
   async findMany(
-    query: FindDocumentsQuery,
+    query: FindDocumentsQueryParams,
   ): Promise<PaginatedResult<DocumentListItemProjection>> {
     const qb = this.manager.createQueryBuilder(
       DocumentOrmEntity,
@@ -82,19 +82,26 @@ export class DocumentReadTypeOrmRepository
 
     const sortField =
       this.sortableFields[
-        query.sortBy ?? 'createdAt'
+        query.sorting.field ?? query.sorting.sortBy ?? 'createdAt'
       ];
+
+    const direction = String(
+      query.sorting.direction ?? query.sorting.sortOrder ?? 'DESC',
+    ).toUpperCase() as 'ASC' | 'DESC';
 
     qb.orderBy(
       sortField,
-      query.sortOrder ?? 'DESC',
+      direction,
     );
+
+    const page = query.pagination.page ?? 1;
+    const limit = query.pagination.limit ?? 20;
 
     qb.skip(
-      (query.page - 1) * query.limit,
+      (page - 1) * limit,
     );
 
-    qb.take(query.limit);
+    qb.take(limit);
 
     const [documents, total] =
       await qb.getManyAndCount();
@@ -115,8 +122,8 @@ export class DocumentReadTypeOrmRepository
     return PaginatedResult.create(
       projections,
       total,
-      query.page,
-      query.limit,
+      page,
+      limit,
     );
   }
 }

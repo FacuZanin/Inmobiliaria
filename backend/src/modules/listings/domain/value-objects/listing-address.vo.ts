@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-address.vo.ts
 
-import { DomainException } from '@/core/domain/exceptions/domain.exception';
+import { ValidationError } from '@/core/shared-kernel/errors';
 
 export type ListingAddressProps = {
   street: string;
@@ -27,40 +27,28 @@ export class ListingAddressVO {
 
   constructor(props: ListingAddressProps) {
     if (!props.street?.trim()) {
-      throw new DomainException(
-        'Invalid street',
-      );
+      throw new ValidationError('Invalid street');
     }
 
     if (!props.city?.trim()) {
-      throw new DomainException(
-        'Invalid city',
-      );
+      throw new ValidationError('Invalid city');
     }
 
     this.street = props.street.trim();
 
     this.city = props.city.trim();
 
-    this.province =
-      props.province?.trim() ?? null;
+    this.province = props.province?.trim() ?? null;
 
-    this.country =
-      props.country?.trim() ?? null;
+    this.country = props.country?.trim() ?? null;
 
-    this.zipCode =
-      props.zipCode?.trim() ?? null;
+    this.zipCode = props.zipCode?.trim() ?? null;
 
     Object.freeze(this);
   }
 
   public getValue(): string {
-    return [
-      this.street,
-      this.city,
-      this.province,
-      this.country,
-    ]
+    return [this.street, this.city, this.province, this.country]
       .filter(Boolean)
       .join(', ');
   }

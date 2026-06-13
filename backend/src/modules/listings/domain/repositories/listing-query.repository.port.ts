@@ -1,4 +1,4 @@
-// backend\src\modules\listings\domain\repositories\listing-query.repository.port.ts
+// backend/src/modules/listings/domain/repositories/listing-query.repository.port.ts
 import { ListingAggregate } from '../aggregates/listing.aggregate';
 
 import { ListingStatus } from '../enums/listing-status.enum';

@@ -1,6 +1,7 @@
 // backend\src\modules\listings\domain\aggregates\listing.aggregate.ts
 
-import { DomainException } from '@/core/domain/exceptions/domain.exception';
+import { ValidationError } from '@/core/shared-kernel/errors';
+import { ConflictError } from '@/core/shared-kernel/errors';
 
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';
@@ -137,11 +138,11 @@ export class ListingAggregate {
 
   private validateInvariants() {
     if (!this._title?.trim()) {
-      throw new DomainException('Listing title is required');
+      throw new ValidationError('Listing title is required');
     }
 
     if (!this._ownerId) {
-      throw new DomainException('Listing owner is required');
+      throw new ValidationError('Listing owner is required');
     }
   }
 
@@ -386,7 +387,7 @@ export class ListingAggregate {
 
   publish() {
     if (this._moderationStatus !== ModerationStatus.APPROVED) {
-      throw new DomainException('Listing must be approved before publishing');
+      throw new ConflictError('Listing must be approved before publishing');
     }
 
     this.ensurePublishable();
@@ -398,7 +399,7 @@ export class ListingAggregate {
 
   pause() {
     if (this._status !== ListingStatus.ACTIVE) {
-      throw new DomainException('Only active listings can be paused');
+      throw new ConflictError('Only active listings can be paused');
     }
 
     this._status = ListingStatus.PAUSED;
@@ -408,7 +409,7 @@ export class ListingAggregate {
 
   reactivate() {
     if (this._status !== ListingStatus.PAUSED) {
-      throw new DomainException('Only paused listings can be reactivated');
+      throw new ConflictError('Only paused listings can be reactivated');
     }
 
     this._status = ListingStatus.ACTIVE;
@@ -418,7 +419,7 @@ export class ListingAggregate {
 
   archive() {
     if (this._status === ListingStatus.ARCHIVED) {
-      throw new DomainException('Listing already archived');
+      throw new ConflictError('Listing already archived');
     }
 
     this._status = ListingStatus.ARCHIVED;
@@ -536,7 +537,7 @@ export class ListingAggregate {
       }
 
       if (this._media.length >= 50) {
-        throw new DomainException('Listing media limit exceeded');
+        throw new ConflictError('Listing media limit exceeded');
       }
 
       this._media.push(item);
@@ -549,7 +550,7 @@ export class ListingAggregate {
 
   assignPersistenceId(id: number) {
     if (this._id !== null) {
-      throw new DomainException('Listing already has a persistence id');
+      throw new ConflictError('Listing already has a persistence id');
     }
 
     this._id = id;
@@ -573,19 +574,19 @@ export class ListingAggregate {
 
   private ensurePublishable() {
     if (this._title.trim().length < 10) {
-      throw new DomainException('Listing title is too short');
+      throw new ValidationError('Listing title is too short');
     }
 
     if (!this._description || this._description.length < 30) {
-      throw new DomainException('Listing description is too short');
+      throw new ValidationError('Listing description is too short');
     }
 
     if (!this._pricing.hasValidPrice()) {
-      throw new DomainException('Listing requires pricing before publishing');
+      throw new ValidationError('Listing requires pricing before publishing');
     }
 
     if (!this._location.hasValidAddress()) {
-      throw new DomainException('Listing requires location before publishing');
+      throw new ValidationError('Listing requires location before publishing');
     }
 
     const readyMedia = this._media.filter(
@@ -593,7 +594,7 @@ export class ListingAggregate {
     );
 
     if (!readyMedia.length) {
-      throw new DomainException(
+      throw new ValidationError(
         'Listing requires processed media before publishing',
       );
     }
@@ -601,7 +602,7 @@ export class ListingAggregate {
     const hasPrimary = readyMedia.some((media) => media.isPrimary);
 
     if (!hasPrimary) {
-      throw new DomainException('Listing requires a primary image');
+      throw new ValidationError('Listing requires a primary image');
     }
   }
 

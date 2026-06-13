@@ -15,7 +15,7 @@ export class QueueDomainEventPublisher implements IDomainEventPublisher {
   async publish(events: DomainEvent[]): Promise<void> {
     for (const event of events) {
       // await this.queue.add(event.eventName, event);
-      console.log(`[QueuePublisher] Publicando evento: ${event.eventName}`, {
+      console.log(`[QueuePublisher] Publicando evento: ${event.eventName ?? event.name}`, {
         eventId: event.eventId,
         aggregateId: event.aggregateId,
         occurredAt: event.occurredAt,

@@ -1,5 +1,5 @@
 // backend\src\modules\documents\domain\events\document-uploaded.event.ts
-import { DomainEvent } from '@/core/domain/events/domain-event';
+import { DomainEvent } from '@/core/domain/events/domain-event.base';
 
 import { DocumentType } from '../enums/document-type.enum';
 

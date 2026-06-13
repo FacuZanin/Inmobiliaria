@@ -1,4 +1,7 @@
-import { PaginatedResponse, buildPaginationMeta, } from '@/core/application/pagination/paginated.response';
+import {
+  PaginatedResponse,
+  buildPaginationMeta,
+} from '@/core/application/pagination/paginated.response';
 import { PaginatedQueryExecutionResult } from '../contracts/query-execution-result';
 
 /**
@@ -21,13 +24,10 @@ export class PaginatedQueryResultBuilder {
   ): PaginatedQueryExecutionResult<TResult> {
     const response: PaginatedResponse<TResult> = {
       data,
-      meta: buildPaginationMeta(
-        total,
-        {
-          page,
-          limit,
-        },
-      ),
+      meta: buildPaginationMeta(total, {
+        page,
+        limit,
+      }),
     };
 
     return {

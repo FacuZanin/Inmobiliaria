@@ -1,5 +1,5 @@
 // backend\src\modules\documents\application\queries\queries\list-documents-by-owner.query.ts
-import { PaginationParams } from '@/core/querying/pagination/pagination-params';
+import { PaginationParams } from '@/core/application/pagination/pagination-params';
 import { SortingParams } from '@/core/querying/sorting/sorting-params';
 
 import { DocumentOwnerType } from '@/modules/documents/domain/enums/document-owner-type.enum';

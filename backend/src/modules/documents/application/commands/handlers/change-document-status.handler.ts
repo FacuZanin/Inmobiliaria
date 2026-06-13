@@ -1,4 +1,4 @@
-// backend\src\modules\documents\application\commands\handlers\change-document-status.handler.ts
+// backend/src/modules/documents/application/commands/handlers/change-document-status.handler.ts
 import { Inject, Injectable } from '@nestjs/common';
 
 import { DOCUMENTS_UNIT_OF_WORK } from '../../tokens/document.tokens';

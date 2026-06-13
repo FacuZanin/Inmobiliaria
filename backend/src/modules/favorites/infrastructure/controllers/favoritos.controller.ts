@@ -18,8 +18,8 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-import { Auth } from '@/core/shared/security/decorators/auth.decorator';
-import { CurrentUser } from '@/core/shared/security/decorators/current-user.decorator';
+import { Auth } from '@/security/decorators/auth.decorator';
+import { CurrentUser } from '@/security/decorators/current-user.decorator';
 
 import { AddFavoriteUseCase } from '../../application/use-cases/add-favorite.usecase';
 import { RemoveFavoriteUseCase } from '../../application/use-cases/remove-favorite.usecase';

@@ -1,53 +1,40 @@
-// backend\src\modules\agencias\infrastructure\persistence\typeorm\repositories\listing.typeorm.repository.ts
+// backend/src/modules/agencies/infrastructure/persistence/typeorm/repositories/listing.typeorm.repository.ts
+
+import { Injectable, BadRequestException } from '@nestjs/common';
+
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import {
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
-
-import {
-  InjectRepository,
-} from '@nestjs/typeorm';
-
-import {
-  Repository,
-  SelectQueryBuilder,
-} from 'typeorm';
-
-import {
-  ListingRepositoryPort,
   ListingSearchFilters,
   PaginatedListingsResult,
-} from '@modules/listings/domain/repositories/listing.repository.port';
+} from '@modules/listings/domain/repositories/listing-query.repository.port';
+
+import { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
 
 import { ListingAggregate } from '@modules/listings/domain/aggregates/listing.aggregate';
 
-import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing.orm-entity';
+import { ListingOrmEntity } from '@modules/listings/infrastructure/persistence/typeorm/entities/listing.orm-entity';
 
 import { ListingMapper } from '@modules/listings/infrastructure/mappers/listing.mapper';
 
-import { LISTING_FULL_RELATIONS } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing-relations.constants';
+import { LISTING_FULL_RELATIONS } from '@modules/listings/infrastructure/persistence/typeorm/entities/listing-relations.constants';
 
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';
 import { ListingVisibility } from '@modules/listings/domain/enums/listing-visibility.enum';
 
 @Injectable()
-export class ListingTypeOrmRepository
-  implements ListingRepositoryPort
-{
+export class ListingTypeOrmRepository implements ListingRepositoryPort {
   constructor(
     @InjectRepository(ListingOrmEntity)
     private readonly repo: Repository<ListingOrmEntity>,
   ) {}
 
-  async save(
-    listing: ListingAggregate,
-  ): Promise<ListingAggregate> {
+  async save(listing: ListingAggregate): Promise<ListingAggregate> {
     try {
-      const orm = this.repo.create(
-        ListingMapper.toOrm(listing),
-      );
+      const orm = this.repo.create(ListingMapper.toOrm(listing));
 
       const saved = await this.repo.save(orm);
 
@@ -59,21 +46,14 @@ export class ListingTypeOrmRepository
       });
 
       if (!reloaded) {
-        throw new BadRequestException(
-          'Listing could not be reloaded',
-        );
+        throw new BadRequestException('Listing could not be reloaded');
       }
 
       return ListingMapper.toDomain(reloaded);
     } catch (error) {
-      console.error(
-        '[ListingTypeOrmRepository.save]',
-        error,
-      );
+      console.error('[ListingTypeOrmRepository.save]', error);
 
-      throw new BadRequestException(
-        'Error saving listing',
-      );
+      throw new BadRequestException('Error saving listing');
     }
   }
 
@@ -92,21 +72,14 @@ export class ListingTypeOrmRepository
       const updated = await this.findById(id);
 
       if (!updated) {
-        throw new BadRequestException(
-          'Listing could not be reloaded',
-        );
+        throw new BadRequestException('Listing could not be reloaded');
       }
 
       return updated;
     } catch (error) {
-      console.error(
-        '[ListingTypeOrmRepository.update]',
-        error,
-      );
+      console.error('[ListingTypeOrmRepository.update]', error);
 
-      throw new BadRequestException(
-        'Error updating listing',
-      );
+      throw new BadRequestException('Error updating listing');
     }
   }
 
@@ -118,9 +91,7 @@ export class ListingTypeOrmRepository
     await this.softDelete(id);
   }
 
-  async findById(
-    id: number,
-  ): Promise<ListingAggregate | null> {
+  async findById(id: number): Promise<ListingAggregate | null> {
     const entity = await this.repo.findOne({
       where: {
         id,
@@ -135,9 +106,7 @@ export class ListingTypeOrmRepository
     return ListingMapper.toDomain(entity);
   }
 
-  async findBySlug(
-    slug: string,
-  ): Promise<ListingAggregate | null> {
+  async findBySlug(slug: string): Promise<ListingAggregate | null> {
     const entity = await this.repo.findOne({
       where: {
         slug,
@@ -152,9 +121,7 @@ export class ListingTypeOrmRepository
     return ListingMapper.toDomain(entity);
   }
 
-  async existsBySlug(
-    slug: string,
-  ): Promise<boolean> {
+  async existsBySlug(slug: string): Promise<boolean> {
     const count = await this.repo.count({
       where: {
         slug,
@@ -171,28 +138,17 @@ export class ListingTypeOrmRepository
 
     qb.andWhere('listing.deletedAt IS NULL');
 
-    qb.andWhere(
-      'listing.status = :status',
-      {
-        status: ListingStatus.ACTIVE,
-      },
-    );
+    qb.andWhere('listing.status = :status', {
+      status: ListingStatus.ACTIVE,
+    });
 
-    qb.andWhere(
-      'listing.moderationStatus = :moderationStatus',
-      {
-        moderationStatus:
-          ModerationStatus.APPROVED,
-      },
-    );
+    qb.andWhere('listing.moderationStatus = :moderationStatus', {
+      moderationStatus: ModerationStatus.APPROVED,
+    });
 
-    qb.andWhere(
-      'listing.visibility = :visibility',
-      {
-        visibility:
-          ListingVisibility.PUBLIC,
-      },
-    );
+    qb.andWhere('listing.visibility = :visibility', {
+      visibility: ListingVisibility.PUBLIC,
+    });
 
     this.applyFilters(qb, filters);
 
@@ -207,12 +163,9 @@ export class ListingTypeOrmRepository
 
     qb.andWhere('listing.deletedAt IS NULL');
 
-    qb.andWhere(
-      'listing.ownerId = :ownerId',
-      {
-        ownerId,
-      },
-    );
+    qb.andWhere('listing.ownerId = :ownerId', {
+      ownerId,
+    });
 
     this.applyFilters(qb, filters);
 
@@ -230,9 +183,7 @@ export class ListingTypeOrmRepository
     });
   }
 
-  async findDraftsByOwner(
-    ownerId: number,
-  ): Promise<ListingAggregate[]> {
+  async findDraftsByOwner(ownerId: number): Promise<ListingAggregate[]> {
     const result = await this.searchOwnerListings(ownerId, {
       status: ListingStatus.DRAFT,
       page: 1,
@@ -250,12 +201,9 @@ export class ListingTypeOrmRepository
 
     qb.andWhere('listing.deletedAt IS NULL');
 
-    qb.andWhere(
-      'listing.agencyId = :agencyId',
-      {
-        agencyId,
-      },
-    );
+    qb.andWhere('listing.agencyId = :agencyId', {
+      agencyId,
+    });
 
     this.applyFilters(qb, filters);
 
@@ -285,8 +233,7 @@ export class ListingTypeOrmRepository
     return this.searchAdmin({
       search: params.query,
       status: params.status as ListingStatus | undefined,
-      moderationStatus:
-        params.moderationStatus as ModerationStatus | undefined,
+      moderationStatus: params.moderationStatus as ModerationStatus | undefined,
       ownerId: params.ownerId,
       page: params.page,
       limit: params.limit,
@@ -324,21 +271,16 @@ export class ListingTypeOrmRepository
   ): Promise<PaginatedListingsResult> {
     const qb = this.createBaseQueryBuilder();
 
-    qb.andWhere(
-      'listing.moderationStatus = :moderationStatus',
-      {
-        moderationStatus,
-      },
-    );
+    qb.andWhere('listing.moderationStatus = :moderationStatus', {
+      moderationStatus,
+    });
 
     this.applyFilters(qb, filters);
 
     return this.executePaginatedQuery(qb);
   }
 
-  async incrementViews(
-    id: number,
-  ): Promise<void> {
+  async incrementViews(id: number): Promise<void> {
     await this.repo.increment(
       {
         id,
@@ -348,9 +290,7 @@ export class ListingTypeOrmRepository
     );
   }
 
-  async incrementContacts(
-    id: number,
-  ): Promise<void> {
+  async incrementContacts(id: number): Promise<void> {
     await this.repo.increment(
       {
         id,
@@ -360,10 +300,7 @@ export class ListingTypeOrmRepository
     );
   }
 
-  async syncFavoritesCount(
-    listingId: number,
-    count: number,
-  ): Promise<void> {
+  async syncFavoritesCount(listingId: number, count: number): Promise<void> {
     await this.repo.update(
       {
         id: listingId,
@@ -374,9 +311,7 @@ export class ListingTypeOrmRepository
     );
   }
 
-  async countByOwner(
-    ownerId: number,
-  ): Promise<number> {
+  async countByOwner(ownerId: number): Promise<number> {
     return this.repo.count({
       where: {
         ownerId,
@@ -384,9 +319,7 @@ export class ListingTypeOrmRepository
     });
   }
 
-  async countByAgency(
-    agencyId: number,
-  ): Promise<number> {
+  async countByAgency(agencyId: number): Promise<number> {
     return this.repo.count({
       where: {
         agencyId,
@@ -394,29 +327,15 @@ export class ListingTypeOrmRepository
     });
   }
 
-  private createBaseQueryBuilder(
-    options?: {
-      withDeleted?: boolean;
-    },
-  ): SelectQueryBuilder<ListingOrmEntity> {
+  private createBaseQueryBuilder(options?: {
+    withDeleted?: boolean;
+  }): SelectQueryBuilder<ListingOrmEntity> {
     const qb = this.repo
       .createQueryBuilder('listing')
-      .leftJoinAndSelect(
-        'listing.owner',
-        'owner',
-      )
-      .leftJoinAndSelect(
-        'listing.agency',
-        'agency',
-      )
-      .leftJoinAndSelect(
-        'listing.media',
-        'media',
-      )
-      .loadRelationCountAndMap(
-        'listing.favoritesCount',
-        'listing.favorites',
-      );
+      .leftJoinAndSelect('listing.owner', 'owner')
+      .leftJoinAndSelect('listing.agency', 'agency')
+      .leftJoinAndSelect('listing.media', 'media')
+      .loadRelationCountAndMap('listing.favoritesCount', 'listing.favorites');
 
     if (options?.withDeleted) {
       qb.withDeleted();
@@ -467,21 +386,15 @@ export class ListingTypeOrmRepository
     }
 
     if (propertyType) {
-      qb.andWhere(
-        'listing.propertyType = :propertyType',
-        {
-          propertyType,
-        },
-      );
+      qb.andWhere('listing.propertyType = :propertyType', {
+        propertyType,
+      });
     }
 
     if (operationType) {
-      qb.andWhere(
-        'listing.operationType = :operationType',
-        {
-          operationType,
-        },
-      );
+      qb.andWhere('listing.operationType = :operationType', {
+        operationType,
+      });
     }
 
     if (city) {
@@ -525,57 +438,39 @@ export class ListingTypeOrmRepository
     }
 
     if (rooms !== undefined) {
-      qb.andWhere(
-        'listing.rooms = :rooms',
-        {
-          rooms,
-        },
-      );
+      qb.andWhere('listing.rooms = :rooms', {
+        rooms,
+      });
     }
 
     if (bedrooms !== undefined) {
-      qb.andWhere(
-        'listing.bedrooms = :bedrooms',
-        {
-          bedrooms,
-        },
-      );
+      qb.andWhere('listing.bedrooms = :bedrooms', {
+        bedrooms,
+      });
     }
 
     if (bathrooms !== undefined) {
-      qb.andWhere(
-        'listing.bathrooms = :bathrooms',
-        {
-          bathrooms,
-        },
-      );
+      qb.andWhere('listing.bathrooms = :bathrooms', {
+        bathrooms,
+      });
     }
 
     if (agencyId !== undefined) {
-      qb.andWhere(
-        'listing.agencyId = :agencyId',
-        {
-          agencyId,
-        },
-      );
+      qb.andWhere('listing.agencyId = :agencyId', {
+        agencyId,
+      });
     }
 
     if (ownerId !== undefined) {
-      qb.andWhere(
-        'listing.ownerId = :ownerId',
-        {
-          ownerId,
-        },
-      );
+      qb.andWhere('listing.ownerId = :ownerId', {
+        ownerId,
+      });
     }
 
     if (status) {
-      qb.andWhere(
-        'listing.status = :status',
-        {
-          status,
-        },
-      );
+      qb.andWhere('listing.status = :status', {
+        status,
+      });
     }
 
     if (moderationStatus) {
@@ -591,37 +486,26 @@ export class ListingTypeOrmRepository
     }
 
     if (visibility) {
-      qb.andWhere(
-        'listing.visibility = :visibility',
-        {
-          visibility,
-        },
-      );
+      qb.andWhere('listing.visibility = :visibility', {
+        visibility,
+      });
     }
   }
 
   private async executePaginatedQuery(
     qb: SelectQueryBuilder<ListingOrmEntity>,
   ): Promise<PaginatedListingsResult> {
-    const rawLimit = Number(
-      qb.expressionMap.parameters.limit ?? 20,
-    );
+    const rawLimit = Number(qb.expressionMap.parameters.limit ?? 20);
 
-    const rawPage = Number(
-      qb.expressionMap.parameters.page ?? 1,
-    );
+    const rawPage = Number(qb.expressionMap.parameters.page ?? 1);
 
     const limit = Math.min(rawLimit, 100);
 
     const page = Math.max(rawPage, 1);
 
-    const sortBy =
-      qb.expressionMap.parameters.sortBy ??
-      'createdAt';
+    const sortBy = qb.expressionMap.parameters.sortBy ?? 'createdAt';
 
-    const order =
-      qb.expressionMap.parameters.order ??
-      'DESC';
+    const order = qb.expressionMap.parameters.order ?? 'DESC';
 
     const allowedSorts = [
       'createdAt',
@@ -632,29 +516,21 @@ export class ListingTypeOrmRepository
       'favoritesCount',
     ];
 
-    const safeSort = allowedSorts.includes(
-      sortBy,
-    )
-      ? sortBy
-      : 'createdAt';
+    const safeSort = allowedSorts.includes(sortBy) ? sortBy : 'createdAt';
 
-    qb.orderBy(
-      `listing.${safeSort}`,
-      order,
-    );
+    qb.orderBy(`listing.${safeSort}`, order);
 
     qb.take(limit);
 
     qb.skip((page - 1) * limit);
 
-    const [entities, total] =
-      await qb.getManyAndCount();
+    const [entities, total] = await qb.getManyAndCount();
 
     return {
-      items: entities.map((entity) =>
-        ListingMapper.toDomain(entity),
-      ),
+      items: entities.map((entity) => ListingMapper.toDomain(entity)),
       total,
+      page,
+      limit,
     };
   }
 }

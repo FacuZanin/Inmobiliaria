@@ -17,7 +17,7 @@ const ormconfig: TypeOrmModuleOptions = {
   migrations: [__dirname + '/../database/migrations/*.{ts,js}'],
 
   synchronize: false,
-  migrationsRun: true,
+  migrationsRun: process.env.DB_MIGRATIONS_RUN === 'true',
   autoLoadEntities: true,
 };
 

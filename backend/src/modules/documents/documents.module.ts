@@ -7,12 +7,14 @@ import { DocumentAuditOrmEntity } from './infrastructure/persistence/typeorm/ent
 
 import { DocumentTypeOrmRepository } from './infrastructure/persistence/typeorm/repositories/document.typeorm.repository';
 import { DocumentAuditTypeOrmRepository } from './infrastructure/persistence/typeorm/repositories/document-audit.typeorm.repository';
+import { DocumentQueryTypeOrmRepository } from './infrastructure/persistence/typeorm/repositories/document-query.typeorm.repository';
 import { DocumentsTypeOrmUnitOfWork } from './infrastructure/persistence/typeorm/repositories/transaction/documents-typeorm.unit-of-work';
 import { TransactionalRepositoryFactory } from './infrastructure/persistence/typeorm/repositories/transaction/transactional-repository.factory';
 
 import {
   DOCUMENT_REPOSITORY,
   DOCUMENT_AUDIT_REPOSITORY,
+  DOCUMENT_QUERY_REPOSITORY,
 } from './application/tokens/document.tokens';
 
 import { FILE_STORAGE } from './application/tokens/storage.tokens';
@@ -20,11 +22,11 @@ import { DOCUMENTS_UNIT_OF_WORK } from './application/tokens/document.tokens';
 
 import { LocalFileStorageService } from './infrastructure/storage/local/local-file-storage.service';
 
-import { UploadDocumentUseCase } from './application/commands/use-cases/upload-document.usecase';
-import { ChangeDocumentStatusUseCase } from './application/commands/use-cases/change-document-status.usecase';
-import { GetDocumentsByStatusQueryHandler } from './application/queries/use-cases/get-documents-by-status.usecase';
+import { UploadDocumentHandler } from './application/commands/handlers/upload-document.handler';
+import { ChangeDocumentStatusHandler } from './application/commands/handlers/change-document-status.handler';
+import { GetDocumentsByStatusHandler } from './application/queries/handlers/get-documents-by-status.handler';
 
-import { ListDocumentsByOwnerQueryHandler } from './application/queries/use-cases/list-documents-by-owner.usecase';
+import { ListDocumentsByOwnerHandler } from './application/queries/handlers/list-documents-by-owner.handler';
 
 import { TenantDocumentsController } from './presentation/http/controllers/tenant-documents.controller';
 import { OwnerDocumentsController } from './presentation/http/controllers/owner-documents.controller';
@@ -42,10 +44,10 @@ import { AdminDocumentsController } from './presentation/http/controllers/admin-
   ],
 
   providers: [
-    UploadDocumentUseCase,
-    ChangeDocumentStatusUseCase,
-    GetDocumentsByStatusQueryHandler,
-    ListDocumentsByOwnerQueryHandler,
+    UploadDocumentHandler,
+    ChangeDocumentStatusHandler,
+    GetDocumentsByStatusHandler,
+    ListDocumentsByOwnerHandler,
     TransactionalRepositoryFactory,
 
     {
@@ -56,6 +58,11 @@ import { AdminDocumentsController } from './presentation/http/controllers/admin-
     {
       provide: DOCUMENT_AUDIT_REPOSITORY,
       useClass: DocumentAuditTypeOrmRepository,
+    },
+
+    {
+      provide: DOCUMENT_QUERY_REPOSITORY,
+      useClass: DocumentQueryTypeOrmRepository,
     },
 
     {

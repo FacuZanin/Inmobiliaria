@@ -16,7 +16,7 @@ import { Auth } from '@/security/decorators/auth.decorator';
 
 import { CurrentUser } from '@/security/decorators/current-user.decorator';
 
-import { PaginationParams } from '@/core/querying/pagination/pagination-params';
+import { PaginationParams } from '@/core/application/pagination/pagination-params';
 
 import { UploadDocumentRequest } from '@/modules/documents/presentation/http/requests/upload-document.request';
 
@@ -24,7 +24,7 @@ import { UploadDocumentRequestMapper } from '@/modules/documents/presentation/ht
 
 import { UploadDocumentHandler } from '@/modules/documents/application/commands/handlers/upload-document.handler';
 
-import { ListDocumentsByOwnerQuery } from '@/modules/documents/application/queries/queries/list-documents-by-owner.query';
+import { ListDocumentsByOwnerHandler } from '@/modules/documents/application/queries/handlers/list-documents-by-owner.handler';
 
 import { DocumentOwnerType } from '@/modules/documents/domain/enums/document-owner-type.enum';
 
@@ -40,7 +40,7 @@ export class OwnerDocumentsController {
   constructor(
     private readonly uploadDocumentHandler: UploadDocumentHandler,
 
-    private readonly listDocuments: ListDocumentsByOwnerQuery,
+    private readonly listDocuments: ListDocumentsByOwnerHandler,
   ) {}
 
   @Post()

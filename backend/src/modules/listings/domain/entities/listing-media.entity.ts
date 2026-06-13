@@ -1,6 +1,6 @@
 // backend\src\modules\listings\domain\entities\listing-media.entity.ts
 
-import { DomainException } from '@/core/domain/exceptions/domain.exception';
+import { ValidationError } from '@/core/shared-kernel/errors';
 
 import { ListingMediaType } from '../enums/listing-media-type.enum';
 import { MediaProcessingStatus } from '../enums/media-processing-status.enum';
@@ -209,7 +209,7 @@ export class ListingMediaEntity {
 
   updateSortOrder(SortOrder: number) {
     if (SortOrder < 0) {
-      throw new DomainException('Invalid media order');
+      throw new ValidationError('Invalid media order');
     }
 
     this._sortOrder = SortOrder;
@@ -223,19 +223,19 @@ export class ListingMediaEntity {
 
   private validate(props: ListingMediaProps) {
     if (!props.url?.trim()) {
-      throw new DomainException('Media URL is required');
+      throw new ValidationError('Media URL is required');
     }
 
     if (!props.storageKey?.trim()) {
-      throw new DomainException('Media storageKey is required');
+      throw new ValidationError('Media storageKey is required');
     }
 
     if (!props.mimeType?.trim()) {
-      throw new DomainException('Media mimeType is required');
+      throw new ValidationError('Media mimeType is required');
     }
 
     if (props.sizeInBytes != null && props.sizeInBytes < 0) {
-      throw new DomainException('Invalid media size');
+      throw new ValidationError('Invalid media size');
     }
   }
 }

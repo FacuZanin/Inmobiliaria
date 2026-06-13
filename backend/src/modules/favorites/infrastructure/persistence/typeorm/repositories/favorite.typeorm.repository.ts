@@ -9,8 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { Favorite } from '@/modules/favoritos/domain/entities/favorite.entity';
-import { FavoriteRepositoryPort } from '@/modules/favoritos/application/ports/favorite-repository.port';
+import { Favorite } from '@/modules/favorites/domain/entities/favorite.entity';
+import { FavoriteRepositoryPort } from '@/modules/favorites/application/ports/favorite-repository.port';
 import { ListingOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing.orm-entity';
 
 @Injectable()

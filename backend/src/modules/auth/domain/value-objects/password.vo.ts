@@ -1,5 +1,5 @@
 // backend\src\modules\auth\domain\value-objects\password.vo.ts
-import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
+import { ValidationError } from '@/core/shared-kernel/errors/validation.error';
 import { PasswordHasherPort } from '../../application/ports/password-hasher.port';
 
 export class Password {
@@ -10,26 +10,23 @@ export class Password {
     hasher: PasswordHasherPort,
   ): Promise<Password> {
     if (!plainPassword) {
-      throw new DomainException('La contraseña es requerida');
+      throw new ValidationError('La contraseña es requerida');
     }
 
     if (plainPassword.length < 8) {
-      throw new DomainException(
+      throw new ValidationError(
         'La contraseña debe tener al menos 8 caracteres',
       );
     }
 
-    // 🔥 (opcional pero PRO)
     if (!/[A-Z]/.test(plainPassword)) {
-      throw new DomainException(
+      throw new ValidationError(
         'La contraseña debe tener al menos una mayúscula',
       );
     }
 
     if (!/[0-9]/.test(plainPassword)) {
-      throw new DomainException(
-        'La contraseña debe tener al menos un número',
-      );
+      throw new ValidationError('La contraseña debe tener al menos un número');
     }
 
     const hashed = await hasher.hash(plainPassword);

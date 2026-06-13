@@ -15,4 +15,3 @@ export class UserId {
     return this._value;
   }
 }
-

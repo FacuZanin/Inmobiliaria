@@ -1,6 +1,7 @@
 // backend\src\modules\documents\presentation\http\serializers\document.serializer.ts
 
 import { DocumentListItemProjection } from '@modules/documents/application/queries/projections/document-list-item.projection';
+import { PaginatedResult } from '@/core/querying/pagination/paginated-result';
 
 export class DocumentSerializer {
   static serialize(
@@ -32,7 +33,7 @@ export class DocumentSerializer {
   }
 
   static serializePaginated(
-    response: PaginatedResponseDto<DocumentListItemProjection>,
+    response: PaginatedResult<DocumentListItemProjection>,
   ) {
     return {
       data: response.data.map(this.serialize),

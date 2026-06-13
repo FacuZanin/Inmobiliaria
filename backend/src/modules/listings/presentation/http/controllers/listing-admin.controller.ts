@@ -14,6 +14,7 @@ import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 import { Inject } from '@nestjs/common';
 import { ListingStatus } from '@modules/listings/domain/enums/listing-status.enum';
 import { ModerationStatus } from '@modules/listings/domain/enums/moderation-status.enum';
+import { ListingQueryRepository } from '@modules/listings/infrastructure/repositories/listing-query.repository';
 
 
 @ApiTags('Admin Listings')
@@ -23,7 +24,9 @@ import { ModerationStatus } from '@modules/listings/domain/enums/moderation-stat
 export class ListingAdminController {
   constructor(
     @Inject(LISTING_REPOSITORY)
-    private readonly listings: ListingRepositoryPort,
+    private readonly listingRepository: ListingRepositoryPort,
+
+    private readonly listings: ListingQueryRepository,
   ) {}
 
   @Get()
@@ -36,7 +39,7 @@ export class ListingAdminController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.listings.adminSearch({
+    return this.listings.searchAdmin({
       query,
       status,
       moderationStatus,
@@ -49,6 +52,6 @@ export class ListingAdminController {
   @Get(':id')
   @ApiOperation({ summary: 'Get listing as admin' })
   findById(@Param('id', ParseIntPipe) id: number) {
-    return this.listings.findById(id);
+    return this.listingRepository.findById(id);
   }
 }

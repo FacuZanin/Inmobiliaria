@@ -1,5 +1,4 @@
 // backend/src/core/core.module.ts
-// src/core/core.module.ts
 import { Global, Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';

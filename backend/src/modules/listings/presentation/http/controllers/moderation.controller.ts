@@ -9,13 +9,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { Auth } from '@/core/shared/security/decorators/auth.decorator';
+import { Auth } from '@/security/decorators/auth.decorator';
 import { Permission } from '@shared/contracts/enums/permission.enum';
 import { ModerateListingDto } from '@modules/listings/application/dto/moderation.dto';
 import { ModerateListingUseCase } from '@modules/listings/application/use-cases/moderate-listing.usecase';
-import { ListingRepositoryPort } from '@modules/listings/domain/repositories/listing.repository.port';
-import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
-import { Inject } from '@nestjs/common';
+import { ListingQueryRepository } from '@modules/listings/infrastructure/repositories/listing-query.repository';
 
 @ApiTags('Listing Moderation')
 @ApiBearerAuth('access-token')
@@ -25,20 +23,16 @@ export class ModerationController {
   constructor(
     private readonly moderateListing: ModerateListingUseCase,
 
-    @Inject(LISTING_REPOSITORY)
-    private readonly listings: ListingRepositoryPort,
+    private readonly listings: ListingQueryRepository,
   ) {}
 
   @Get('pending')
   @ApiOperation({ summary: 'List pending listings moderation' })
-  pending(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
-    return this.listings.findPendingModeration(
-      page ? Number(page) : 1,
-      limit ? Number(limit) : 20,
-    );
+  pending(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.listings.findPendingModeration({
+      page: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 20,
+    });
   }
 
   @Patch(':id')

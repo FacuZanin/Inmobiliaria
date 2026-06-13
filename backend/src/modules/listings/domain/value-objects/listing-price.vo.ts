@@ -1,6 +1,6 @@
 // backend/src/modules/listings/domain/value-objects/listing-price.vo.ts
 
-import { DomainException } from '@/core/shared/domain/exceptions/domain.exception';
+import { ValidationError } from '@/core/shared-kernel/errors';
 
 export class ListingPriceVO {
   readonly value: number;
@@ -11,7 +11,7 @@ export class ListingPriceVO {
       Number.isNaN(value) ||
       value < 0
     ) {
-      throw new DomainException(
+      throw new ValidationError(
         'Invalid listing price',
       );
     }

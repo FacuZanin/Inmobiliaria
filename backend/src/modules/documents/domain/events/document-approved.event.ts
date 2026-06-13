@@ -1,5 +1,5 @@
 // backend\src\modules\documents\domain\events\document-approved.event.ts
-import { DomainEvent } from '@/core/domain/events/domain-event';
+import { DomainEvent } from '@/core/domain/events/domain-event.base';
 
 interface DocumentApprovedPayload {
   approvedBy: number;

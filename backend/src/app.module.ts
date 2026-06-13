@@ -6,6 +6,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bullmq';
 
 import { AuditInterceptor } from '@/core/infrastructure/interceptors/audit.interceptor';
+import { CoreModule } from '@/core/core.module';
 
 import ormconfig from './database/typeorm.config';
 
@@ -16,7 +17,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { AgenciasModule } from './modules/agencies/agencias.module';
 import { ListingsModule } from './modules/listings/listings.module';
-import { OperacionesModule } from './modules/operaciones/operaciones.module';
 import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
 import { FavoritosModule } from './modules/favorites/favoritos.module';
 import { AuditModule } from './modules/audit/audit.module';
@@ -27,10 +27,7 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { HttpExceptionFilter } from '@/core/infrastructure/filters/http-exception.filter';
 import { LoggingInterceptor } from '@/core/infrastructure/interceptors/logging.interceptor';
 import { TimingInterceptor } from '@/core/infrastructure/interceptors/timing.interceptor';
-import { ValidationPipe } from '@/core/infrastructure/pipes/validation.pipe';
-
-// LOGGER
-import { LoggerModule } from '@/core/infrastructure/logger/logger.module';
+import { ValidationPipe } from '@nestjs/common';
 
 // HEALTH
 import { HealthModule } from './health/health.module';
@@ -64,8 +61,7 @@ import { HealthModule } from './health/health.module';
     // DB
     TypeOrmModule.forRoot(ormconfig),
 
-    // LOGGER GLOBAL
-    LoggerModule,
+    CoreModule,
 
     // DOMAINS
     HealthModule,
@@ -73,7 +69,6 @@ import { HealthModule } from './health/health.module';
     UsersModule,
     AgenciasModule,
     ListingsModule,
-    OperacionesModule,
     InquilinosModule,
     FavoritosModule,
     AuditModule,
