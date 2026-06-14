@@ -5,8 +5,8 @@ import { Injectable } from '@nestjs/common';
 import { User }
 from '@/modules/users/domain/entities/user.entity';
 
-import { ListingAggregate }
-from '@/modules/listings/domain/aggregates/listing.aggregate';
+import { PropertyAggregate }
+from '@/modules/properties/domain/aggregates/property.aggregate';
 
 import { UserRole }
 from '@shared/contracts/enums/user-role.enum';
@@ -15,7 +15,7 @@ from '@shared/contracts/enums/user-role.enum';
 export class PropertyOwnershipPolicy {
   canManage(
     user: User,
-    property: ListingAggregate,
+    property: PropertyAggregate,
   ): boolean {
     if (user.role === UserRole.SUPERADMIN) {
       return true;
@@ -37,21 +37,21 @@ export class PropertyOwnershipPolicy {
 
   canModify(
     user: User,
-    property: ListingAggregate,
+    property: PropertyAggregate,
   ): boolean {
     return this.canManage(user, property);
   }
 
   canDelete(
     user: User,
-    property: ListingAggregate,
+    property: PropertyAggregate,
   ): boolean {
     return this.canManage(user, property);
   }
 
   canViewPrivate(
     user: User,
-    property: ListingAggregate,
+    property: PropertyAggregate,
   ): boolean {
     return this.canManage(user, property);
   }

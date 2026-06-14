@@ -5,6 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+import { DOMAIN_EVENT_PUBLISHER } from '@/core/application/ports/domain-event-publisher.token';
+import type { IDomainEventPublisher } from '@/core/domain/events/domain-event-publisher.interface';
 import { LISTING_REPOSITORY } from '@modules/listings/application/tokens';
 import { ModerationStatus } from '../../domain/enums/moderation-status.enum';
 
@@ -18,6 +20,9 @@ export class ModerateListingUseCase {
     private readonly repository: ListingRepositoryPort,
 
     private readonly moderationPolicy: ListingModerationPolicy,
+
+    @Inject(DOMAIN_EVENT_PUBLISHER)
+    private readonly eventPublisher: IDomainEventPublisher,
   ) {}
 
   async execute(params: {
@@ -64,6 +69,23 @@ export class ModerateListingUseCase {
         );
     }
 
-    return this.repository.save(listing);
+    const saved = await this.repository.save(listing);
+
+    await this.eventPublisher.publish([
+      {
+        aggregateId: String(saved.id),
+        occurredAt: new Date(),
+        eventName: 'listing.moderated',
+        payload: {
+          listingId: saved.id!,
+          ownerId: saved.ownerId,
+          agencyId: saved.agencyId,
+          status: saved.moderationStatus,
+          reason: saved.moderationReason,
+        },
+      },
+    ]);
+
+    return saved;
   }
 }

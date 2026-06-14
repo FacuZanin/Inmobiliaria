@@ -35,7 +35,7 @@ export class ChangeDocumentStatusHandler
     command: ChangeDocumentStatusCommand,
   ): Promise<DocumentEntity> {
     return this.uow.execute(
-      async ({ documents, audits }) => {
+      async ({ documents, audits }, collectDomainEvents) => {
         const document =
           await documents.findById(
             command.documentId,
@@ -81,6 +81,9 @@ export class ChangeDocumentStatusHandler
 
         const saved =
           await documents.save(document);
+
+        collectDomainEvents(saved.getDomainEvents());
+        saved.clearDomainEvents();
 
         await audits.save(
           new DocumentAuditEntity(

@@ -17,9 +17,14 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { AgenciasModule } from './modules/agencies/agencias.module';
 import { ListingsModule } from './modules/listings/listings.module';
+import { PropertiesModule } from './modules/properties/properties.module';
+import { DocumentsModule } from './modules/documents/documents.module';
+import { MediaModule } from './modules/media/media.module';
 import { InquilinosModule } from './modules/inquilinos/inquilinos.module';
 import { FavoritosModule } from './modules/favorites/favoritos.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { VisitsModule } from './modules/visits/visits.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 // GLOBALS
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
@@ -68,7 +73,12 @@ import { HealthModule } from './health/health.module';
     AuthModule,
     UsersModule,
     AgenciasModule,
+    PropertiesModule,
     ListingsModule,
+    DocumentsModule,
+    MediaModule,
+    VisitsModule,
+    NotificationsModule,
     InquilinosModule,
     FavoritosModule,
     AuditModule,

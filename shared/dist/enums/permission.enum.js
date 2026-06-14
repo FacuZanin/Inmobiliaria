@@ -47,6 +47,15 @@ var Permission;
     Permission["DOCUMENT_UPLOAD"] = "DOCUMENT_UPLOAD";
     Permission["DOCUMENT_REVIEW"] = "DOCUMENT_REVIEW";
     Permission["DOCUMENT_HISTORY"] = "DOCUMENT_HISTORY";
+    // VISITS
+    Permission["VISIT_CREATE"] = "VISIT_CREATE";
+    Permission["VISIT_READ_OWN"] = "VISIT_READ_OWN";
+    Permission["VISIT_READ_PRIVATE"] = "VISIT_READ_PRIVATE";
+    Permission["VISIT_ACCEPT"] = "VISIT_ACCEPT";
+    Permission["VISIT_REJECT"] = "VISIT_REJECT";
+    Permission["VISIT_CANCEL"] = "VISIT_CANCEL";
+    Permission["VISIT_RESCHEDULE"] = "VISIT_RESCHEDULE";
+    Permission["VISIT_DONE"] = "VISIT_DONE";
     // OPERATIONS
     Permission["OPERATION_CREATE"] = "OPERATION_CREATE";
     Permission["OPERATION_UPDATE"] = "OPERATION_UPDATE";

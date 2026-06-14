@@ -1,0 +1,7 @@
+export enum OperationStatus {
+  PENDING = 'PENDING',
+  RESERVED = 'RESERVED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  FINALIZED = 'FINALIZED',
+  CANCELLED = 'CANCELLED',
+}

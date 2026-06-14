@@ -87,6 +87,11 @@ class FeaturesDto {
 }
 
 export class CreateListingDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  propertyId?: number;
+
   @ApiProperty()
   @IsString()
   @MaxLength(120)

@@ -6,6 +6,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+import { DOMAIN_EVENT_PUBLISHER } from '@/core/application/ports/domain-event-publisher.token';
+import type { IDomainEventPublisher } from '@/core/domain/events/domain-event-publisher.interface';
 import type { AgenciaSolicitudRepositoryPort } from '../ports/agencia-solicitud-repository.port';
 import type { AgenciasRepositoryPort } from '../ports/agencias-repository.port';
 import type { UserRepositoryPort } from '../../../users/application/ports/user-repository.port';
@@ -27,6 +29,9 @@ export class AprobarSolicitudAgenciaUseCase {
 
     @Inject(USER_REPOSITORY)
     private readonly users: UserRepositoryPort,
+
+    @Inject(DOMAIN_EVENT_PUBLISHER)
+    private readonly eventPublisher: IDomainEventPublisher,
   ) {}
 
   async execute(id: number) {
@@ -67,6 +72,20 @@ export class AprobarSolicitudAgenciaUseCase {
 
     solicitud.estado = AgenciaSolicitudEstado.APROBADA;
     await this.solicitudes.save(solicitud);
+
+    await this.eventPublisher.publish([
+      {
+        aggregateId: String(solicitud.id),
+        occurredAt: new Date(),
+        eventName: 'agency.request.approved',
+        payload: {
+          requestId: solicitud.id,
+          userId: solicitud.usuario.id,
+          userType: solicitud.usuario.tipo,
+          agencyId: nuevaAgencia?.id ?? null,
+        },
+      },
+    ]);
 
     return {
       message: 'Solicitud aprobada correctamente',

@@ -15,6 +15,7 @@ import {
 import { User } from '@/modules/users/domain/entities/user.entity';
 import { Agencia } from '@/modules/agencies/domain/entities/agencia.entity';
 import { Favorite } from '@modules/favorites/domain/entities/favorite.entity';
+import { PropertyOrmEntity } from '@/modules/properties/infrastructure/persistence/typeorm/entities/property.orm-entity';
 import { ListingMediaOrmEntity } from '@/modules/listings/infrastructure/persistence/typeorm/entities/listing-media.orm-entity';
 
 import { ListingCategory } from '@modules/listings/domain/enums/listing-category.enum';
@@ -222,6 +223,19 @@ export class ListingOrmEntity {
   @Index()
   @Column()
   ownerId!: number;
+
+  @ManyToOne(() => PropertyOrmEntity, {
+    nullable: true,
+    onDelete: 'SET NULL',
+    eager: false,
+  })
+  property!: PropertyOrmEntity | null;
+
+  @Index()
+  @Column({
+    nullable: true,
+  })
+  propertyId!: number | null;
 
   @ManyToOne(() => Agencia, {
     nullable: true,

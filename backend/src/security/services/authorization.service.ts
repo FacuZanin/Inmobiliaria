@@ -7,8 +7,8 @@ import {
 
 import { User } from '@/modules/users/domain/entities/user.entity';
 
-import { ListingAggregate }
-from '@/modules/listings/domain/aggregates/listing.aggregate';
+import { PropertyAggregate }
+from '@/modules/properties/domain/aggregates/property.aggregate';
 
 import { PropertyOwnershipPolicy }
 from '../policies/property-ownership.policy';
@@ -78,7 +78,7 @@ export class AuthorizationService {
 
   assertCanEditProperty(
     user: User,
-    property: ListingAggregate,
+    property: PropertyAggregate,
   ): void {
     if (
       !this.propertyOwnership.canModify(
@@ -94,7 +94,7 @@ export class AuthorizationService {
 
   assertCanDeleteProperty(
     user: User,
-    property: ListingAggregate,
+    property: PropertyAggregate,
   ): void {
     if (
       !this.propertyOwnership.canDelete(
@@ -110,7 +110,7 @@ export class AuthorizationService {
 
   assertCanViewPrivateProperty(
     user: User,
-    property: ListingAggregate,
+    property: PropertyAggregate,
   ): void {
     if (
       !this.propertyOwnership.canViewPrivate(

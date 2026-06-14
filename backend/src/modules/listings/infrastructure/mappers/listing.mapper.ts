@@ -53,6 +53,8 @@ export class ListingMapper {
 
       ownerId: entity.ownerId,
 
+      propertyId: entity.propertyId,
+
       agencyId: entity.agencyId,
 
       media:
@@ -114,6 +116,8 @@ export class ListingMapper {
     ormEntity.details = aggregate.details ?? {};
 
     ormEntity.ownerId = aggregate.ownerId;
+
+    ormEntity.propertyId = aggregate.propertyId ?? null;
 
     ormEntity.agencyId = aggregate.agencyId ?? null;
 

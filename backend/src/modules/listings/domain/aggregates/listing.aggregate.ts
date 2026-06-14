@@ -33,6 +33,8 @@ type ListingAggregateProps = {
 
   ownerId: number;
 
+  propertyId?: number | null;
+
   agencyId?: number | null;
 
   status?: ListingStatus;
@@ -104,6 +106,8 @@ export class ListingAggregate {
 
   private _ownerId: number;
 
+  private _propertyId: number | null;
+
   private _agencyId: number | null;
 
   private _status: ListingStatus;
@@ -160,6 +164,8 @@ export class ListingAggregate {
     this._operationType = props.operationType;
 
     this._ownerId = props.ownerId;
+
+    this._propertyId = props.propertyId ?? null;
 
     this._agencyId = props.agencyId ?? null;
 
@@ -267,6 +273,10 @@ export class ListingAggregate {
 
   get ownerId() {
     return this._ownerId;
+  }
+
+  get propertyId() {
+    return this._propertyId;
   }
 
   get agencyId() {
@@ -385,6 +395,65 @@ export class ListingAggregate {
     this.touch();
   }
 
+  setPrimaryMedia(mediaId: number) {
+    const media = this._media.find((item) => item.id === mediaId);
+
+    if (!media) {
+      throw new ValidationError('Listing media not found');
+    }
+
+    this.clearPrimaryMedia();
+    media.markAsPrimary();
+    this.touch();
+  }
+
+  reorderMedia(items: { id: number; sortOrder: number }[]) {
+    const mediaById = new Map(
+      this._media
+        .filter((media) => media.id !== null)
+        .map((media) => [media.id!, media]),
+    );
+
+    for (const item of items) {
+      const media = mediaById.get(item.id);
+
+      if (!media) {
+        throw new ValidationError('Listing media not found');
+      }
+
+      media.updateSortOrder(item.sortOrder);
+    }
+
+    this._media.sort((a, b) => a.sortOrder - b.sortOrder);
+    this.touch();
+  }
+
+  markMediaReadyByStorageKey(storageKey: string) {
+    const media = this._media.find((item) => item.storageKey === storageKey);
+
+    if (!media) {
+      return false;
+    }
+
+    media.markAsReady();
+    this.touch();
+
+    return true;
+  }
+
+  markMediaFailedByStorageKey(storageKey: string, error?: string) {
+    const media = this._media.find((item) => item.storageKey === storageKey);
+
+    if (!media) {
+      return false;
+    }
+
+    media.markAsFailed(error);
+    this.touch();
+
+    return true;
+  }
+
   publish() {
     if (this._moderationStatus !== ModerationStatus.APPROVED) {
       throw new ConflictError('Listing must be approved before publishing');
@@ -423,6 +492,46 @@ export class ListingAggregate {
     }
 
     this._status = ListingStatus.ARCHIVED;
+
+    this.touch();
+  }
+
+  reserve() {
+    if (![ListingStatus.ACTIVE, ListingStatus.PAUSED].includes(this._status)) {
+      throw new ConflictError('Only active or paused listings can be reserved');
+    }
+
+    this._status = ListingStatus.RESERVED;
+
+    this.touch();
+  }
+
+  releaseReservation() {
+    if (this._status !== ListingStatus.RESERVED) {
+      return;
+    }
+
+    this._status = ListingStatus.ACTIVE;
+
+    this.touch();
+  }
+
+  markAsSold() {
+    if (this._status === ListingStatus.RENTED) {
+      throw new ConflictError('Rented listings cannot be marked as sold');
+    }
+
+    this._status = ListingStatus.SOLD;
+
+    this.touch();
+  }
+
+  markAsRented() {
+    if (this._status === ListingStatus.SOLD) {
+      throw new ConflictError('Sold listings cannot be marked as rented');
+    }
+
+    this._status = ListingStatus.RENTED;
 
     this.touch();
   }
@@ -621,6 +730,8 @@ export class ListingAggregate {
       operationType: this._operationType,
 
       ownerId: this._ownerId,
+
+      propertyId: this._propertyId,
 
       agencyId: this._agencyId,
 

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["node", "multer", "express"],
+    "types": ["node", "multer", "express", "jest"],
     "module": "Node16",
     "moduleResolution": "node16",
     "esModuleInterop": true,

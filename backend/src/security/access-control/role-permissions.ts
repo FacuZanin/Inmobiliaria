@@ -27,6 +27,10 @@ export const ROLE_PERMISSIONS: Record<
     Permission.LISTING_MEDIA_UPLOAD,
     Permission.LISTING_MEDIA_DELETE,
 
+    Permission.UPLOAD_CREATE,
+    Permission.UPLOAD_READ,
+    Permission.UPLOAD_DELETE,
+
     // USERS
     Permission.USER_READ,
     Permission.USER_CREATE,
@@ -38,6 +42,15 @@ export const ROLE_PERMISSIONS: Record<
     // DOCUMENTS
     Permission.DOCUMENT_REVIEW,
     Permission.DOCUMENT_HISTORY,
+
+    Permission.VISIT_CREATE,
+    Permission.VISIT_READ_OWN,
+    Permission.VISIT_READ_PRIVATE,
+    Permission.VISIT_ACCEPT,
+    Permission.VISIT_REJECT,
+    Permission.VISIT_CANCEL,
+    Permission.VISIT_RESCHEDULE,
+    Permission.VISIT_DONE,
 
     // OPERATIONS
     Permission.OPERATION_CREATE,
@@ -65,6 +78,11 @@ export const ROLE_PERMISSIONS: Record<
     Permission.LISTING_PUBLISH,
 
     Permission.LISTING_MEDIA_UPLOAD,
+    Permission.LISTING_MEDIA_DELETE,
+
+    Permission.UPLOAD_CREATE,
+    Permission.UPLOAD_READ,
+    Permission.UPLOAD_DELETE,
 
     // FAVORITES
     Permission.FAVORITE_CREATE,
@@ -74,6 +92,16 @@ export const ROLE_PERMISSIONS: Record<
 
     // DOCUMENTS
     Permission.DOCUMENT_UPLOAD,
+
+    // VISITS
+    Permission.VISIT_CREATE,
+    Permission.VISIT_READ_OWN,
+    Permission.VISIT_READ_PRIVATE,
+    Permission.VISIT_ACCEPT,
+    Permission.VISIT_REJECT,
+    Permission.VISIT_CANCEL,
+    Permission.VISIT_RESCHEDULE,
+    Permission.VISIT_DONE,
 
     // OPERATIONS
     Permission.OPERATION_CREATE,

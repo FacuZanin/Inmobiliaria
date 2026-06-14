@@ -46,9 +46,11 @@ import { ListingIndexingProcessor } from './infrastructure/queues/listing-indexi
 import { ListingMediaProcessor } from './infrastructure/queues/listing-media.processor';
 
 import { ListingEventsSubscriber } from './infrastructure/persistence/typeorm/subscribers/listing-events.subscriber';
+import { PropertiesModule } from '@/modules/properties/properties.module';
 
 @Module({
   imports: [
+    PropertiesModule,
     TypeOrmModule.forFeature([
       ListingOrmEntity,
       ListingMediaOrmEntity,

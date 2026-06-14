@@ -1,0 +1,1 @@
+export const VISIT_REPOSITORY = Symbol('VISIT_REPOSITORY');

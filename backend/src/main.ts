@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -12,11 +13,15 @@ import { LoggerService } from '@nestjs/common';
 import { LOGGER } from '@/core/application/ports/logger.token';
 
 import cookieParser from 'cookie-parser';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.use(cookieParser());
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
+    prefix: '/uploads/',
+  });
   // 🔹 Logger global
   app.useLogger(app.get<LoggerService>(LOGGER));
   // 🔹 Pipes globales

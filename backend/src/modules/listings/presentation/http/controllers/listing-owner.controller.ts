@@ -72,6 +72,7 @@ export class ListingOwnerController {
     return this.createListingUseCase.execute(
       dto,
       user.id ?? user.sub,
+      user.agencia?.id ?? null,
     );
   }
 

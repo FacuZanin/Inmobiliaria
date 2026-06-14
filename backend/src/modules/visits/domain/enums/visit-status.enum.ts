@@ -1,0 +1,7 @@
+export enum VisitStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED',
+  DONE = 'DONE',
+}

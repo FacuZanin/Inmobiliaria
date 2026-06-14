@@ -1,0 +1,8 @@
+export enum MediaOwnerType {
+  USER = 'USER',
+  PROFILE = 'PROFILE',
+  AGENCY = 'AGENCY',
+  PROPERTY = 'PROPERTY',
+  LISTING = 'LISTING',
+  DOCUMENT = 'DOCUMENT',
+}
